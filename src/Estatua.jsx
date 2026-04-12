@@ -13,20 +13,16 @@ export default function Estatua({ current, total }) {
       if (obj.isMesh && obj.material) {
 
         obj.material.color = new THREE.Color('#f3f2e4')
-        obj.material.emissive = new THREE.Color('#e6d6c29f')
+        obj.material.emissive = new THREE.Color('#e6d6c2')
         obj.material.emissiveIntensity = 0
         obj.material.roughness = 0.95
         obj.material.metalness = 0.0
-        obj.material.needsUpdate = true
-
-        
-         
-        
+        obj.material.needsUpdate = true 
       }
     })
   }, [scene])
 
-  useFrame(() => {
+  useFrame(()=> {
     if (!ref.current) return
 
     // Estátua fica centralizada e levemente rotacionada
@@ -35,7 +31,7 @@ export default function Estatua({ current, total }) {
     )
 
     ref.current.rotation.y = THREE.MathUtils.lerp(
-      ref.current.rotation.y, -0.15, 0.03
+      ref.current.rotation.y, 19.5, 0.3
     )
 
     // Câmera muda de foco a cada seção explorando partes da estátua
@@ -43,19 +39,19 @@ export default function Estatua({ current, total }) {
 
     if (current === 0) {
       // Visão geral — estátua inteira centralizada
-      targetCamX = 20; targetCamY = 1; targetCamZ = 10; lookAtY = 2
+      targetCamX = 2; targetCamY = 2; targetCamZ = 20; lookAtY = 2
     } else if (current === 1) {
       // Rosto / cabeça
-      targetCamX = 10; targetCamY = 5; targetCamZ = 6; lookAtY = 5
+      targetCamX = 15; targetCamY = 5; targetCamZ = 6; lookAtY = 5
     } else if (current === 2) {
       // Asas e torso
-      targetCamX = 10; targetCamY = 5; targetCamZ = -6; lookAtY = 5
+      targetCamX = 10; targetCamY = 5; targetCamZ = -6; lookAtY = 4
     } else if (current === 3) {
       // Mãos / flores
-      targetCamX = 5; targetCamY = 10; targetCamZ = 2.5; lookAtY = 6
+      targetCamX = 5; targetCamY = 10; targetCamZ = 10; lookAtY = 2
     } else {
       // Base / pés
-      targetCamX = 20; targetCamY = 1; targetCamZ = 10; lookAtY = 2
+      targetCamX = 2; targetCamY = 2; targetCamZ = 20; lookAtY = 2
     }
 
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.04)
@@ -68,8 +64,8 @@ export default function Estatua({ current, total }) {
     <primitive
       ref={ref}
       object={scene}
-      scale={14}
-      position={[0, -10.0, 0]}
+      scale={1}
+      position={[5, 0, 0]}
     />
   )
 }

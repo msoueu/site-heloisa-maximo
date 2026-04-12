@@ -42,7 +42,7 @@ export default function App() {
 
       {/* Canvas 3D fixo */}
       <div className="app-canvas">
-        <Canvas camera={{ position: [0, 1.2, 6], fov: 35 }} gl={{ alpha: true, antialias: true }}>
+        <Canvas camera={{ position: [0, 1, 6], fov: 45 }} gl={{ alpha: true, antialias: true }}>
 
           {/* Luz ambiente quente — base de preenchimento */}
           <ambientLight intensity={0.08} color="#3a2a1a" />
