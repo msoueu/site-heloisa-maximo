@@ -65,7 +65,7 @@ export default function Estatua({ current, total }) {
       ref={ref}
       object={scene}
       scale={1}
-      position={[4, 0, 0]}
+      position={[5, 0, 0]}
     />
   )
 }

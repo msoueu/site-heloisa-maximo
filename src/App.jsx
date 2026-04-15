@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
-// import Estatua from './Estatua'
+import Estatua from './Estatua'
 import Header from './Header'
 import Dots from './Dots'
 import SectionContent from './SectionContent'
@@ -82,7 +82,7 @@ export default function App() {
             color="#7a5c3a"
           />
 
-          {/* <Estatua current={current} total={total} /> */}
+          <Estatua current={current} total={total} /> 
 
           <EffectComposer>
             <Bloom
