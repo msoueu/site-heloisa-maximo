@@ -1,0 +1,148 @@
+:root {
+  --bg: #3c2729;
+  --gold: #c9b99a;
+  --gold-bright: #e6cf9f;
+  --ivory: #f5f0eb;
+  --muted: #a8968a;
+  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans: 'Manrope', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --line: rgba(201, 185, 154, 0.2);
+  --glass: rgba(40, 22, 24, 0.4);
+  --glass-solido: rgba(40, 22, 24, 0.78);
+  --surface: rgba(52, 32, 34, 0.55);
+  --shade: rgba(30, 16, 18, 0.55);
+  --vignette: rgba(20, 10, 12, 0.55);
+  color-scheme: dark;
+}
+
+:root[data-theme='escuro'] {
+  --bg: #0a0909;
+  --muted: #9b9188;
+  --line: rgba(201, 185, 154, 0.16);
+  --glass: rgba(18, 16, 16, 0.55);
+  --glass-solido: rgba(18, 16, 16, 0.85);
+  --surface: rgba(24, 22, 21, 0.75);
+  --shade: rgba(0, 0, 0, 0.6);
+  --vignette: rgba(0, 0, 0, 0.7);
+}
+
+:root[data-destaque] {
+  --muted: #d2c5b8;
+}
+
+:root[data-destaque][data-theme='escuro'] {
+  --muted: #c2b8ae;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  scrollbar-width: none;
+  transition: background 0.6s var(--ease);
+}
+
+body.is-home {
+  overflow: hidden;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+button {
+  font: inherit;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+.app-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: var(--bg) center / cover; /* o CRA tenta empacotar url(/...) do CSS, então a imagem vai no style em App.jsx */
+  transition: filter 0.6s var(--ease);
+}
+
+/* O monograma difere do fundo em 3 tons; o contraste é esticado para ele aparecer */
+:root[data-theme='escuro'] .app-bg {
+  filter: blur(0.6px) grayscale(1) brightness(1.407) contrast(1.848);
+}
+
+.app-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 42%, rgba(214, 178, 120, 0.1), transparent 70%),
+    radial-gradient(ellipse 120% 100% at 50% 50%, transparent 45%, var(--vignette) 100%);
+}
+
+.app-veu {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(to right, rgba(14, 7, 9, 0.62) 0%, rgba(14, 7, 9, 0.45) 34%, rgba(14, 7, 9, 0.15) 52%, transparent 64%);
+  transition: opacity 0.6s var(--ease);
+}
+
+:root[data-veu] .app-veu {
+  opacity: 1;
+}
+
+@media (max-width: 760px) {
+  .app-veu {
+    display: none;
+  }
+}
+
+.app-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.app-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dev-credit:hover {
+  opacity: 0.9;
+}
+
+.dev-credit {
+  position: fixed;
+  left: 16px;
+  bottom: 14px;
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  opacity: 0.55;
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+}
+
