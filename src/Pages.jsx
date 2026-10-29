@@ -38,6 +38,8 @@ function Rodape({ abrir }) {
         <div className="page-footer-links">
           <button onClick={() => abrir('sobre')}>Sobre</button>
           <button onClick={() => abrir('conteudo')}>Conteúdo jurídico</button>
+          <button onClick={() => abrir('atuacao')}>Áreas de atuação</button>
+          <button onClick={() => abrir('contato')}>Contato</button>
           <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">WhatsApp</a>
         </div>
       </div>
@@ -84,7 +86,7 @@ function ChamadaContato() {
 }
 
 export function SobrePage({ abrir }) {
-  const { perfil, destaques, areas, etapas } = useSite()
+  const { perfil, destaques } = useSite()
   useReveal('sobre')
 
   return (
@@ -147,36 +149,10 @@ export function SobrePage({ abrir }) {
           </div>
         </section>
 
-        <section className="page-section page-ancora" id="atuacao">
-          <div className="reveal">
-            <p className="panel-tag">ÁREAS DE ATUAÇÃO</p>
-            <h2 className="page-h2">Defesa em todas as fases do processo penal</h2>
-          </div>
-          <div className="page-grid-3">
-            {areas.map((a, i) => (
-              <article className="page-card page-card-area reveal" key={a.titulo}>
-                <span className="page-card-num">{String(i + 1).padStart(2, '0')}</span>
-                <h3>{a.titulo}</h3>
-                <p>{a.texto}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="page-section">
-          <div className="reveal">
-            <p className="panel-tag">COMO FUNCIONA</p>
-            <h2 className="page-h2">Do primeiro contato à conclusão do caso</h2>
-          </div>
-          <ol className="page-steps">
-            {etapas.map((e, i) => (
-              <li className="reveal" key={e.titulo}>
-                <span>{i + 1}</span>
-                <h3>{e.titulo}</h3>
-                <p>{e.texto}</p>
-              </li>
-            ))}
-          </ol>
+        <section className="page-section page-ir reveal">
+          <button className="panel-link" onClick={() => abrir('atuacao')}>
+            Ver as áreas de atuação <Seta />
+          </button>
         </section>
 
         <blockquote className="page-big-quote reveal">
@@ -253,6 +229,109 @@ export function ConteudoPage({ abrir }) {
         </div>
 
         <ChamadaContato />
+      </div>
+      <Rodape abrir={abrir} />
+    </main>
+  )
+}
+
+export function AtuacaoPage({ abrir }) {
+  const { areas, etapas } = useSite()
+  useReveal('atuacao')
+
+  return (
+    <main className="page">
+      <div className="page-inner">
+        <LinkVoltar />
+
+        <header className="page-header reveal">
+          <p className="panel-tag">ÁREAS DE ATUAÇÃO</p>
+          <h1 className="page-title">Defesa em todas as fases do processo penal</h1>
+          <p className="page-lead">
+            Atuação exclusiva na área criminal, do inquérito aos tribunais.
+          </p>
+        </header>
+
+        <section className="page-section">
+          <div className="page-grid-3">
+            {areas.map((a, i) => (
+              <article className="page-card page-card-area reveal" key={a.titulo}>
+                <span className="page-card-num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{a.titulo}</h3>
+                <p>{a.texto}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="page-section">
+          <div className="reveal">
+            <p className="panel-tag">COMO FUNCIONA</p>
+            <h2 className="page-h2">Do primeiro contato à conclusão do caso</h2>
+          </div>
+          <ol className="page-steps">
+            {etapas.map((e, i) => (
+              <li className="reveal" key={e.titulo}>
+                <span>{i + 1}</span>
+                <h3>{e.titulo}</h3>
+                <p>{e.texto}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <ChamadaContato />
+      </div>
+      <Rodape abrir={abrir} />
+    </main>
+  )
+}
+
+export function ContatoPage({ abrir }) {
+  const { perfil, contato } = useSite()
+  useReveal('contato')
+
+  return (
+    <main className="page">
+      <div className="page-inner">
+        <LinkVoltar />
+
+        <header className="page-header reveal">
+          <p className="panel-tag">CONTATO</p>
+          <h1 className="page-title">Cada hora conta.</h1>
+          <p className="page-lead">
+            Em uma situação criminal, a primeira orientação faz toda a diferença. Fale diretamente
+            com a advogada, com sigilo absoluto.
+          </p>
+          <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer" className="panel-btn panel-btn-solid">
+            <WhatsApp /> Falar no WhatsApp
+          </a>
+        </header>
+
+        <section className="page-section reveal">
+          <div className="page-grid-4">
+            <a className="page-card page-card-link" href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">
+              <WhatsApp />
+              <h3>WhatsApp</h3>
+              <p>Atendimento com hora marcada e resposta direta da advogada.</p>
+            </a>
+            <div className="page-card">
+              <Relogio />
+              <h3>Plantão 24h</h3>
+              <p>Urgências, como prisões em flagrante, a qualquer hora.</p>
+            </div>
+            <a className="page-card page-card-link" href={contato.instagram} target="_blank" rel="noreferrer">
+              <Instagram />
+              <h3>Instagram</h3>
+              <p>{contato.instagramUser}</p>
+            </a>
+            <div className="page-card">
+              <Local />
+              <h3>Onde atua</h3>
+              <p>{perfil.local}</p>
+            </div>
+          </div>
+        </section>
       </div>
       <Rodape abrir={abrir} />
     </main>

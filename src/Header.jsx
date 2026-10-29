@@ -3,19 +3,17 @@ import { useSite, linkWhatsApp } from './SiteData'
 import { Sol, Lua } from './Icons'
 
 const LINKS = [
-  { label: 'Sobre', pagina: 'sobre', section: 1 },
-  { label: 'Conteúdo', pagina: 'conteudo', section: 2 },
-  { label: 'Atuação', pagina: 'sobre/atuacao', section: 3 },
-  { label: 'Contato', section: 4 }
+  { label: 'Sobre', pagina: 'sobre' },
+  { label: 'Conteúdo', pagina: 'conteudo' },
+  { label: 'Atuação', pagina: 'atuacao' },
+  { label: 'Contato', pagina: 'contato' }
 ]
 
-export default function Header({ rota, endereco, current, irPara, abrir, tema, alternarTema }) {
+export default function Header({ rota, endereco, irPara, abrir, tema, alternarTema }) {
   const { contato } = useSite()
   const naHome = rota === 'home'
-  const ativo = (link) => {
-    if (naHome) return current === link.section
-    return link.pagina !== undefined && endereco === `#/${link.pagina}`
-  }
+  // Destaque só na página aberta; na home nenhum link fica marcado
+  const ativo = (link) => !naHome && endereco.startsWith(`#/${link.pagina}`)
   return (
     <div className={`header-overlay ${naHome ? '' : 'header-page'}`}>
       <nav className="header-nav">
@@ -30,7 +28,7 @@ export default function Header({ rota, endereco, current, irPara, abrir, tema, a
               <button
                 key={link.label}
                 className={ativo(link) ? 'is-active' : ''}
-                onClick={() => (link.pagina ? abrir(link.pagina) : irPara(link.section))}
+                onClick={() => abrir(link.pagina)}
               >
                 {link.label}
               </button>

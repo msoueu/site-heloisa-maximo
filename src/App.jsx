@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import Header from './Header'
 import Home from './Home'
-import { SobrePage, ConteudoPage } from './Pages'
+import { SobrePage, ConteudoPage, AtuacaoPage, ContatoPage } from './Pages'
 import { veioDeRecuperacao } from './SiteData'
 import useTheme from './useTheme'
 import './App.css'
@@ -13,6 +13,8 @@ function lerRota() {
   const h = window.location.hash
   if (h.startsWith('#/sobre')) return 'sobre'
   if (h.startsWith('#/conteudo')) return 'conteudo'
+  if (h.startsWith('#/atuacao')) return 'atuacao'
+  if (h.startsWith('#/contato')) return 'contato'
   if (h.startsWith('#/painel') || veioDeRecuperacao) return 'painel'
   return 'home'
 }
@@ -67,7 +69,6 @@ export default function App() {
       {rota !== 'painel' && <Header
         rota={rota}
         endereco={endereco}
-        current={current}
         irPara={irPara}
         abrir={abrir}
         tema={tema}
@@ -77,6 +78,8 @@ export default function App() {
       {rota === 'home' && <Home current={current} setCurrent={setCurrent} abrir={abrir} />}
       {rota === 'sobre' && <SobrePage abrir={abrir} />}
       {rota === 'conteudo' && <ConteudoPage abrir={abrir} />}
+      {rota === 'atuacao' && <AtuacaoPage abrir={abrir} />}
+      {rota === 'contato' && <ContatoPage abrir={abrir} />}
       {rota === 'painel' && <Suspense fallback={null}><Painel /></Suspense>}
     </>
   )
