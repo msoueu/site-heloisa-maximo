@@ -14,7 +14,6 @@ const Estudio = memo(function Estudio() {
         <Lightformer form="rect" intensity={1.1} color="#e2bd84" position={[6, 1, -1]} rotation-y={-Math.PI / 2} scale={[2, 6, 1]} />
         <Lightformer form="rect" intensity={0.7} color="#ffffff" position={[0, 1, 7]} scale={[4, 3, 1]} />
       </Environment>
-      <hemisphereLight intensity={0.22} color="#f5e6c8" groundColor="#3d2729" />
     </>
   )
 })

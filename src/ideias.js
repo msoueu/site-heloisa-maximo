@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 
 // Opções do painel ?lab. As de estilo viram atributos data-<id> no <html>
 export const IDEIAS = [
+  { id: 'cinema', nome: 'Movimento cinematográfico', ligada: true, estilo: true },
   { id: 'mouse', nome: 'Segue o mouse', ligada: false },
   { id: 'respiracao', nome: 'Respiração lenta', ligada: false },
   { id: 'balanca', nome: 'Balança se equilibrando', ligada: true },

@@ -13,24 +13,57 @@ const BALANCA = '/justica-balanca.bin'
 const ALTURA = 3.6
 const d = THREE.MathUtils.degToRad
 
-// Ângulos em graus. foco e halo estão no espaço do glTF; tela vai de -1 a 1
+// Ângulos em graus. foco e halo estão no espaço do glTF; tela vai de -1 a 1; anel 0 é o disco
+// dourado, 1 é o anel de luz fino; ceu é a luz difusa de cima
 const PLANO = {
   giro: [0, -20, 0], foco: [0, -0.02, 0], distancia: 6.6, fov: 38, altura: -5, tela: [0.3, 0],
-  luz: [-35, 40, 2.6], contraluz: 3.2, preenchimento: 0.45, ambiente: 0.5, halo: [0.02, 0.7, 1.3, 1]
+  luz: [-35, 40, 2.6], contraluz: 3.2, preenchimento: 0.45, ambiente: 0.5, halo: [0.02, 0.7, 1.3, 1], anel: 0,
+  ceu: 0.22
 }
+
+// Movimento cinematográfico: a estátua gira sobre o eixo enquanto a câmera se aproxima, e o anel de
+// luz sai e volta pelos cantos. Luz de fundo escuro: quase sem ambiente nem preenchimento, contraluz
+// forte e a luz principal rasante, trocando de lado para o brilho correr pelo mármore no giro. Os
+// closes evitam ângulos em que a balança passa na frente do rosto
+const ESCURO = { preenchimento: 0.05, ambiente: 0.12, ceu: 0.05 }
+const PLANOS_CINEMA = [
+  { // início: figura inteira com o anel atrás da cabeça
+    ...PLANO, ...ESCURO, luz: [-58, 32, 3.4], contraluz: 6, halo: [0.02, 0.74, 1.05, 1], anel: 1
+  },
+  { // sobre: busto em três quartos; o anel escorrega para a direita
+    giro: [0, 32, 0], foco: [0.02, 0.6, 0.02], distancia: 3.7, fov: 28, altura: 2, tela: [0.32, -0.04],
+    luz: [62, 24, 3.6], contraluz: 6.5, ...ESCURO, halo: [0.42, 0.78, 0.95, 0.75], anel: 1
+  },
+  { // conteúdo: perfil do rosto, luz quase de lado e sem anel
+    giro: [0, 72, 0], foco: [0, 0.69, 0.03], distancia: 2.5, fov: 24, altura: 5, tela: [0.3, 0.04],
+    luz: [92, 16, 3.9], contraluz: 7, preenchimento: 0.03, ambiente: 0.08, ceu: 0.03, halo: [0.1, 0.72, 0.7, 0], anel: 1
+  },
+  { // atuação: a mão na espada, vista de cima
+    giro: [-3, -12, 0], foco: [-0.3, -0.14, 0], distancia: 3.1, fov: 32, altura: 14, tela: [0.22, 0.06],
+    luz: [-48, 38, 3.4], contraluz: 6.5, ...ESCURO, halo: [-0.3, 0.1, 0.8, 0.35], anel: 1
+  },
+  { // contato: meio corpo, o anel volta por cima e a luz abre um pouco
+    giro: [0, -8, 0], foco: [0.02, 0.42, 0.02], distancia: 4.5, fov: 32, altura: -4, tela: [0.3, -0.12],
+    luz: [-28, 50, 3], contraluz: 5.5, preenchimento: 0.1, ambiente: 0.18, ceu: 0.08, halo: [0.06, 1.02, 1.15, 1], anel: 1
+  }
+]
 
 function vetor(p) {
   return [
     ...p.giro.map(d), ...p.foco, p.distancia, p.fov, d(p.altura), ...p.tela,
-    d(p.luz[0]), d(p.luz[1]), p.luz[2], p.contraluz, p.preenchimento, p.ambiente, ...p.halo
+    d(p.luz[0]), d(p.luz[1]), p.luz[2], p.contraluz, p.preenchimento, p.ambiente, ...p.halo, p.anel, p.ceu
   ]
 }
 const ALVO = vetor(PLANO)
+const ALVOS_CINEMA = PLANOS_CINEMA.map(vetor)
 const ENTRADA = vetor({
-  ...PLANO, luz: [-35, 40, 0], contraluz: 0, preenchimento: 0, ambiente: 0.12, halo: [0.02, 0.7, 1.1, 0]
+  ...PLANO, luz: [-35, 40, 0], contraluz: 0, preenchimento: 0, ambiente: 0.12, ceu: 0, halo: [0.02, 0.7, 1.1, 0],
+  anel: ideia.cinema ? 1 : 0
 })
 
 const SUAVIDADE = 0.34
+// As passagens do cinematográfico são mais longas, para o giro e a aproximação se lerem
+const SUAVIDADE_CINEMA = 0.5
 const SUAVIDADE_ENTRADA = 0.6
 const BALANCO = 0.05
 
@@ -69,17 +102,23 @@ const haloFragment = /* glsl */ `
   uniform vec3 uEdge;
   uniform vec3 uGlow;
   uniform float uForca;
+  uniform float uAnel;
+  uniform vec3 uLinha;
   varying vec2 vUv;
   void main() {
     float r = length(vUv - 0.5) * 2.0 * ${GLOW.toFixed(2)};
+    float faixa = exp(-pow((r - 0.93) / 0.022, 2.0));
+    float brilhoAnel = exp(-abs(r - 0.93) * 7.0) * 0.55;
+    vec4 anel = vec4(uLinha * (faixa * 1.4 + brilhoAnel), min(1.0, faixa + brilhoAnel * 0.8));
     float disc = 1.0 - smoothstep(0.99, 1.0, r);
     vec3 col = mix(uCore, uEdge, pow(min(r, 1.0), 1.6));
     col += uCore * 0.25 * smoothstep(0.82, 1.0, r) * disc;
     float out_ = max(r - 1.0, 0.0);
     float glow = exp(-out_ * 4.2) * (1.0 - disc);
     vec3 color = col * disc + uGlow * glow;
-    float alpha = (disc * 0.96 + glow * 0.7) * uForca;
-    gl_FragColor = vec4(color, alpha);
+    float alpha = disc * 0.96 + glow * 0.7;
+    vec4 cor = mix(vec4(color, alpha), anel, uAnel);
+    gl_FragColor = vec4(cor.rgb, cor.a * uForca);
   }
 `
 const srgb = (hex) => new THREE.Color(hex).convertLinearToSRGB()
@@ -258,7 +297,9 @@ export default function Justica({ current }) {
       uCore: { value: srgb('#f6e2b4') },
       uEdge: { value: srgb('#b08c58') },
       uGlow: { value: srgb('#d8b777') },
-      uForca: { value: 0 }
+      uForca: { value: 0 },
+      uAnel: { value: 0 },
+      uLinha: { value: srgb('#fff3dc') }
     }
   }), [])
 
@@ -266,6 +307,7 @@ export default function Justica({ current }) {
   const halo = useRef()
   const chave = useRef()
   const preenche = useRef()
+  const ceuRef = useRef()
   const contra1 = useRef()
   const contra2 = useRef()
   const x = useRef(ENTRADA.slice())
@@ -326,12 +368,12 @@ export default function Justica({ current }) {
     relogio.current += dt
     const t = relogio.current
     const secao = Math.min(current, PESOS.length - 1)
-    const target = ALVO
+    const target = ideia.cinema ? ALVOS_CINEMA[secao] : ALVO
     if (current !== 0) entrada.current = false
     const p = x.current
     const vel = v.current
 
-    amortecer(p, vel, target, entrada.current ? SUAVIDADE_ENTRADA : SUAVIDADE, dt)
+    amortecer(p, vel, target, entrada.current ? SUAVIDADE_ENTRADA : ideia.cinema ? SUAVIDADE_CINEMA : SUAVIDADE, dt)
     let moving = false
     for (let i = 0; i < p.length; i++) {
       if (Math.abs(target[i] - p[i]) > 0.0004 || Math.abs(vel[i]) > 0.0004) moving = true
@@ -341,7 +383,7 @@ export default function Justica({ current }) {
       vel.fill(0)
       entrada.current = false
     }
-    const [rx, ry, rz, fx, fy, fz, dist, fov, alt, telaX, telaY, az, el, forca, contra, preench, amb, hx, hy, hr, hf] = p
+    const [rx, ry, rz, fx, fy, fz, dist, fov, alt, telaX, telaY, az, el, forca, contra, preench, amb, hx, hy, hr, hf, anel, ceu] = p
 
     const g = statue.current
     const balanco = THREE.MathUtils.clamp(-vel[1] * BALANCO, -0.06, 0.06)
@@ -406,10 +448,12 @@ export default function Justica({ current }) {
     contra1.current.intensity = contra
     contra2.current.intensity = contra * 0.44
     cena.environmentIntensity = amb
+    ceuRef.current.intensity = ceu
 
     halo.current.position.set(tmp.halo.x, tmp.halo.y, foco.z - 1.6)
     halo.current.scale.setScalar(hr)
     haloMat.uniforms.uForca.value = hf
+    haloMat.uniforms.uAnel.value = anel
     luzHalo.current.copy(halo.current.position)
 
     // Movimentos lentos rodam a QUADROS_CALMOS fps; a sombra é atualizada em quadros alternados
@@ -439,6 +483,7 @@ export default function Justica({ current }) {
         shadow-camera-far={16}
       />
       <directionalLight ref={preenche} position={[4, 1, 3]} color="#d9dde6" />
+      <hemisphereLight ref={ceuRef} color="#f5e6c8" groundColor="#3d2729" />
       <directionalLight ref={contra1} position={[0, 2.5, -4]} color="#f3d9a4" />
       <directionalLight ref={contra2} position={[-3, 1, -3]} color="#c9a96e" />
 
