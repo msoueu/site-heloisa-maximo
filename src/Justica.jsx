@@ -21,30 +21,32 @@ const PLANO = {
   ceu: 0.22
 }
 
-// Movimento cinematográfico: a estátua gira sobre o eixo enquanto a câmera se aproxima, e o anel de
-// luz sai e volta pelos cantos. Luz de fundo escuro: quase sem ambiente nem preenchimento, contraluz
+// Movimento cinematográfico: a estátua gira sobre o eixo enquanto a câmera se aproxima. Luz de fundo escuro: quase sem ambiente nem preenchimento, contraluz
 // forte e a luz principal rasante, trocando de lado para o brilho correr pelo mármore no giro. Os
 // closes evitam ângulos em que a balança passa na frente do rosto
 const ESCURO = { preenchimento: 0.05, ambiente: 0.12, ceu: 0.05 }
+// O anel fica sempre atrás da cabeça e do colo, centrado no eixo da estátua, e gira com ela; nos
+// closes ele só parece maior porque a câmera está mais perto
+const ANEL = [0.04, 0.95, 1.12, 1]
 const PLANOS_CINEMA = [
   { // início: figura inteira com o anel atrás da cabeça
-    ...PLANO, ...ESCURO, luz: [-58, 32, 3.4], contraluz: 6, halo: [0.02, 0.74, 1.05, 1], anel: 1
+    ...PLANO, ...ESCURO, luz: [-58, 32, 3.4], contraluz: 6, halo: ANEL, anel: 1
   },
-  { // sobre: busto em três quartos; o anel escorrega para a direita
+  { // sobre: busto em três quartos, virada para a direita
     giro: [0, 32, 0], foco: [0.02, 0.6, 0.02], distancia: 3.7, fov: 28, altura: 2, tela: [0.32, -0.04],
-    luz: [62, 24, 3.6], contraluz: 6.5, ...ESCURO, halo: [0.42, 0.78, 0.95, 0.75], anel: 1
+    luz: [62, 24, 3.6], contraluz: 6.5, ...ESCURO, halo: ANEL, anel: 1
   },
-  { // conteúdo: perfil do rosto, luz quase de lado e sem anel
-    giro: [0, 72, 0], foco: [0, 0.69, 0.03], distancia: 2.5, fov: 24, altura: 5, tela: [0.3, 0.04],
-    luz: [92, 16, 3.9], contraluz: 7, preenchimento: 0.03, ambiente: 0.08, ceu: 0.03, halo: [0.1, 0.72, 0.7, 0], anel: 1
+  { // conteúdo: busto em três quartos, virada para a esquerda
+    giro: [0, -22, 0], foco: [0, 0.62, 0.02], distancia: 3.5, fov: 28, altura: -3, tela: [0.32, -0.04],
+    luz: [-64, 26, 3.6], contraluz: 6.5, ...ESCURO, halo: ANEL, anel: 1
   },
-  { // atuação: a mão na espada, vista de cima
-    giro: [-3, -12, 0], foco: [-0.3, -0.14, 0], distancia: 3.1, fov: 32, altura: 14, tela: [0.22, 0.06],
-    luz: [-48, 38, 3.4], contraluz: 6.5, ...ESCURO, halo: [-0.3, 0.1, 0.8, 0.35], anel: 1
+  { // atuação: de novo para a direita, mais virada e vista um pouco de cima
+    giro: [0, 46, 0], foco: [0.02, 0.58, 0.02], distancia: 3.3, fov: 28, altura: 9, tela: [0.32, -0.02],
+    luz: [70, 30, 3.6], contraluz: 6.5, ...ESCURO, halo: ANEL, anel: 1
   },
-  { // contato: meio corpo, o anel volta por cima e a luz abre um pouco
+  { // contato: meio corpo de frente, com a luz um pouco mais aberta
     giro: [0, -8, 0], foco: [0.02, 0.42, 0.02], distancia: 4.5, fov: 32, altura: -4, tela: [0.3, -0.12],
-    luz: [-28, 50, 3], contraluz: 5.5, preenchimento: 0.1, ambiente: 0.18, ceu: 0.08, halo: [0.06, 1.02, 1.15, 1], anel: 1
+    luz: [-28, 50, 3], contraluz: 5.5, preenchimento: 0.1, ambiente: 0.18, ceu: 0.08, halo: ANEL, anel: 1
   }
 ]
 
@@ -75,6 +77,8 @@ const RESPIRA = { giro: d(2.6), periodoGiro: 17, inclina: d(0.6), periodoInclina
 const PESOS = [-13, -8, 5, -3, 0].map(d)
 const MOLA = { rigidez: 26, amortecimento: 0.32 }
 const QUADROS_CALMOS = 30
+// A luz principal varre a estátua devagar, para o brilho deslizar sobre o mármore mesmo parada
+const VARREDURA = { giro: d(14), periodoGiro: 14, sobe: d(6), periodoSobe: 19 }
 
 // SmoothDamp (amortecimento crítico)
 function amortecer(p, v, alvo, tempo, dt) {
@@ -123,14 +127,7 @@ const haloFragment = /* glsl */ `
 `
 const srgb = (hex) => new THREE.Color(hex).convertLinearToSRGB()
 
-const marmoreVertexGlsl = /* glsl */ `
-  attribute float aOclusao;
-  varying float vOclusao;
-  varying vec3 vRocha;
-`
-const marmoreFragmentGlsl = /* glsl */ `
-  varying float vOclusao;
-  varying vec3 vRocha;
+const ruidoGlsl = /* glsl */ `
   float rochaHash(vec3 p) {
     p = fract(p * 0.3183099 + 0.1) * 17.0;
     return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
@@ -144,6 +141,8 @@ const marmoreFragmentGlsl = /* glsl */ `
       mix(mix(rochaHash(i + vec3(0, 0, 1)), rochaHash(i + vec3(1, 0, 1)), f.x), mix(rochaHash(i + vec3(0, 1, 1)), rochaHash(i + vec3(1, 1, 1)), f.x), f.y),
       f.z);
   }
+`
+const fbmGlsl = /* glsl */ `
   float rochaFbm(vec3 p) {
     float s = 0.0;
     float a = 0.5;
@@ -155,18 +154,35 @@ const marmoreFragmentGlsl = /* glsl */ `
     return s;
   }
 `
+// Os veios são calculados por vértice (a malha é densa o bastante); por pixel fica só o grão fino
+const marmoreVertexGlsl = /* glsl */ `
+  attribute float aOclusao;
+  varying float vOclusao;
+  varying float vVeio;
+  varying vec3 vRocha;
+  ${ruidoGlsl}
+  ${fbmGlsl}
+`
+const marmoreVeio = /* glsl */ `
+  float torcao = rochaFbm(position * 2.6);
+  float veio = 1.0 - smoothstep(0.0, 0.08, abs(sin((position.x * 0.7 + position.z * 1.1 + torcao * 2.4) * 5.0)));
+  float fino = 1.0 - smoothstep(0.0, 0.05, abs(sin((position.y * 1.4 - position.x + torcao * 3.1) * 11.0)));
+  vVeio = 1.0 - 0.18 * veio - 0.08 * fino * rochaRuido(position * 9.0);
+`
+const marmoreFragmentGlsl = /* glsl */ `
+  varying float vOclusao;
+  varying float vVeio;
+  varying vec3 vRocha;
+  ${ruidoGlsl}
+`
 const marmoreCor = /* glsl */ `
-  float torcao = rochaFbm(vRocha * 2.6);
-  float veio = 1.0 - smoothstep(0.0, 0.08, abs(sin((vRocha.x * 0.7 + vRocha.z * 1.1 + torcao * 2.4) * 5.0)));
-  float fino = 1.0 - smoothstep(0.0, 0.05, abs(sin((vRocha.y * 1.4 - vRocha.x + torcao * 3.1) * 11.0)));
-  diffuseColor.rgb *= 1.0 - 0.13 * veio - 0.06 * fino * rochaRuido(vRocha * 9.0);
-  diffuseColor.rgb *= 0.965 + 0.07 * rochaRuido(vRocha * 38.0);
+  diffuseColor.rgb *= vVeio * (0.965 + 0.07 * rochaRuido(vRocha * 38.0));
 `
 const marmoreOclusao = /* glsl */ `
-  float oclusao = mix(1.0, vOclusao, 0.9);
+  float oclusao = vOclusao;
   reflectedLight.indirectDiffuse *= oclusao;
   reflectedLight.indirectSpecular *= oclusao;
-  reflectedLight.directDiffuse *= mix(1.0, oclusao, 0.45);
+  reflectedLight.directDiffuse *= mix(1.0, oclusao, 0.6);
   reflectedLight.directSpecular *= mix(1.0, oclusao, 0.6);
 `
 
@@ -219,10 +235,10 @@ export default function Justica({ current }) {
       uHaste: { value: 0 }
     }
     const marble = new THREE.MeshStandardMaterial({
-      color: '#efe6d6',
-      roughness: 0.44,
+      color: '#d2c7b6',
+      roughness: 0.34,
       metalness: 0,
-      envMapIntensity: 0.9
+      envMapIntensity: 1.1
     })
     marble.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, uniforms)
@@ -233,6 +249,7 @@ export default function Justica({ current }) {
         .replace('#include <begin_vertex>', `#include <begin_vertex>
           vRocha = position;
           vOclusao = aOclusao;
+          ${marmoreVeio}
           ${balancaVertex}`)
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>\n${marmoreFragmentGlsl}`)
@@ -314,7 +331,7 @@ export default function Justica({ current }) {
   const v = useRef(ENTRADA.map(() => 0))
   const entrada = useRef(true)
   const warmup = useRef(20)
-  const tmp = useMemo(() => ({ foco: new THREE.Vector3(), halo: new THREE.Vector3(), alvo: new THREE.Vector3() }), [])
+  const tmp = useMemo(() => ({ foco: new THREE.Vector3(), halo: new THREE.Vector3(), alvo: new THREE.Vector3(), olhar: [0, 0] }), [])
   const cursor = useRef([0, 0])
   const olhar = useRef({ p: [0, 0], v: [0, 0] })
   const haste = useRef({ a: PESOS[0], v: 0 })
@@ -379,7 +396,7 @@ export default function Justica({ current }) {
       if (Math.abs(target[i] - p[i]) > 0.0004 || Math.abs(vel[i]) > 0.0004) moving = true
     }
     if (!moving) {
-      p.splice(0, p.length, ...target)
+      for (let i = 0; i < p.length; i++) p[i] = target[i]
       vel.fill(0)
       entrada.current = false
     }
@@ -396,7 +413,9 @@ export default function Justica({ current }) {
     tmp.halo.set(hx, hy, 0).multiplyScalar(escala).add(origem).applyMatrix4(g.matrixWorld)
 
     const o = olhar.current
-    const alvoOlhar = ideia.mouse ? [cursor.current[0] * OLHAR.giro, cursor.current[1] * OLHAR.inclina] : [0, 0]
+    const alvoOlhar = tmp.olhar
+    alvoOlhar[0] = ideia.mouse ? cursor.current[0] * OLHAR.giro : 0
+    alvoOlhar[1] = ideia.mouse ? cursor.current[1] * OLHAR.inclina : 0
     amortecer(o.p, o.v, alvoOlhar, OLHAR.suavidade, dt)
     const olhando = Math.abs(o.p[0] - alvoOlhar[0]) + Math.abs(o.p[1] - alvoOlhar[1]) + Math.abs(o.v[0]) + Math.abs(o.v[1]) > 0.0002
 
@@ -442,7 +461,9 @@ export default function Justica({ current }) {
       camera.updateProjectionMatrix()
     }
 
-    chave.current.position.set(Math.sin(az) * Math.cos(el) * 7, Math.sin(el) * 7, Math.cos(az) * Math.cos(el) * 7)
+    const azV = az + VARREDURA.giro * onda(VARREDURA.periodoGiro)
+    const elV = el + VARREDURA.sobe * onda(VARREDURA.periodoSobe)
+    chave.current.position.set(Math.sin(azV) * Math.cos(elV) * 7, Math.sin(elV) * 7, Math.cos(azV) * Math.cos(elV) * 7)
     chave.current.intensity = forca
     preenche.current.intensity = preench
     contra1.current.intensity = contra
@@ -450,7 +471,7 @@ export default function Justica({ current }) {
     cena.environmentIntensity = amb
     ceuRef.current.intensity = ceu
 
-    halo.current.position.set(tmp.halo.x, tmp.halo.y, foco.z - 1.6)
+    halo.current.position.set(tmp.halo.x, tmp.halo.y, tmp.halo.z - 1.4)
     halo.current.scale.setScalar(hr)
     haloMat.uniforms.uForca.value = hf
     haloMat.uniforms.uAnel.value = anel

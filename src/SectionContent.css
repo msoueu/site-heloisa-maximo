@@ -20,6 +20,7 @@
 
 .section-panel > *,
 .section-panel .panel-intro > * {
+  will-change: transform, opacity;
   transition:
     opacity 0.45s var(--ease),
     transform 0.55s var(--ease);
@@ -284,25 +285,9 @@
   transition: border-color 0.3s, gap 0.4s var(--ease);
 }
 
-.panel-link:hover,
-.panel-clicavel:hover .panel-link {
+.panel-link:hover {
   gap: 14px;
   border-color: var(--gold-bright);
-}
-
-.panel-clicavel.panel-active {
-  cursor: pointer;
-}
-
-.panel-clicavel:focus-visible {
-  outline: 1px solid var(--gold);
-  outline-offset: 12px;
-  border-radius: 4px;
-}
-
-.panel-clicavel:hover .panel-tag-link {
-  color: var(--gold-bright);
-  gap: 18px;
 }
 
 .panel-intro + .panel-link {
@@ -497,23 +482,16 @@
   font-size: 15px;
 }
 
-/* Movimento cinematográfico: títulos sobem de dentro de uma máscara */
+/* Movimento cinematográfico: títulos sobem mais e mais devagar. Só transform e opacity, que a placa
+   de vídeo anima sem redesenhar as letras */
 :root[data-cinema] .section-panel .panel-name,
 :root[data-cinema] .section-panel .panel-titulo {
   transition:
-    clip-path 1s var(--ease),
-    transform 1s var(--ease),
-    opacity 0.45s var(--ease);
+    transform 0.9s var(--ease),
+    opacity 0.6s var(--ease);
 }
 
 :root[data-cinema] .panel-hidden .panel-name,
 :root[data-cinema] .panel-hidden .panel-titulo {
-  clip-path: inset(100% -10% -25% -10%);
-  transform: translateY(0.45em);
-}
-
-:root[data-cinema] .panel-active .panel-name,
-:root[data-cinema] .panel-active .panel-titulo {
-  clip-path: inset(-25% -10% -25% -10%);
-  transform: none;
+  transform: translateY(0.6em);
 }
