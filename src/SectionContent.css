@@ -486,3 +486,9 @@
     zoom: 0.85;
   }
 }
+
+@media (pointer: coarse) {
+  .section-content {
+    transition: translate 0.35s var(--ease);
+  }
+}

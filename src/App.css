@@ -162,3 +162,9 @@ button {
     display: none;
   }
 }
+
+/* A página inicial troca de seção pelo arraste: sem isso o navegador recarrega ao puxar para baixo */
+body.is-home {
+  overscroll-behavior: none;
+  touch-action: pinch-zoom;
+}

@@ -210,8 +210,10 @@ body.is-home .header-theme {
     left: 12px;
     display: none;
     padding: 8px;
+    border-color: rgba(230, 207, 159, 0.45);
     border-radius: 16px;
-    background: var(--bg);
+    background: #5b373b;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   }
 
   .header-nav-links.is-aberto,
