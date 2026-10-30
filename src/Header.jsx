@@ -69,7 +69,7 @@ export default function Header({ rota, endereco, irPara, abrir, tema, alternarTe
       </nav>
 
       <div className="header-cta">
-        <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">
+        <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer">
           <WhatsApp />
           Falar no WhatsApp
         </a>

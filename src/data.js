@@ -18,7 +18,9 @@ export const DEV = {
 }
 
 export const CONTATO = {
-  whatsapp: 'https://wa.me/message/OOKYODDRW6ILK1',
+  whatsapp: '+55 79 99627-0697',
+  mensagem: 'Olá, Dra. Heloisa Máximo! Vim pelo seu site e gostaria de falar com a senhora.',
+  mensagemAnalise: 'Olá, Dra. Heloisa Máximo! Vim pelo seu site e gostaria de falar com a senhora sobre um caso.\n\nFiz a análise rápida e respondi o seguinte:',
   instagram: 'https://www.instagram.com/advheloisamaximo/',
   instagramUser: '@advheloisamaximo',
   telefone: '',

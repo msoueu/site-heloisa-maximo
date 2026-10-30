@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSite, linkWhatsApp } from './SiteData'
+import { CONTATO } from './data'
 import { WhatsApp, Check, Escudo, Relogio, Info } from './Icons'
 import { Pagina } from './Pages'
 import './Diagnostico.css'
@@ -32,9 +33,9 @@ function useAnalise() {
 
 function useLinkResumo(respostas) {
   const { contato } = useSite()
-  const resumo = PERGUNTAS.map((p) => `${p.id}: ${respostas[p.id]}`).join('\n')
-  const mensagem = `Olá! Fiz a análise pelo site.\n${resumo}`
-  return `${linkWhatsApp(contato.whatsapp)}?text=${encodeURIComponent(mensagem)}`
+  const resumo = PERGUNTAS.map((p) => `${p.texto} ${respostas[p.id]}`).join('\n')
+  const mensagem = `${contato.mensagemAnalise || CONTATO.mensagemAnalise}\n${resumo}`
+  return linkWhatsApp(contato.whatsapp, mensagem)
 }
 
 function Hora() {

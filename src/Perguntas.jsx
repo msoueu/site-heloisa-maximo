@@ -36,7 +36,7 @@ export default function PerguntasPage({ abrir }) {
           <h2>Não encontrou a sua dúvida?</h2>
           <p>
             <a href="#/diagnostico">Analisar meu caso</a>
-            <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">Falar com a advogada</a>
+            <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer">Falar com a advogada</a>
           </p>
         </div>
       </section>

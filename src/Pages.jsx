@@ -61,7 +61,7 @@ export function useFeixe() {
 export function BotaoWhatsApp() {
   const { contato } = useSite()
   return (
-    <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer" className="page-botao">
+    <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer" className="page-botao">
       <WhatsApp width={22} height={22} /> Falar no WhatsApp
     </a>
   )
@@ -91,7 +91,7 @@ function Rodape({ abrir }) {
           <button onClick={() => abrir('atuacao')}>Áreas de atuação</button>
           <button onClick={() => abrir('contato')}>Contato</button>
           <button onClick={() => abrir('perguntas')}>Perguntas frequentes</button>
-          <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer">WhatsApp</a>
         </nav>
       </div>
       <div className="page-footer-base">
@@ -298,7 +298,7 @@ export function AtuacaoPage({ abrir }) {
 
 export function ContatoPage({ abrir }) {
   const { perfil, contato } = useSite()
-  const zap = linkWhatsApp(contato.whatsapp)
+  const zap = linkWhatsApp(contato.whatsapp, contato.mensagem)
 
   return (
     <Pagina abrir={abrir} chamada={false}>

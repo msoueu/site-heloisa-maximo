@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { supabase, useSite, BUCKET, veioDeRecuperacao, linkWhatsApp } from './SiteData'
+import { supabase, useSite, BUCKET, veioDeRecuperacao, linkWhatsApp, aceitaMensagem } from './SiteData'
 import {
   Documento, Telefone, Pessoa, Estrela, Balanca, Passos, Sair, Externo, Mais, Lixeira,
   Cima, Baixo, Imagem, Video, Check, Voltar, Letra
 } from './Icons'
-import { APARENCIA } from './data'
+import { APARENCIA, CONTATO } from './data'
 import './Painel.css'
 
 // pagina: o que a prévia abre primeiro. adicionar e campos: os nomes usados na lista dessa seção
@@ -568,11 +568,35 @@ function Contato({ contato, mudar }) {
           mudar={campo('whatsapp')}
           dica="Digite com DDD, por exemplo: 79 99999-9999."
         />
+        {!aceitaMensagem(contato.whatsapp) && (
+          <p className="adm-alerta adm-alerta-erro">
+            Este link não leva a mensagem automática nem as respostas da análise do caso. Digite aqui o número com DDD.
+          </p>
+        )}
         {contato.whatsapp && (
-          <a className="adm-btn adm-btn-pequeno adm-btn-auto" href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">
+          <a className="adm-btn adm-btn-pequeno adm-btn-auto" href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer">
             <Externo width={14} height={14} /> Testar se abre o WhatsApp
           </a>
         )}
+      </Bloco>
+      <Bloco
+        titulo="Mensagem automática do WhatsApp"
+        descricao="O texto que já aparece escrito quando a pessoa abre a conversa. Ela ainda pode mudar antes de enviar."
+      >
+        <Campo
+          label="Nos botões do WhatsApp"
+          valor={contato.mensagem ?? CONTATO.mensagem}
+          mudar={campo('mensagem')}
+          longo={3}
+          dica="Se deixar em branco, volta a mensagem original."
+        />
+        <Campo
+          label="Na análise do caso"
+          valor={contato.mensagemAnalise ?? CONTATO.mensagemAnalise}
+          mudar={campo('mensagemAnalise')}
+          longo={5}
+          dica="As respostas da pessoa entram sozinhas depois deste texto."
+        />
       </Bloco>
       <Bloco titulo="Telefone e e-mail" descricao="Aparecem na página Contato. Se deixar em branco, não aparecem.">
         <div className="adm-dupla">

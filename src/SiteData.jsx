@@ -36,11 +36,16 @@ export function aplicarAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaq
   raiz.dataset.destaque = destaque
 }
 
+// Links wa.me/message/... são da conta comercial e ignoram o texto: só o número leva a mensagem
+export const aceitaMensagem = (valor) => !valor.includes('wa.me/message/')
+
 // Aceita o número com DDD ("79 99999-9999") ou um link pronto do WhatsApp
-export function linkWhatsApp(valor) {
-  if (/^https?:\/\//.test(valor)) return valor
+export function linkWhatsApp(valor, mensagem) {
+  if (!aceitaMensagem(valor)) return valor
+  const texto = `text=${encodeURIComponent(mensagem || CONTATO.mensagem)}`
+  if (/^https?:\/\//.test(valor)) return `${valor}${valor.includes('?') ? '&' : '?'}${texto}`
   const digitos = valor.replace(/\D/g, '')
-  return `https://wa.me/${digitos.startsWith('55') ? digitos : `55${digitos}`}`
+  return `https://wa.me/${digitos.startsWith('55') ? digitos : `55${digitos}`}?${texto}`
 }
 
 // Dentro da prévia do painel o site mostra o rascunho, que ainda não foi publicado
