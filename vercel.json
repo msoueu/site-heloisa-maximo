@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/(justica.*|Prancheta1\\.jpg|Heloisa\\.webp|conteudo/.*)",
+      "source": "/(justica.*|marmore.*|Prancheta1\\.jpg|Heloisa\\.webp|conteudo/.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
       ]

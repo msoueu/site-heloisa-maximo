@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { ideia } from './ideias'
 
 // O movimento é todo calculado no shader a partir de uTempo
 const QUANTIDADE = 260
@@ -42,7 +41,7 @@ const fragment = /* glsl */ `
 `
 
 export default function Poeira({ luz }) {
-  const { viewport, invalidate } = useThree()
+  const { viewport } = useThree()
   const { geometry, material } = useMemo(() => {
     const pos = new Float32Array(QUANTIDADE * 3)
     const semente = new Float32Array(QUANTIDADE)
@@ -63,23 +62,18 @@ export default function Poeira({ luz }) {
       uniforms: {
         uTempo: { value: 0 },
         uTamanho: { value: 1 },
-        uLuz: { value: new THREE.Vector3() },
+        uLuz: { value: new THREE.Vector3(...luz) },
         uCor: { value: new THREE.Color('#f3d49a') },
-        uForca: { value: 0 }
+        uForca: { value: 0.9 }
       }
     })
     return { geometry, material }
-  }, [])
+  }, [luz])
 
   useFrame((_, dt) => {
     const u = material.uniforms
     u.uTempo.value += Math.min(dt, 0.1)
     u.uTamanho.value = 26 * viewport.dpr
-    u.uLuz.value.copy(luz.current)
-    const alvo = ideia.poeira ? 0.9 : 0
-    u.uForca.value += (alvo - u.uForca.value) * Math.min(1, dt * 3)
-    if (Math.abs(alvo - u.uForca.value) > 0.002) invalidate()
-    else u.uForca.value = alvo
   })
 
   return <points geometry={geometry} material={material} frustumCulled={false} renderOrder={1} />

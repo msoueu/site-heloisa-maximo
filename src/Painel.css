@@ -874,3 +874,51 @@
     flex-direction: row;
   }
 }
+
+.adm-campo select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid rgba(201, 185, 154, 0.3);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font: inherit;
+}
+
+.adm-campo select option {
+  color: #222;
+}
+
+.adm-campo input[type='range'] {
+  padding: 0;
+  accent-color: #e6cf9f;
+}
+
+.adm-previa {
+  padding: 24px;
+  border-radius: 8px;
+  background: #3c2729;
+  color: #f5f0eb;
+  line-height: 1.5;
+}
+
+.adm-previa p + p {
+  margin-top: 12px;
+}
+
+.adm-previa[data-destaque='negrito'] .realce {
+  color: #fff;
+}
+
+.adm-previa[data-destaque='dourado'] .realce {
+  color: #e6cf9f;
+}
+
+.adm-previa[data-destaque='marca'] .realce {
+  background: linear-gradient(transparent 68%, rgba(230, 207, 159, 0.38) 68%);
+}
+
+.adm-previa[data-destaque='nenhum'] .realce {
+  font-weight: inherit;
+}

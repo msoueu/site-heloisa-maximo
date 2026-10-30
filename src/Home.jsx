@@ -3,11 +3,10 @@ import { DEV } from './data'
 import { GitHub } from './Icons'
 import Dots from './Dots'
 import SectionContent from './SectionContent'
-import Laboratorio, { LAB } from './Laboratorio'
 
 const Cena = lazy(() => import('./Cena'))
 
-class ModelBoundary extends Component {
+export class ModelBoundary extends Component {
   state = { failed: false }
   static getDerivedStateFromError() { return { failed: true } }
   render() { return this.state.failed ? null : this.props.children }
@@ -71,7 +70,7 @@ export default function Home({ current, setCurrent, abrir }) {
     <>
       <div className="app-veu" />
 
-      <div className="app-canvas">
+      <div className="app-canvas" aria-hidden="true">
         <ModelBoundary>
           <Suspense fallback={null}>
             <Cena current={current} />
@@ -85,10 +84,8 @@ export default function Home({ current, setCurrent, abrir }) {
 
       <SectionContent current={current} abrir={abrir} />
 
-      {LAB && <Laboratorio />}
-
       <a className="dev-credit" href={DEV.github} target="_blank" rel="noreferrer">
-        <GitHub width={12} height={12} /> Site por {DEV.nome}
+        <GitHub width={16} height={16} /> Site por {DEV.nome}
       </a>
     </>
   )

@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { supabase, useSite, BUCKET, veioDeRecuperacao, linkWhatsApp } from './SiteData'
 import {
   Documento, Telefone, Pessoa, Estrela, Balanca, Passos, Sair, Externo, Mais, Lixeira,
-  Cima, Baixo, Imagem, Video, Check, Voltar
+  Cima, Baixo, Imagem, Video, Check, Voltar, Letra
 } from './Icons'
+import { APARENCIA } from './data'
 import './Painel.css'
 
 const SECOES = [
@@ -17,7 +18,28 @@ const SECOES = [
   { id: 'perfil', label: 'Perfil', Icone: Pessoa, descricao: 'Seu nome, sua apresentação e sua foto.' },
   { id: 'destaques', label: 'Destaques', Icone: Estrela, descricao: 'Os pontos que aparecem ao lado da sua foto.' },
   { id: 'areas', label: 'Áreas de atuação', Icone: Balanca, descricao: 'As áreas listadas na página inicial e na página Sobre.' },
-  { id: 'etapas', label: 'Como funciona', Icone: Passos, descricao: 'As etapas do atendimento, na página Sobre.' }
+  { id: 'etapas', label: 'Como funciona', Icone: Passos, descricao: 'As etapas do atendimento, na página Atuação.' },
+  { id: 'perguntas', label: 'Perguntas frequentes', Icone: Documento, descricao: 'As perguntas e respostas da página Perguntas frequentes.' },
+  { id: 'aparencia', label: 'Aparência', Icone: Letra, descricao: 'Fonte, tamanho e destaque dos textos das páginas internas.' }
+]
+
+const FONTES_TEXTO = [
+  ['Source Sans 3', 'Source Sans'],
+  ['Lato', 'Lato'],
+  ['Nunito Sans', 'Nunito Sans'],
+  ['Atkinson Hyperlegible', 'Atkinson (feita para baixa visão)']
+]
+const FONTES_TITULO = [
+  ['Georgia', 'Georgia'],
+  ['EB Garamond', 'EB Garamond'],
+  ['Libre Baskerville', 'Libre Baskerville'],
+  ['Lora', 'Lora']
+]
+const DESTAQUES_TEXTO = [
+  ['negrito', 'Negrito claro'],
+  ['dourado', 'Dourado'],
+  ['marca', 'Negrito com marca dourada'],
+  ['nenhum', 'Sem destaque']
 ]
 
 export default function Painel() {
@@ -167,8 +189,8 @@ function NovaSenha({ aoConcluir }) {
   )
 }
 
-function copiar({ perfil, contato, destaques, areas, etapas, conteudos }) {
-  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos }))
+function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }) {
+  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }))
 }
 
 function Editor({ email }) {
@@ -269,7 +291,8 @@ function Editor({ email }) {
           {secao === 'conteudos' && <Publicacoes lista={rascunho.conteudos} mudar={(v) => alterar('conteudos', v)} />}
           {secao === 'contato' && <Contato contato={rascunho.contato} mudar={(v) => alterar('contato', v)} />}
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
-          {['destaques', 'areas', 'etapas'].includes(secao) && (
+          {secao === 'aparencia' && <Aparencia aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />}
+          {['destaques', 'areas', 'etapas', 'perguntas'].includes(secao) && (
             <ListaSimples key={secao} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
           )}
         </div>
@@ -357,6 +380,69 @@ function Arquivo({ label, valor, mudar, aceita, redondo }) {
   )
 }
 
+function Aparencia({ aparencia, mudar }) {
+  const campo = (chave) => (v) => mudar({ ...aparencia, [chave]: v })
+  const amostra = {
+    fontFamily: `'${aparencia.fonte}', sans-serif`,
+    fontSize: `${1.1875 * aparencia.tamanho}rem`
+  }
+  const titulo = {
+    fontFamily: `'${aparencia.titulo}', serif`,
+    fontSize: `${2.25 * aparencia.tamanhoTitulo}rem`
+  }
+  return (
+    <div className="adm-pilha">
+      <Bloco titulo="Fontes" descricao="Valem para as páginas Sobre, Conteúdo, Atuação e Contato. A página inicial não muda.">
+        <div className="adm-dupla">
+          <Opcoes label="Fonte do texto" valor={aparencia.fonte} mudar={campo('fonte')} opcoes={FONTES_TEXTO} />
+          <Opcoes label="Fonte dos títulos" valor={aparencia.titulo} mudar={campo('titulo')} opcoes={FONTES_TITULO} />
+        </div>
+      </Bloco>
+      <Bloco titulo="Tamanho" descricao="O mínimo é o tamanho atual, para o texto continuar fácil de ler.">
+        <div className="adm-dupla">
+          <Faixa label="Tamanho do texto" valor={aparencia.tamanho} mudar={campo('tamanho')} min={1} max={1.3} />
+          <Faixa label="Tamanho dos títulos" valor={aparencia.tamanhoTitulo} mudar={campo('tamanhoTitulo')} min={0.8} max={1.2} />
+        </div>
+      </Bloco>
+      <Bloco titulo="Destaque das palavras-chave">
+        <Opcoes label="Estilo" valor={aparencia.destaque} mudar={campo('destaque')} opcoes={DESTAQUES_TEXTO} />
+      </Bloco>
+      <Bloco titulo="Prévia">
+        <div className="adm-previa" data-destaque={aparencia.destaque}>
+          <p style={titulo}>Cada hora conta.</p>
+          <p style={amostra}>
+            Fale diretamente com a advogada, com <strong className="realce">sigilo absoluto</strong>.
+            Atendimento em <strong className="realce">Plantão 24h</strong> para urgências.
+          </p>
+        </div>
+        <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={() => mudar({ ...APARENCIA })}>
+          Voltar ao padrão
+        </button>
+      </Bloco>
+    </div>
+  )
+}
+
+function Opcoes({ label, valor, mudar, opcoes }) {
+  return (
+    <label className="adm-campo">
+      <span className="adm-rotulo">{label}</span>
+      <select value={valor} onChange={(e) => mudar(e.target.value)}>
+        {opcoes.map(([v, nome]) => <option key={v} value={v}>{nome}</option>)}
+      </select>
+    </label>
+  )
+}
+
+function Faixa({ label, valor, mudar, min, max }) {
+  return (
+    <label className="adm-campo">
+      <span className="adm-rotulo">{label}: {Math.round(valor * 100)}%</span>
+      <input type="range" min={min} max={max} step={0.05} value={valor} onChange={(e) => mudar(Number(e.target.value))} />
+    </label>
+  )
+}
+
 function Contato({ contato, mudar }) {
   const campo = (chave) => (v) => mudar({ ...contato, [chave]: v })
   return (
@@ -373,6 +459,12 @@ function Contato({ contato, mudar }) {
             <Externo width={14} height={14} /> Testar link
           </a>
         )}
+      </Bloco>
+      <Bloco titulo="Telefone e e-mail" descricao="Aparecem na página Contato.">
+        <div className="adm-dupla">
+          <Campo label="Telefone" valor={contato.telefone || ''} mudar={campo('telefone')} placeholder="(79) 99999-9999" />
+          <Campo label="E-mail" type="email" valor={contato.email || ''} mudar={campo('email')} />
+        </div>
       </Bloco>
       <Bloco titulo="Instagram">
         <div className="adm-dupla">

@@ -1,5 +1,7 @@
 import './Dots.css'
 
+const SECOES = ['Início', 'Sobre', 'Conteúdo jurídico', 'Áreas de atuação', 'Contato']
+
 export default function Dots({ current, total, setCurrent }) {
   return (
     <div className="dots-container">
@@ -9,7 +11,7 @@ export default function Dots({ current, total, setCurrent }) {
           key={i}
           className={`dot ${current === i ? 'dot-active' : ''}`}
           onClick={() => setCurrent(i)}
-          aria-label={`Seção ${i + 1}`}
+          aria-label={`Ir para ${SECOES[i]}`}
         />
       ))}
       <span className="dots-total">{String(total).padStart(2, '0')}</span>

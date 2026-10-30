@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS } from './data'
+import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES } from './data'
 
 const url = process.env.REACT_APP_SUPABASE_URL
 const chave = process.env.REACT_APP_SUPABASE_ANON_KEY
@@ -22,7 +22,18 @@ const PADRAO = {
   destaques: DESTAQUES,
   areas: AREAS,
   etapas: ETAPAS,
-  conteudos: CONTEUDOS
+  conteudos: CONTEUDOS,
+  aparencia: APARENCIA,
+  perguntas: PERGUNTAS_FREQUENTES
+}
+
+export function aplicarAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaque }) {
+  const raiz = document.documentElement
+  raiz.style.setProperty('--pagina-fonte', `'${fonte}', sans-serif`)
+  raiz.style.setProperty('--pagina-titulo', `'${titulo}', Georgia, serif`)
+  raiz.style.setProperty('--pagina-tamanho', tamanho)
+  raiz.style.setProperty('--pagina-tamanho-titulo', tamanhoTitulo)
+  raiz.dataset.destaque = destaque
 }
 
 // Aceita o número com DDD ("79 99999-9999") ou um link pronto do WhatsApp
@@ -50,6 +61,8 @@ export function SiteProvider({ children }) {
         else if (data) setDados({ ...PADRAO, ...data.dados })
       })
   }, [])
+
+  useEffect(() => aplicarAparencia(dados.aparencia), [dados.aparencia])
 
   const salvar = useCallback(async (novos) => {
     const { error } = await supabase.from('site').upsert({ id: 1, dados: novos })

@@ -1,16 +1,15 @@
 import './Header.css'
-import { useSite, linkWhatsApp } from './SiteData'
-import { Sol, Lua } from './Icons'
+import { Sol, Lua, Relogio, Escudo } from './Icons'
 
 const LINKS = [
   { label: 'Sobre', pagina: 'sobre' },
   { label: 'Conteúdo', pagina: 'conteudo' },
   { label: 'Atuação', pagina: 'atuacao' },
-  { label: 'Contato', pagina: 'contato' }
+  { label: 'Contato', pagina: 'contato' },
+  { label: 'Perguntas', sufixo: ' frequentes', pagina: 'perguntas' }
 ]
 
 export default function Header({ rota, endereco, irPara, abrir, tema, alternarTema }) {
-  const { contato } = useSite()
   const naHome = rota === 'home'
   // Destaque só na página aberta; na home nenhum link fica marcado
   const ativo = (link) => !naHome && endereco.startsWith(`#/${link.pagina}`)
@@ -30,7 +29,7 @@ export default function Header({ rota, endereco, irPara, abrir, tema, alternarTe
                 className={ativo(link) ? 'is-active' : ''}
                 onClick={() => abrir(link.pagina)}
               >
-                {link.label}
+                {link.label}{link.sufixo && <span>{link.sufixo}</span>}
               </button>
             ))}
           </div>
@@ -46,11 +45,14 @@ export default function Header({ rota, endereco, irPara, abrir, tema, alternarTe
       </nav>
 
       <div className="header-cta">
-        <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">
+        <a href="#/diagnostico">
           <span className="header-cta-pulse" />
-          Agendar consulta
+          Analisar meu caso
         </a>
-        <p>Atendimento 24h para urgências</p>
+        <div className="cta-selos">
+          <span><Relogio width={18} height={18} /> Atendimento 24h</span>
+          <span><Escudo width={18} height={18} /> Atendimento confidencial</span>
+        </div>
       </div>
     </div>
   )

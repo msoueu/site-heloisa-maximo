@@ -17,12 +17,11 @@ export default function SectionContent({ current, abrir }) {
   const painel = (i) => `section-panel ${current === i ? 'panel-active' : 'panel-hidden'}`
 
   return (
-    <div className="section-content">
+    <main className="section-content" id="conteudo" tabIndex={-1}>
       <section className={painel(0)}>
         <Tag onClick={() => abrir('sobre')}>ADVOCACIA CRIMINAL</Tag>
         <div className="panel-intro">
           <h1 className="panel-name">{perfil.nome}</h1>
-          <div className="panel-divider" />
           <p className="panel-desc">{perfil.slogan}</p>
           <p className="panel-sub">{perfil.especialidade} · Atuação Nacional</p>
         </div>
@@ -34,7 +33,6 @@ export default function SectionContent({ current, abrir }) {
       <section className={painel(1)}>
         <Tag onClick={() => abrir('sobre')}>SOBRE</Tag>
         <h2 className="panel-titulo">{perfil.titulo}</h2>
-        <div className="panel-divider" />
         <div className="panel-sobre">
           <img src={perfil.foto} alt={perfil.nome} className="panel-foto" />
           <ul className="panel-facts">
@@ -56,7 +54,6 @@ export default function SectionContent({ current, abrir }) {
           <>
             <Tag onClick={() => abrir('conteudo')}>CONTEÚDO JURÍDICO</Tag>
             <h2 className="panel-titulo">{destaque.titulo}</h2>
-            <div className="panel-divider" />
             <p className="panel-desc">{destaque.texto[0]}</p>
             <p className="panel-desc">{destaque.resumo}</p>
             <button className="panel-link" onClick={() => abrir('conteudo')}>
@@ -69,11 +66,9 @@ export default function SectionContent({ current, abrir }) {
       <section className={painel(3)}>
         <Tag onClick={() => abrir('atuacao')}>ÁREAS DE ATUAÇÃO</Tag>
         <h2 className="panel-titulo">Defesa em todas as fases do processo penal</h2>
-        <div className="panel-divider" />
         <ol className="panel-areas">
-          {areas.map((a, i) => (
+          {areas.map((a) => (
             <li key={a.titulo}>
-              <span className="area-num">{String(i + 1).padStart(2, '0')}</span>
               <span className="area-nome">{a.titulo}</span>
             </li>
           ))}
@@ -86,7 +81,6 @@ export default function SectionContent({ current, abrir }) {
       <section className={painel(4)}>
         <Tag onClick={() => abrir('contato')}>CONTATO</Tag>
         <h2 className="panel-name">Cada hora conta.</h2>
-        <div className="panel-divider" />
         <p className="panel-desc">
           Em uma situação criminal, a primeira orientação faz toda a diferença. Fale diretamente
           com a advogada, com sigilo absoluto. Atendimento com hora marcada e plantão 24h para
@@ -107,6 +101,6 @@ export default function SectionContent({ current, abrir }) {
           Todas as formas de contato <Seta />
         </button>
       </section>
-    </div>
+    </main>
   )
 }

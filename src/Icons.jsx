@@ -96,6 +96,30 @@ export const Check = (p) => (
   <svg {...base} {...p}><path d="M5 12l5 5 9-10" /></svg>
 )
 
+export const Email = (p) => (
+  <svg {...base} {...p}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+)
+
+export const Letra = (p) => (
+  <svg {...base} {...p}><path d="M4 19L10 5h1l6 14M6.5 14h8M18 19v-5" /></svg>
+)
+
+export const Papeis = (p) => (
+  <svg {...base} {...p}><path d="M8 7V5a2 2 0 0 1 2-2h6l4 4v10a2 2 0 0 1-2 2h-2" /><path d="M15 3v5h5" /><rect x="4" y="7" width="12" height="14" rx="2" /><path d="M7.5 12h5M7.5 16h5" /></svg>
+)
+
+export const Escudo = (p) => (
+  <svg {...base} {...p}><path d="M12 3l8 3v6c0 4.5-3.2 7.7-8 9-4.8-1.3-8-4.5-8-9V6z" /><path d="M8.5 12l2.5 2.5 4.5-5" /></svg>
+)
+
+export const Sino = (p) => (
+  <svg {...base} {...p}><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z" /><path d="M10 21a2 2 0 0 0 4 0" /></svg>
+)
+
+export const Info = (p) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>
+)
+
 export const Casa = (p) => (
   <svg {...base} {...p}><path d="M4 11l8-7 8 7M6 10v10h12V10" /></svg>
 )

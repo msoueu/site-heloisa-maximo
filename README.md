@@ -54,7 +54,7 @@ src/             componentes, estilos e textos do site
 supabase/        SQL e instruções do banco
 ```
 
-O modelo 3D usa dois arquivos gerados a partir de `public/justica.glb`. Se o modelo for trocado, gere de novo com:
+O modelo 3D usa `public/justica.bin` e `public/marmore.bin`, gerados a partir de `scripts/justica-original.glb`. Se o modelo for trocado, gere de novo com:
 
 ```bash
 node scripts/preparar-estatua.mjs

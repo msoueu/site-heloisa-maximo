@@ -20,7 +20,9 @@ export const DEV = {
 export const CONTATO = {
   whatsapp: 'https://wa.me/message/OOKYODDRW6ILK1',
   instagram: 'https://www.instagram.com/advheloisamaximo/',
-  instagramUser: '@advheloisamaximo'
+  instagramUser: '@advheloisamaximo',
+  telefone: '',
+  email: ''
 }
 
 export const DESTAQUES = [
@@ -113,3 +115,51 @@ export const CONTEUDOS = [
     ]
   }
 ]
+
+export const PERGUNTAS_FREQUENTES = [
+  {
+    titulo: 'Alguém da minha família foi preso. O que fazer primeiro?',
+    texto: 'Procure uma advogada o quanto antes. Toda pessoa presa tem direito de comunicar a prisão à família e de ter assistência de advogado, e a orientação logo no início ajuda a proteger esses direitos.'
+  },
+  {
+    titulo: 'O que é a audiência de custódia?',
+    texto: 'É a apresentação da pessoa presa a um juiz logo após a prisão, em regra em até 24 horas. Nela, o juiz analisa como a prisão aconteceu e decide se a pessoa continua presa ou se responde em liberdade.'
+  },
+  {
+    titulo: 'Sou obrigado a falar na delegacia?',
+    texto: 'Não. A Constituição garante o direito de permanecer calado, e esse silêncio não pode ser usado contra você. Antes de prestar depoimento, o ideal é conversar com uma advogada.'
+  },
+  {
+    titulo: 'Recebi uma intimação da delegacia. O que eu faço?',
+    texto: 'Não ignore a intimação e leia com atenção a data e o motivo. Procure orientação jurídica antes de comparecer, para entender em que condição você está sendo chamado e como se preparar.'
+  },
+  {
+    titulo: 'O que é habeas corpus?',
+    texto: 'É uma medida usada para proteger a liberdade de locomoção de quem está preso ou ameaçado de prisão de forma ilegal ou com abuso de poder.'
+  },
+  {
+    titulo: 'Sou vítima de um crime. Posso ter advogado?',
+    texto: 'Sim. A vítima e sua família podem ter advogado para acompanhar a investigação e o processo e defender seus interesses.'
+  },
+  {
+    titulo: 'A conversa com a advogada é sigilosa?',
+    texto: 'Sim. O que você conta à advogada no exercício da profissão é protegido pelo sigilo profissional.'
+  },
+  {
+    titulo: 'A advogada atende fora de Sergipe?',
+    texto: 'Sim. A base é em Sergipe, com atendimento em todo o Brasil.'
+  },
+  {
+    titulo: 'Quanto custa uma consulta?',
+    texto: 'Os honorários dependem da complexidade de cada caso e são combinados diretamente com a advogada, conforme as regras da OAB.'
+  }
+]
+
+// Opções da seção Aparência do painel; valem só para as páginas internas
+export const APARENCIA = {
+  fonte: 'Source Sans 3',
+  titulo: 'Georgia',
+  tamanho: 1,
+  tamanhoTitulo: 1,
+  destaque: 'negrito'
+}
