@@ -7,36 +7,76 @@ import {
 import { APARENCIA } from './data'
 import './Painel.css'
 
+// pagina: o que a prévia abre primeiro. adicionar e campos: os nomes usados na lista dessa seção
 const SECOES = [
   {
     id: 'conteudos',
     label: 'Publicações',
     Icone: Documento,
-    descricao: 'Textos, fotos e vídeos da página Conteúdo jurídico. A primeira da lista também aparece na página inicial.'
+    pagina: 'conteudo',
+    descricao: 'Seus artigos, fotos e vídeos. A primeira publicação da lista também aparece na página inicial.'
   },
-  { id: 'contato', label: 'Contato', Icone: Telefone, descricao: 'Como os visitantes falam com você.' },
-  { id: 'perfil', label: 'Perfil', Icone: Pessoa, descricao: 'Seu nome, sua apresentação e sua foto.' },
-  { id: 'destaques', label: 'Destaques', Icone: Estrela, descricao: 'Os pontos que aparecem ao lado da sua foto.' },
-  { id: 'areas', label: 'Áreas de atuação', Icone: Balanca, descricao: 'As áreas listadas na página inicial e na página Sobre.' },
-  { id: 'etapas', label: 'Como funciona', Icone: Passos, descricao: 'As etapas do atendimento, na página Atuação.' },
-  { id: 'perguntas', label: 'Perguntas frequentes', Icone: Documento, descricao: 'As perguntas e respostas da página Perguntas frequentes.' },
-  { id: 'aparencia', label: 'Aparência', Icone: Letra, descricao: 'Fonte, tamanho e destaque dos textos das páginas internas.' }
+  { id: 'contato', label: 'Formas de contato', Icone: Telefone, pagina: 'contato', descricao: 'WhatsApp, telefone, e-mail e Instagram que aparecem no site.' },
+  { id: 'perfil', label: 'Sobre você', Icone: Pessoa, pagina: 'sobre', descricao: 'Seu nome, sua apresentação e sua foto.' },
+  {
+    id: 'destaques',
+    label: 'Pontos ao lado da foto',
+    Icone: Estrela,
+    pagina: 'sobre',
+    adicionar: 'Adicionar ponto',
+    descricao: 'As frases curtas que aparecem ao lado da sua foto.'
+  },
+  {
+    id: 'areas',
+    label: 'Áreas de atuação',
+    Icone: Balanca,
+    pagina: 'atuacao',
+    adicionar: 'Adicionar área',
+    descricao: 'As áreas em que você trabalha, mostradas na página Atuação.'
+  },
+  {
+    id: 'etapas',
+    label: 'Etapas do atendimento',
+    Icone: Passos,
+    pagina: 'atuacao',
+    adicionar: 'Adicionar etapa',
+    descricao: 'O caminho do primeiro contato até o fim do caso, mostrado na página Atuação.'
+  },
+  {
+    id: 'perguntas',
+    label: 'Perguntas frequentes',
+    Icone: Documento,
+    pagina: 'perguntas',
+    adicionar: 'Adicionar pergunta',
+    campos: ['Pergunta', 'Resposta'],
+    descricao: 'As perguntas e respostas mostradas na página Perguntas frequentes.'
+  },
+  { id: 'aparencia', label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' }
+]
+
+const PAGINAS = [
+  ['', 'Página inicial'],
+  ['sobre', 'Sobre'],
+  ['conteudo', 'Conteúdo'],
+  ['atuacao', 'Atuação'],
+  ['contato', 'Contato'],
+  ['perguntas', 'Perguntas frequentes']
 ]
 
 const FONTES_TEXTO = [
-  ['Source Sans 3', 'Source Sans'],
+  ['Source Sans 3', 'Source Sans (a atual)'],
   ['Lato', 'Lato'],
   ['Nunito Sans', 'Nunito Sans'],
   ['Atkinson Hyperlegible', 'Atkinson (feita para baixa visão)']
 ]
 const FONTES_TITULO = [
-  ['Georgia', 'Georgia'],
+  ['Georgia', 'Georgia (a atual)'],
   ['EB Garamond', 'EB Garamond'],
   ['Libre Baskerville', 'Libre Baskerville'],
   ['Lora', 'Lora']
 ]
 const DESTAQUES_TEXTO = [
-  ['negrito', 'Negrito claro'],
+  ['negrito', 'Negrito claro (o atual)'],
   ['dourado', 'Dourado'],
   ['marca', 'Negrito com marca dourada'],
   ['nenhum', 'Sem destaque']
@@ -97,11 +137,11 @@ function NaoConfigurado() {
 function mensagemDeErro(error) {
   if (error.code === 'invalid_credentials') return 'E-mail ou senha incorretos.'
   if (error.code === 'email_not_confirmed') {
-    return 'Este e-mail ainda não foi confirmado. No Supabase, recrie o usuário marcando Auto Confirm User.'
+    return 'Este e-mail ainda não foi confirmado. Fale com quem cuida do site.'
   }
   if (error.status === 429) return 'Muitas tentativas. Aguarde alguns minutos e tente de novo.'
-  if (!error.status) return 'Não foi possível conectar ao Supabase. Confira as variáveis na Vercel e faça Redeploy.'
-  return `Erro ao entrar: ${error.message}`
+  if (!error.status) return 'Não foi possível conectar. Confira sua internet e tente de novo.'
+  return 'Não foi possível entrar agora. Tente de novo em alguns minutos.'
 }
 
 function Login() {
@@ -140,7 +180,7 @@ function Login() {
         <Marca />
         <div>
           <h1>Entrar</h1>
-          <p className="adm-muted">Acesso restrito para edição do site.</p>
+          <p className="adm-muted">Área para você mudar os textos e as fotos do site.</p>
         </div>
         <Campo label="E-mail" type="email" autoComplete="username" valor={email} mudar={setEmail} required />
         <Campo label="Senha" type="password" autoComplete="current-password" valor={senha} mudar={setSenha} required />
@@ -200,6 +240,7 @@ function Editor({ email }) {
   const [pendente, setPendente] = useState(false)
   const [salvando, setSalvando] = useState(false)
   const [aviso, setAviso] = useState(null)
+  const [previa, setPrevia] = useState(false)
 
   // Quando o conteúdo do banco chega depois da abertura do painel, o rascunho acompanha
   useEffect(() => { setRascunho(copiar(site)) }, [site])
@@ -227,17 +268,24 @@ function Editor({ email }) {
     try {
       await site.salvar(rascunho)
       setPendente(false)
-      setAviso({ tipo: 'ok', texto: 'Alterações publicadas no site.' })
+      setPrevia(false)
+      setAviso({ tipo: 'ok', texto: 'Pronto! Suas mudanças já estão no site.' })
     } catch (erro) {
-      setAviso({ tipo: 'erro', texto: `Não foi possível salvar: ${erro.message}` })
+      console.error(erro)
+      setAviso({ tipo: 'erro', texto: 'Não foi possível publicar. Confira sua internet e tente de novo.' })
     }
     setSalvando(false)
   }
 
   const descartar = () => {
-    if (!window.confirm('Descartar as alterações que ainda não foram salvas?')) return
+    if (!window.confirm('Desfazer tudo o que você mudou e ainda não publicou?')) return
     setRascunho(copiar(site))
     setPendente(false)
+  }
+
+  const abrirPrevia = () => {
+    window.rascunhoDoPainel = rascunho
+    setPrevia(true)
   }
 
   const atual = SECOES.find((s) => s.id === secao)
@@ -258,15 +306,15 @@ function Editor({ email }) {
         </nav>
         <div className="adm-side-rodape">
           <a className="adm-side-link" href="#/" target="_blank" rel="noreferrer">
-            <Externo /> Ver site
+            <Externo /> Abrir o site
           </a>
           <div className="adm-usuario">
             <span className="adm-avatar">{email.slice(0, 1).toUpperCase()}</span>
             <span className="adm-usuario-email" title={email}>{email}</span>
-            <button className="adm-icone" onClick={() => supabase.auth.signOut()} title="Sair" aria-label="Sair">
-              <Sair />
-            </button>
           </div>
+          <button className="adm-side-link" onClick={() => supabase.auth.signOut()}>
+            <Sair /> Sair do painel
+          </button>
         </div>
       </aside>
 
@@ -278,14 +326,21 @@ function Editor({ email }) {
           </div>
           <div className="adm-head-acoes">
             <span className={`adm-status ${pendente ? 'is-pendente' : ''}`}>
-              {pendente ? 'Alterações não salvas' : <><Check width={14} height={14} /> Tudo salvo</>}
+              {pendente ? 'Mudanças ainda não publicadas' : <><Check width={14} height={14} /> Tudo publicado</>}
             </span>
-            {pendente && <button className="adm-btn" onClick={descartar}>Descartar</button>}
+            {pendente && <button className="adm-btn" onClick={descartar}>Desfazer</button>}
+            <button className="adm-btn" onClick={abrirPrevia}>Ver como vai ficar</button>
             <button className="adm-btn adm-btn-primario" onClick={salvar} disabled={!pendente || salvando}>
-              {salvando ? 'Salvando…' : 'Salvar alterações'}
+              {salvando ? 'Publicando…' : 'Publicar no site'}
             </button>
           </div>
         </header>
+
+        <ol className="adm-passos">
+          <li>Escolha no menu o que quer mudar</li>
+          <li>Clique em Ver como vai ficar</li>
+          <li>Se gostou, clique em Publicar no site</li>
+        </ol>
 
         <div className="adm-corpo">
           {secao === 'conteudos' && <Publicacoes lista={rascunho.conteudos} mudar={(v) => alterar('conteudos', v)} />}
@@ -293,12 +348,65 @@ function Editor({ email }) {
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
           {secao === 'aparencia' && <Aparencia aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />}
           {['destaques', 'areas', 'etapas', 'perguntas'].includes(secao) && (
-            <ListaSimples key={secao} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
+            <ListaSimples key={secao} secao={atual} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
           )}
         </div>
       </main>
 
+      {previa && (
+        <Previa
+          inicial={atual.pagina}
+          pendente={pendente}
+          salvando={salvando}
+          publicar={salvar}
+          fechar={() => setPrevia(false)}
+        />
+      )}
+
       {aviso && <div className={`adm-toast adm-toast-${aviso.tipo}`} role="status">{aviso.texto}</div>}
+    </div>
+  )
+}
+
+// O site de verdade, dentro de um quadro, lendo o rascunho em vez do que está publicado
+function Previa({ inicial, pendente, salvando, publicar, fechar }) {
+  const [pagina, setPagina] = useState(inicial)
+  const [aparelho, setAparelho] = useState('computador')
+
+  return (
+    <div className="adm-tela-previa" role="dialog" aria-modal="true" aria-label="Prévia do site">
+      <header>
+        <button className="adm-btn" onClick={fechar}><Voltar width={16} height={16} /> Voltar a editar</button>
+        <label className="adm-campo adm-previa-pagina">
+          <span className="adm-rotulo">Página</span>
+          <select value={pagina} onChange={(e) => setPagina(e.target.value)}>
+            {PAGINAS.map(([v, nome]) => <option key={v} value={v}>{nome}</option>)}
+          </select>
+        </label>
+        <div className="adm-segmentos adm-segmentos-dois" role="radiogroup" aria-label="Tamanho da tela">
+          {[['computador', 'Computador'], ['celular', 'Celular']].map(([valor, rotulo]) => (
+            <button
+              key={valor}
+              type="button"
+              role="radio"
+              aria-checked={aparelho === valor}
+              className={aparelho === valor ? 'is-active' : ''}
+              onClick={() => setAparelho(valor)}
+            >
+              {rotulo}
+            </button>
+          ))}
+        </div>
+        <button className="adm-btn adm-btn-primario" onClick={publicar} disabled={!pendente || salvando}>
+          {salvando ? 'Publicando…' : 'Publicar no site'}
+        </button>
+      </header>
+      <p>
+        {pendente
+          ? 'Isto é só uma prévia. Quem visita o site ainda não vê estas mudanças.'
+          : 'Você ainda não mudou nada. O site está assim agora.'}
+      </p>
+      <iframe src={`/?previa=1#/${pagina}`} title="Prévia do site" className={`is-${aparelho}`} />
     </div>
   )
 }
@@ -360,8 +468,8 @@ function Arquivo({ label, valor, mudar, aceita, redondo }) {
         {!valor && (
           <label className="adm-upload-vazio">
             {video ? <Video /> : <Imagem />}
-            <strong>{enviando ? 'Enviando…' : `Enviar ${video ? 'vídeo' : 'imagem'}`}</strong>
-            <small>{video ? 'MP4, até 50 MB' : 'JPG, PNG ou WEBP'}</small>
+            <strong>{enviando ? 'Enviando…' : `Escolher ${video ? 'vídeo' : 'foto'}`}</strong>
+            <small>{video ? 'Formato MP4, até 50 MB' : 'Clique para escolher no seu aparelho'}</small>
             <input type="file" accept={aceita} onChange={enviar} disabled={enviando} />
           </label>
         )}
@@ -392,22 +500,22 @@ function Aparencia({ aparencia, mudar }) {
   }
   return (
     <div className="adm-pilha">
-      <Bloco titulo="Fontes" descricao="Valem para as páginas Sobre, Conteúdo, Atuação e Contato. A página inicial não muda.">
+      <Bloco titulo="Tipo de letra">
         <div className="adm-dupla">
-          <Opcoes label="Fonte do texto" valor={aparencia.fonte} mudar={campo('fonte')} opcoes={FONTES_TEXTO} />
-          <Opcoes label="Fonte dos títulos" valor={aparencia.titulo} mudar={campo('titulo')} opcoes={FONTES_TITULO} />
+          <Opcoes label="Letra dos textos" valor={aparencia.fonte} mudar={campo('fonte')} opcoes={FONTES_TEXTO} />
+          <Opcoes label="Letra dos títulos" valor={aparencia.titulo} mudar={campo('titulo')} opcoes={FONTES_TITULO} />
         </div>
       </Bloco>
-      <Bloco titulo="Tamanho" descricao="O mínimo é o tamanho atual, para o texto continuar fácil de ler.">
+      <Bloco titulo="Tamanho das letras" descricao="Arraste para aumentar ou diminuir. Os textos não ficam menores que o atual, para continuarem fáceis de ler.">
         <div className="adm-dupla">
           <Faixa label="Tamanho do texto" valor={aparencia.tamanho} mudar={campo('tamanho')} min={1} max={1.3} />
           <Faixa label="Tamanho dos títulos" valor={aparencia.tamanhoTitulo} mudar={campo('tamanhoTitulo')} min={0.8} max={1.2} />
         </div>
       </Bloco>
-      <Bloco titulo="Destaque das palavras-chave">
+      <Bloco titulo="Palavras importantes" descricao="Como as palavras importantes aparecem no meio dos textos.">
         <Opcoes label="Estilo" valor={aparencia.destaque} mudar={campo('destaque')} opcoes={DESTAQUES_TEXTO} />
       </Bloco>
-      <Bloco titulo="Prévia">
+      <Bloco titulo="Amostra">
         <div className="adm-previa" data-destaque={aparencia.destaque}>
           <p style={titulo}>Cada hora conta.</p>
           <p style={amostra}>
@@ -416,7 +524,7 @@ function Aparencia({ aparencia, mudar }) {
           </p>
         </div>
         <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={() => mudar({ ...APARENCIA })}>
-          Voltar ao padrão
+          Voltar ao que era antes
         </button>
       </Bloco>
     </div>
@@ -447,20 +555,20 @@ function Contato({ contato, mudar }) {
   const campo = (chave) => (v) => mudar({ ...contato, [chave]: v })
   return (
     <div className="adm-pilha">
-      <Bloco titulo="WhatsApp" descricao="Usado nos botões “Agendar consulta” e “Falar no WhatsApp”.">
+      <Bloco titulo="WhatsApp" descricao="Para onde vão os botões “Falar no WhatsApp” e a análise do caso.">
         <Campo
-          label="Número ou link"
+          label="Número do WhatsApp"
           valor={contato.whatsapp}
           mudar={campo('whatsapp')}
-          dica="Digite o número com DDD, ex.: 79 99999-9999. Também aceita um link pronto do WhatsApp."
+          dica="Digite com DDD, por exemplo: 79 99999-9999."
         />
         {contato.whatsapp && (
           <a className="adm-btn adm-btn-pequeno adm-btn-auto" href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer">
-            <Externo width={14} height={14} /> Testar link
+            <Externo width={14} height={14} /> Testar se abre o WhatsApp
           </a>
         )}
       </Bloco>
-      <Bloco titulo="Telefone e e-mail" descricao="Aparecem na página Contato.">
+      <Bloco titulo="Telefone e e-mail" descricao="Aparecem na página Contato. Se deixar em branco, não aparecem.">
         <div className="adm-dupla">
           <Campo label="Telefone" valor={contato.telefone || ''} mudar={campo('telefone')} placeholder="(79) 99999-9999" />
           <Campo label="E-mail" type="email" valor={contato.email || ''} mudar={campo('email')} />
@@ -468,8 +576,8 @@ function Contato({ contato, mudar }) {
       </Bloco>
       <Bloco titulo="Instagram">
         <div className="adm-dupla">
-          <Campo label="Link do perfil" valor={contato.instagram} mudar={campo('instagram')} />
-          <Campo label="Nome exibido" valor={contato.instagramUser} mudar={campo('instagramUser')} dica="Ex.: @advheloisamaximo" />
+          <Campo label="Link do perfil" valor={contato.instagram} mudar={campo('instagram')} dica="Copie o endereço da sua página no Instagram e cole aqui." />
+          <Campo label="Nome no Instagram" valor={contato.instagramUser} mudar={campo('instagramUser')} dica="Ex.: @advheloisamaximo" />
         </div>
       </Bloco>
     </div>
@@ -483,23 +591,23 @@ function Perfil({ perfil, mudar }) {
       <div className="adm-pilha">
         <Bloco titulo="Apresentação">
           <Campo label="Nome" valor={perfil.nome} mudar={campo('nome')} />
-          <Campo label="Título" valor={perfil.titulo} mudar={campo('titulo')} />
-          <Campo label="Frase de apresentação" valor={perfil.slogan} mudar={campo('slogan')} />
+          <Campo label="Profissão" valor={perfil.titulo} mudar={campo('titulo')} dica="Por exemplo: Advogada Criminalista." />
+          <Campo label="Frase de apresentação" valor={perfil.slogan} mudar={campo('slogan')} dica="Uma frase curta que aparece na página inicial." />
         </Bloco>
-        <Bloco titulo="Atuação">
+        <Bloco titulo="Onde e com o que você trabalha">
           <div className="adm-dupla">
-            <Campo label="Especialidade" valor={perfil.especialidade} mudar={campo('especialidade')} />
-            <Campo label="Local" valor={perfil.local} mudar={campo('local')} />
+            <Campo label="Área principal" valor={perfil.especialidade} mudar={campo('especialidade')} />
+            <Campo label="Cidade ou estado" valor={perfil.local} mudar={campo('local')} />
           </div>
         </Bloco>
-        <Bloco titulo="Registro" descricao="Campos vazios não aparecem no site.">
+        <Bloco titulo="OAB e formação">
           <div className="adm-dupla">
-            <Campo label="OAB" valor={perfil.oab} mudar={campo('oab')} placeholder="OAB/SE 0000" />
-            <Campo label="Formação" valor={perfil.formacao} mudar={campo('formacao')} />
+            <Campo label="Número da OAB" valor={perfil.oab} mudar={campo('oab')} placeholder="OAB/SE 0000" />
+            <Campo label="Formação" valor={perfil.formacao} mudar={campo('formacao')} dica="Se deixar em branco, não aparece no site." />
           </div>
         </Bloco>
       </div>
-      <Bloco titulo="Foto">
+      <Bloco titulo="Sua foto">
         <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita="image/*" redondo />
       </Bloco>
     </div>
@@ -515,16 +623,17 @@ function mover(lista, de, para) {
 function Ordenar({ i, total, aoMover }) {
   return (
     <div className="adm-ordenar">
-      <button type="button" className="adm-icone" onClick={() => aoMover(i - 1)} disabled={i === 0} aria-label="Mover para cima"><Cima /></button>
-      <button type="button" className="adm-icone" onClick={() => aoMover(i + 1)} disabled={i === total - 1} aria-label="Mover para baixo"><Baixo /></button>
+      <button type="button" className="adm-icone" onClick={() => aoMover(i - 1)} disabled={i === 0} aria-label="Subir na lista" title="Subir na lista"><Cima /></button>
+      <button type="button" className="adm-icone" onClick={() => aoMover(i + 1)} disabled={i === total - 1} aria-label="Descer na lista" title="Descer na lista"><Baixo /></button>
     </div>
   )
 }
 
-function ListaSimples({ lista, mudar }) {
+function ListaSimples({ secao, lista, mudar }) {
+  const [rotuloTitulo, rotuloTexto] = secao.campos || ['Título', 'Texto']
   const editar = (i, chave, v) => mudar(lista.map((item, n) => (n === i ? { ...item, [chave]: v } : item)))
   const remover = (i) => {
-    if (window.confirm('Remover este item?')) mudar(lista.filter((_, n) => n !== i))
+    if (window.confirm('Apagar este item? Ele só sai do site quando você publicar.')) mudar(lista.filter((_, n) => n !== i))
   }
 
   return (
@@ -533,17 +642,17 @@ function ListaSimples({ lista, mudar }) {
         <div className="adm-item" key={i}>
           <span className="adm-item-num">{String(i + 1).padStart(2, '0')}</span>
           <div className="adm-item-campos">
-            <Campo label="Título" valor={item.titulo} mudar={(v) => editar(i, 'titulo', v)} />
-            <Campo label="Texto" valor={item.texto} mudar={(v) => editar(i, 'texto', v)} longo={2} />
+            <Campo label={rotuloTitulo} valor={item.titulo} mudar={(v) => editar(i, 'titulo', v)} />
+            <Campo label={rotuloTexto} valor={item.texto} mudar={(v) => editar(i, 'texto', v)} longo={2} />
           </div>
           <div className="adm-item-acoes">
             <Ordenar i={i} total={lista.length} aoMover={(para) => mudar(mover(lista, i, para))} />
-            <button type="button" className="adm-icone adm-icone-perigo" onClick={() => remover(i)} aria-label="Remover"><Lixeira /></button>
+            <button type="button" className="adm-icone adm-icone-perigo" onClick={() => remover(i)} aria-label="Apagar" title="Apagar"><Lixeira /></button>
           </div>
         </div>
       ))}
       <button className="adm-adicionar" onClick={() => mudar([...lista, { titulo: '', texto: '' }])}>
-        <Mais /> Adicionar item
+        <Mais /> {secao.adicionar}
       </button>
     </div>
   )
@@ -564,7 +673,7 @@ function Publicacoes({ lista, mudar }) {
         naHome={aberta === 0}
         mudar={(mudancas) => mudar(lista.map((item, n) => (n === aberta ? { ...item, ...mudancas } : item)))}
         excluir={() => {
-          if (!window.confirm('Excluir esta publicação? Ela sai do site depois que você salvar.')) return
+          if (!window.confirm('Apagar esta publicação? Ela só sai do site quando você publicar.')) return
           mudar(lista.filter((_, n) => n !== aberta))
           setAberta(null)
         }}
@@ -577,7 +686,7 @@ function Publicacoes({ lista, mudar }) {
     <div className="adm-pilha">
       <div className="adm-barra">
         <span className="adm-muted">{lista.length} {lista.length === 1 ? 'publicação' : 'publicações'}</span>
-        <button className="adm-btn adm-btn-primario" onClick={nova}><Mais width={16} height={16} /> Nova publicação</button>
+        <button className="adm-btn adm-btn-primario" onClick={nova}><Mais width={16} height={16} /> Escrever nova publicação</button>
       </div>
 
       {lista.length === 0 && (
@@ -603,7 +712,7 @@ function Publicacoes({ lista, mudar }) {
                     {c.video && ' · vídeo'}
                   </span>
                 </span>
-                {i === 0 && <span className="adm-selo">Página inicial</span>}
+                {i === 0 && <span className="adm-selo">Na página inicial</span>}
               </button>
               <Ordenar i={i} total={lista.length} aoMover={(para) => mudar(mover(lista, i, para))} />
             </li>
@@ -631,31 +740,31 @@ function EditarPublicacao({ pub, naHome, mudar, excluir, voltar }) {
         <Bloco>
           <Campo label="Título" valor={pub.titulo} mudar={(v) => mudar({ titulo: v })} placeholder="Título da publicação" />
           <Campo
-            label="Resumo"
+            label="Resumo curto"
             valor={pub.resumo}
             mudar={(v) => mudar({ resumo: v })}
             longo={2}
-            dica={naHome ? 'Aparece na página inicial, abaixo do primeiro parágrafo.' : 'Uma ou duas frases sobre a publicação.'}
+            dica="Uma ou duas frases contando do que se trata."
           />
           <Campo
             label="Texto completo"
             valor={(pub.texto || []).join('\n\n')}
             mudar={(v) => mudar({ texto: v.split(/\n\s*\n/) })}
             longo={12}
-            dica="Deixe uma linha em branco entre os parágrafos."
+            dica="Para começar um novo parágrafo, deixe uma linha em branco."
           />
         </Bloco>
 
         <div className="adm-pilha">
-          <Bloco titulo="Detalhes">
+          <Bloco titulo="Informações">
             <Campo label="Categoria" valor={pub.categoria} mudar={(v) => mudar({ categoria: v })} placeholder="Atuação, Palestra…" />
             <Campo label="Data" valor={pub.data || ''} mudar={(v) => mudar({ data: v })} placeholder="Abril de 2026" />
-            {naHome && <p className="adm-nota">É a primeira da lista, por isso aparece na página inicial.</p>}
+            {naHome && <p className="adm-nota">Esta publicação aparece na página inicial porque é a primeira da lista.</p>}
           </Bloco>
 
-          <Bloco titulo="Mídia">
-            <div className="adm-segmentos" role="radiogroup" aria-label="Tipo de mídia">
-              {[['nenhuma', 'Nenhuma'], ['imagem', 'Imagem'], ['video', 'Vídeo']].map(([valor, rotulo]) => (
+          <Bloco titulo="Foto ou vídeo">
+            <div className="adm-segmentos" role="radiogroup" aria-label="Foto ou vídeo da publicação">
+              {[['nenhuma', 'Só texto'], ['imagem', 'Foto'], ['video', 'Vídeo']].map(([valor, rotulo]) => (
                 <button
                   key={valor}
                   type="button"
@@ -671,19 +780,19 @@ function EditarPublicacao({ pub, naHome, mudar, excluir, voltar }) {
             {tipo === 'imagem' && (
               <>
                 <Arquivo valor={pub.imagem || ''} mudar={(v) => mudar({ imagem: v })} aceita="image/*" />
-                <Campo label="Descrição da imagem" valor={pub.imagemAlt || ''} mudar={(v) => mudar({ imagemAlt: v })} dica="Lida por quem usa leitor de tela." />
+                <Campo label="O que aparece na foto" valor={pub.imagemAlt || ''} mudar={(v) => mudar({ imagemAlt: v })} dica="Descreva em uma frase. Pessoas cegas ouvem esse texto no celular ou computador." />
               </>
             )}
             {tipo === 'video' && (
               <>
                 <Arquivo valor={pub.video || ''} mudar={(v) => mudar({ video: v })} aceita="video/mp4,video/webm" />
-                <Arquivo label="Capa do vídeo (opcional)" valor={pub.poster || ''} mudar={(v) => mudar({ poster: v })} aceita="image/*" />
+                <Arquivo label="Foto de capa do vídeo (não é obrigatória)" valor={pub.poster || ''} mudar={(v) => mudar({ poster: v })} aceita="image/*" />
               </>
             )}
           </Bloco>
 
           <button className="adm-btn adm-btn-perigo adm-btn-cheio" onClick={excluir}>
-            <Lixeira width={16} height={16} /> Excluir publicação
+            <Lixeira width={16} height={16} /> Apagar publicação
           </button>
         </div>
       </div>

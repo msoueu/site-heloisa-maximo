@@ -472,46 +472,45 @@
 }
 
 .page-footer {
-  padding: 56px max(48px, calc((100% - 1024px) / 2)) 32px;
+  padding: 64px max(48px, calc((100% - 1024px) / 2)) 32px;
   border-top: 1px solid var(--line);
   background: var(--shade);
   font-size: calc(1.0625rem * var(--pagina-tamanho, 1));
 }
 
+/* As três colunas têm três linhas de 32px, então todas se alinham entre si */
 .page-footer-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 32px 40px;
 }
 
 .page-footer-marca {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+}
+
+.page-footer-marca p {
+  line-height: 32px;
 }
 
 .page-footer-monograma {
   flex: none;
-  display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
-  border: 1px solid rgba(201, 185, 154, 0.5);
-  border-radius: 50%;
-  color: var(--gold-bright);
-  font-family: var(--pagina-titulo, var(--serif));
-  font-size: 1.375rem;
-  letter-spacing: 1px;
+  width: 62px;
+  height: 72px;
+  background: var(--gold-bright);
+  -webkit-mask: url('./monograma.png') center / contain no-repeat;
+  mask: url('./monograma.png') center / contain no-repeat;
 }
 
 .page-footer-name {
   font-family: var(--pagina-titulo, var(--serif));
   font-size: calc(1.625rem * var(--pagina-tamanho, 1));
-  line-height: 1.2;
 }
 
 .page-footer-area {
-  margin-top: 4px;
   color: var(--gold);
   font-size: 0.9375rem;
   letter-spacing: 3px;
@@ -519,15 +518,14 @@
 }
 
 .page-footer ul {
-  display: grid;
-  gap: 10px;
   list-style: none;
 }
 
 .page-footer li {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  min-height: 32px;
 }
 
 .page-footer li svg {
@@ -535,18 +533,26 @@
   color: var(--gold-bright);
 }
 
+.page-footer li a,
+.page-footer-links a {
+  text-decoration: none;
+}
+
 .page-footer-links {
   display: grid;
-  gap: 6px;
+  grid-template-rows: repeat(3, 32px);
+  grid-auto-flow: column;
+  gap: 0 32px;
+  align-items: center;
   justify-items: start;
 }
 
 .page-footer-links button {
   color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  text-align: left;
 }
 
+.page-footer li a:hover,
 .page-footer-links button:hover,
 .page-footer-links a:hover {
   color: var(--gold-bright);
@@ -554,29 +560,39 @@
 
 .page-footer-base {
   display: grid;
-  gap: 10px;
-  margin-top: 40px;
-  padding-top: 20px;
+  grid-template-columns: 1fr auto;
+  gap: 8px 32px;
+  align-items: center;
+  margin-top: 48px;
+  padding-top: 24px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: calc(1rem * var(--pagina-tamanho, 1));
+  font-size: calc(0.9375rem * var(--pagina-tamanho, 1));
+}
+
+.page-footer-base > p {
+  grid-column: 1 / -1;
 }
 
 .page-footer-base nav {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 24px;
+  margin-bottom: 8px;
 }
 
 .page-footer-base nav a {
-  min-height: 32px;
   color: var(--ivory);
+  font-size: calc(1rem * var(--pagina-tamanho, 1));
 }
 
-.page-footer-creditos {
+.page-footer-base > .page-footer-creditos {
+  grid-column: 2;
+  grid-row: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 14px;
+  gap: 4px 16px;
+  margin-bottom: 8px;
   font-size: 0.8125rem;
   opacity: 0.75;
 }
@@ -640,8 +656,7 @@
   .etapas,
   .canais,
   .portas,
-  .indice,
-  .page-footer-grid {
+  .indice {
     grid-template-columns: 1fr;
   }
 
@@ -679,9 +694,32 @@
   }
 
   .page-footer {
-    padding: 44px 20px 28px;
+    padding: 48px 20px 32px;
   }
 
+  .page-footer-grid {
+    flex-direction: column;
+  }
+
+  .page-footer-links {
+    grid-template-rows: none;
+    grid-auto-flow: row;
+    grid-auto-rows: 40px;
+  }
+
+  .page-footer li {
+    min-height: 40px;
+  }
+
+  .page-footer-base {
+    grid-template-columns: 1fr;
+  }
+
+  .page-footer-base > .page-footer-creditos {
+    grid-column: 1;
+    grid-row: auto;
+    margin: 8px 0 0;
+  }
 }
 
 :root[data-destaque='negrito'] .realce {

@@ -73,7 +73,7 @@ function Rodape({ abrir }) {
     <footer className="page-footer">
       <div className="page-footer-grid">
         <div className="page-footer-marca">
-          <span className="page-footer-monograma">HM</span>
+          <span className="page-footer-monograma" />
           <div>
             <p className="page-footer-name">{perfil.nome}</p>
             <p className="page-footer-area">Advocacia Criminal</p>

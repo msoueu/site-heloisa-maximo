@@ -43,13 +43,16 @@ export function linkWhatsApp(valor) {
   return `https://wa.me/${digitos.startsWith('55') ? digitos : `55${digitos}`}`
 }
 
+// Dentro da prévia do painel o site mostra o rascunho, que ainda não foi publicado
+const rascunho = window.frameElement && window.location.search.includes('previa') ? window.parent.rascunhoDoPainel : null
+
 const SiteContext = createContext(null)
 
 export function SiteProvider({ children }) {
-  const [dados, setDados] = useState(PADRAO)
+  const [dados, setDados] = useState(rascunho ? { ...PADRAO, ...rascunho } : PADRAO)
 
   useEffect(() => {
-    if (!supabase) return
+    if (!supabase || rascunho) return
     supabase
       .from('site')
       .select('dados')

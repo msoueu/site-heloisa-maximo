@@ -17,7 +17,7 @@ export default function Header({ rota, endereco, irPara, abrir, tema, alternarTe
     <div className={`header-overlay ${naHome ? '' : 'header-page'}`}>
       <nav className="header-nav">
         <button className="header-logo" onClick={() => irPara(0)} aria-label="Início">
-          <span className="header-logo-mark">HM</span>
+          <span className="header-logo-mark" />
           <span className="header-logo-text">Heloisa Máximo<small>Advocacia Criminal</small></span>
         </button>
 

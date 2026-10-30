@@ -26,17 +26,14 @@
   text-align: left;
 }
 
+/* O monograma do fundo da página, recortado de Prancheta1.jpg */
 .header-logo-mark {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border: 1px solid rgba(201, 185, 154, 0.5);
-  border-radius: 50%;
-  color: var(--gold-bright);
-  font-family: var(--serif);
-  font-size: 1.0625rem;
-  letter-spacing: 1px;
+  flex: none;
+  width: 38px;
+  height: 44px;
+  background: var(--gold-bright);
+  -webkit-mask: url('./monograma.png') center / contain no-repeat;
+  mask: url('./monograma.png') center / contain no-repeat;
 }
 
 .header-logo-text {
@@ -225,7 +222,7 @@ body.is-home .header-theme {
   }
 
   .header-logo-mark {
-    width: 38px;
+    width: 33px;
     height: 38px;
   }
 
