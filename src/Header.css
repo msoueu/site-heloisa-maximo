@@ -216,6 +216,11 @@ body.is-home .header-theme {
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   }
 
+  :root[data-theme='escuro'] .header-nav-links,
+  :root[data-theme='escuro'] body.is-home .header-nav-links {
+    background: #2b2323;
+  }
+
   .header-nav-links.is-aberto,
   body.is-home .header-nav-links.is-aberto {
     display: grid;
