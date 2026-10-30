@@ -2,8 +2,11 @@ import { useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
+// Celular e tablet: menos pixels, menos partículas e 30 quadros por segundo
+export const LEVE = window.matchMedia('(pointer: coarse)').matches
+
 // O movimento é todo calculado no shader a partir de uTempo
-const QUANTIDADE = 260
+const QUANTIDADE = LEVE ? 110 : 260
 const CAIXA = { x: [-2.6, 2.6], y: [-2, 2.4], z: [-1.8, 1] }
 
 const vertex = /* glsl */ `

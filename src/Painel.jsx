@@ -295,6 +295,12 @@ function Editor({ email }) {
     <div className="adm-shell">
       <aside className="adm-side">
         <Marca />
+        <label className="adm-campo adm-nav-curto">
+          <span className="adm-rotulo">O que você quer mudar?</span>
+          <select value={secao} onChange={(e) => setSecao(e.target.value)}>
+            {SECOES.map(({ id, label }) => <option key={id} value={id}>{label}</option>)}
+          </select>
+        </label>
         <nav className="adm-nav">
           {SECOES.map(({ id, label, Icone }) => (
             <button key={id} className={secao === id ? 'is-active' : ''} onClick={() => setSecao(id)}>
@@ -306,14 +312,14 @@ function Editor({ email }) {
         </nav>
         <div className="adm-side-rodape">
           <a className="adm-side-link" href="#/" target="_blank" rel="noreferrer">
-            <Externo /> Abrir o site
+            <Externo /> Ver site
           </a>
           <div className="adm-usuario">
             <span className="adm-avatar">{email.slice(0, 1).toUpperCase()}</span>
             <span className="adm-usuario-email" title={email}>{email}</span>
           </div>
           <button className="adm-side-link" onClick={() => supabase.auth.signOut()}>
-            <Sair /> Sair do painel
+            <Sair /> Sair
           </button>
         </div>
       </aside>

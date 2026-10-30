@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { Environment, Lightformer } from '@react-three/drei'
 import { Suspense, memo } from 'react'
 import Justica from './Justica'
+import { LEVE } from './Poeira'
 
 // memo: o Environment refaz o cubemap a cada render
 const Estudio = memo(function Estudio() {
@@ -16,11 +17,11 @@ const Estudio = memo(function Estudio() {
 })
 
 const CAMERA = { position: [0, 0.2, 8], fov: 30 }
-const GL = { alpha: true, antialias: true, powerPreference: 'high-performance' }
+const GL = { alpha: true, antialias: true, powerPreference: LEVE ? 'default' : 'high-performance' }
 
 export default function Cena({ current }) {
   return (
-    <Canvas frameloop="demand" shadows="percentage" dpr={[1, 1.5]} camera={CAMERA} gl={GL}>
+    <Canvas frameloop="demand" shadows="percentage" dpr={LEVE ? [1, 1.25] : [1, 1.5]} camera={CAMERA} gl={GL}>
       <Estudio />
       <Suspense fallback={null}>
         <Justica current={current} />

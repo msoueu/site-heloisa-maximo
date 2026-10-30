@@ -1,6 +1,6 @@
 import './SectionContent.css'
-import { useSite, linkWhatsApp } from './SiteData'
-import { Seta, WhatsApp, Instagram, Local, Relogio } from './Icons'
+import { useSite } from './SiteData'
+import { Seta, Instagram, Local, Relogio } from './Icons'
 
 function Tag({ children, onClick }) {
   if (!onClick) return <p className="panel-tag">{children}</p>
@@ -82,9 +82,9 @@ export default function SectionContent({ current, abrir }) {
         <Tag onClick={() => abrir('contato')}>CONTATO</Tag>
         <h2 className="panel-name">Cada hora conta.</h2>
         <p className="panel-desc">
-          Em uma situação criminal, a primeira orientação faz toda a diferença. Fale diretamente
-          com a advogada, com sigilo absoluto. Atendimento com hora marcada e plantão 24h para
-          urgências como prisões em flagrante.
+          Em uma situação criminal, a primeira orientação faz toda a diferença. Faça o diagnóstico
+          rápido do seu caso em menos de 5 minutos e fale diretamente com a advogada, com sigilo
+          absoluto.
         </p>
         <ul className="panel-contact">
           <li><Relogio /> Plantão 24h para urgências</li>
@@ -94,8 +94,8 @@ export default function SectionContent({ current, abrir }) {
             <a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a>
           </li>
         </ul>
-        <a href={linkWhatsApp(contato.whatsapp)} target="_blank" rel="noreferrer" className="panel-btn panel-btn-solid">
-          <WhatsApp /> Falar no WhatsApp
+        <a href="#/diagnostico" className="panel-btn panel-btn-solid">
+          Analisar meu caso <Seta />
         </a>
         <button className="panel-link panel-link-contato" onClick={() => abrir('contato')}>
           Todas as formas de contato <Seta />

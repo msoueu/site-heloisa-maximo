@@ -117,6 +117,14 @@ body.is-home .header-theme {
   border-color: var(--gold);
 }
 
+.header-menu {
+  display: none;
+}
+
+.header-menu:hover {
+  transform: none;
+}
+
 .header-page .header-nav {
   background: var(--shade);
   backdrop-filter: blur(14px);
@@ -161,28 +169,6 @@ body.is-home .header-theme {
   box-shadow: 0 16px 50px -10px rgba(230, 207, 159, 0.8);
 }
 
-.header-cta-pulse {
-  position: relative;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #2a1a1b;
-}
-
-.header-cta-pulse::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1px solid #2a1a1b;
-  animation: pulse 2s ease-out infinite;
-}
-
-@keyframes pulse {
-  from { transform: scale(0.6); opacity: 0.9; }
-  to { transform: scale(1.8); opacity: 0; }
-}
-
 .cta-selos {
   display: flex;
   justify-content: center;
@@ -207,15 +193,42 @@ body.is-home .header-theme {
 }
 
 
-@media (max-width: 760px) {
+@media (max-width: 1180px) {
   .header-nav {
-    padding: 18px 20px;
+    padding: 16px 24px;
   }
 
-  .header-logo-text {
+  .header-menu {
+    display: grid;
+  }
+
+  .header-nav-links,
+  body.is-home .header-nav-links {
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    left: 12px;
     display: none;
+    padding: 8px;
+    border-radius: 16px;
+    background: var(--bg);
   }
 
+  .header-nav-links.is-aberto,
+  body.is-home .header-nav-links.is-aberto {
+    display: grid;
+  }
+
+  .header-nav-links button {
+    min-height: 48px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 1rem;
+    text-align: left;
+  }
+}
+
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
   .header-nav {
     gap: 8px;
     padding: 12px;
@@ -224,35 +237,6 @@ body.is-home .header-theme {
   .header-logo-mark {
     width: 33px;
     height: 38px;
-  }
-
-  .header-theme {
-    position: fixed;
-    top: 66px;
-    right: 12px;
-    width: 44px;
-    height: 44px;
-  }
-
-  .header-nav-links {
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .header-nav-links button {
-    flex: none;
-    padding: 8px 6px;
-    font-size: 0.8125rem;
-    letter-spacing: 0;
-  }
-
-  .header-nav-links span {
-    display: none;
-  }
-
-  .header-right {
-    min-width: 0;
   }
 
   .header-cta {
@@ -275,4 +259,44 @@ body.is-home .header-theme {
 
 .header-page .header-cta {
   display: none;
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .header-cta {
+    bottom: 12px;
+    zoom: 0.8;
+  }
+
+  .cta-selos {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-logo-text small {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .cta-selos {
+    gap: 6px;
+    padding: 3px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+/* A estátua passa por trás do nome nos planos fechados */
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+  body.is-home .header-nav {
+    background: linear-gradient(to bottom, var(--bg) 55%, transparent);
+  }
+}
+
+@media (pointer: coarse) {
+  .header-page .header-nav {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }

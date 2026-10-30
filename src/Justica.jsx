@@ -1,7 +1,7 @@
 import { useRef, useMemo, useEffect } from 'react'
 import { useFrame, useThree, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
-import Poeira from './Poeira'
+import Poeira, { LEVE } from './Poeira'
 
 // Modelo de RaresXS (CC BY 4.0). Os .bin são gerados por scripts/preparar-estatua.mjs
 
@@ -281,7 +281,7 @@ export default function Justica({ current }) {
 
     // Em retrato o texto fica embaixo, então a peça sobe e a câmera recua
     const retrato = viewport.aspect < 0.8
-    const D = dist * (retrato ? 1.7 / Math.max(viewport.aspect / 0.56, 0.75) : 1)
+    const D = dist * (retrato ? 2.1 : 1)
     const meiaAltura = Math.tan(d(fov) / 2) * D
     const sx = retrato ? 0 : telaX
     const sy = retrato ? 0.42 : telaY
@@ -303,8 +303,11 @@ export default function Justica({ current }) {
 
     // A sombra em quadros alternados não aparece e custa metade
     quadro.current++
-    gl.shadowMap.needsUpdate = quadro.current < 4 || quadro.current % 2 === 0
-    if (emFoco.current) invalidate()
+    gl.shadowMap.needsUpdate = quadro.current < 4 || quadro.current % (LEVE ? 4 : 2) === 0
+    if (emFoco.current) {
+      if (LEVE) setTimeout(invalidate, 30)
+      else invalidate()
+    }
   })
 
   const { tamanho, origem } = escala
@@ -316,7 +319,7 @@ export default function Justica({ current }) {
         color="#fff1dd"
         intensity={3.4}
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={LEVE ? [512, 512] : [1024, 1024]}
         shadow-bias={-0.0006}
         shadow-normalBias={0.05}
         shadow-radius={5}

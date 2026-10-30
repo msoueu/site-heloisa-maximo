@@ -68,7 +68,7 @@ export default function Home({ current, setCurrent, abrir }) {
 
   return (
     <>
-      <div className="app-veu" />
+      <div className="app-veu" data-secao={current} />
 
       <div className="app-canvas" aria-hidden="true">
         <ModelBoundary>

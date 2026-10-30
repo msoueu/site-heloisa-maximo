@@ -111,9 +111,14 @@ button {
   background: linear-gradient(to right, rgba(14, 7, 9, 0.62) 0%, rgba(14, 7, 9, 0.45) 36%, rgba(14, 7, 9, 0.15) 54%, transparent 66%);
 }
 
-@media (max-width: 760px) {
+/* No celular o texto fica sobre a estátua; a seção Contato tem mais texto e precisa de mais véu */
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
   .app-veu {
-    display: none;
+    background: linear-gradient(to top, var(--bg) 48%, transparent 72%);
+  }
+
+  .app-veu[data-secao='4'] {
+    background: linear-gradient(to top, var(--bg) 62%, transparent 90%);
   }
 }
 
@@ -146,7 +151,13 @@ button {
   text-decoration: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+  .dev-credit {
+    display: none;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
   .dev-credit {
     display: none;
   }

@@ -173,7 +173,7 @@
   color: rgba(245, 240, 235, 0.85);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
   .section-content {
     top: auto;
     bottom: 104px;
@@ -187,17 +187,6 @@
     top: auto;
     bottom: 0;
     transform: none;
-  }
-
-  .section-content::before {
-    content: '';
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 60vh;
-    background: linear-gradient(to top, var(--bg) 40%, transparent);
-    z-index: -1;
   }
 
   .panel-name {
@@ -397,7 +386,7 @@
   overflow-wrap: break-word;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
   .panel-sobre {
     gap: 16px;
     margin-bottom: 12px;
@@ -468,4 +457,32 @@
 .panel-hidden .panel-name,
 .panel-hidden .panel-titulo {
   transform: translateY(0.6em);
+}
+
+/* Celular deitado: pouca altura para o texto de cada seção */
+@media (max-height: 500px) and (orientation: landscape) {
+  .section-content {
+    top: calc(50% + 40px);
+    zoom: 0.6;
+  }
+
+  .panel-facts li:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+/* Celular pequeno em pé: o texto da seção Contato não pode subir por baixo do cabeçalho */
+@media (max-width: 760px) and (max-height: 720px) and (orientation: portrait) {
+  .section-content {
+    bottom: 130px;
+    zoom: 0.8;
+  }
+}
+
+/* Tablet deitado: a seção Sobre encostava no cabeçalho */
+@media (max-width: 1180px) and (min-height: 501px) and (max-height: 820px) and (orientation: landscape) {
+  .section-content {
+    top: calc(50% + 30px);
+    zoom: 0.85;
+  }
 }

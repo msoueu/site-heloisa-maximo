@@ -215,8 +215,8 @@ export function ConteudoPage({ abrir }) {
 
   const escolher = (i) => {
     setAtivo(i)
-    // No celular o leitor fica abaixo da lista, fora da tela
-    if (window.innerWidth <= 960) leitor.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // O leitor é recriado a cada publicação: a rolagem espera o novo entrar na página
+    requestAnimationFrame(() => leitor.current.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
 
   return (
