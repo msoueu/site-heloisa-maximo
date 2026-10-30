@@ -487,8 +487,15 @@
   }
 }
 
-@media (pointer: coarse) {
+/* O texto segue o arraste; selecionar letras ou puxar a foto interromperia o gesto */
+@media (pointer: coarse), (max-width: 760px) {
   .section-content {
     transition: translate 0.35s var(--ease);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .panel-foto {
+    pointer-events: none;
   }
 }

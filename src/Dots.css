@@ -36,10 +36,48 @@
   background: var(--gold);
 }
 
-@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+@media (max-width: 760px) and (orientation: landscape) {
   .dots-container {
     left: auto;
     right: 16px;
     top: 42%;
+  }
+}
+
+/* Telas em pé: pontinhos na lateral, no lugar das barrinhas */
+@media (max-width: 1100px) and (orientation: portrait) {
+  .dots-container {
+    right: 4px;
+    left: auto;
+    top: 42%;
+    gap: 0;
+  }
+
+  .dot,
+  .dot-active,
+  .dot:hover {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    transition: none;
+  }
+
+  .dot::before {
+    position: static;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(245, 240, 235, 0.4);
+    transition: background 0.3s;
+  }
+
+  .dot-active::before {
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--gold-bright);
+    background: radial-gradient(circle, var(--gold-bright) 32%, transparent 36%);
   }
 }

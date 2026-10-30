@@ -54,27 +54,29 @@ export default function Home({ current, setCurrent, abrir }) {
       const dy = toque.y - clientY
       return Math.abs(dx) > Math.abs(dy) ? { dx, dy: 0 } : { dx: 0, dy }
     }
-    const onTouchStart = (e) => {
+    // Dedo em qualquer tela; mouse só em janela estreita, para não atrapalhar a seleção de texto no computador
+    const onPointerDown = (e) => {
       const menuAberto = document.querySelector('.header-nav-links.is-aberto')
-      toque = e.touches.length === 1 && !menuAberto ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null
+      const mouseEmTelaGrande = e.pointerType === 'mouse' && window.innerWidth > 760
+      toque = e.isPrimary && !menuAberto && !mouseEmTelaGrande ? { x: e.clientX, y: e.clientY } : null
       if (!toque) soltarTexto()
     }
-    const onTouchMove = (e) => {
+    const onPointerMove = (e) => {
       if (!toque) return
-      const { dx, dy } = distancia(e.touches[0])
+      const { dx, dy } = distancia(e)
       const texto = document.getElementById('conteudo')
       texto.style.transition = 'none'
       texto.style.translate = `${-dx * FORCA_ARRASTE}px ${-dy * FORCA_ARRASTE}px`
     }
-    const onTouchEnd = (e) => {
+    const onPointerUp = (e) => {
       if (!toque) return
-      const { dx, dy } = distancia(e.changedTouches[0])
+      const { dx, dy } = distancia(e)
       const arraste = dx + dy
       if (Math.abs(arraste) > ARRASTE_MINIMO) go(arraste > 0 ? 1 : -1)
       toque = null
       soltarTexto()
     }
-    const onTouchCancel = () => {
+    const onPointerCancel = () => {
       toque = null
       soltarTexto()
     }
@@ -84,18 +86,18 @@ export default function Home({ current, setCurrent, abrir }) {
     }
 
     window.addEventListener('wheel', onWheel, { passive: true })
-    window.addEventListener('touchstart', onTouchStart, { passive: true })
-    window.addEventListener('touchmove', onTouchMove, { passive: true })
-    window.addEventListener('touchend', onTouchEnd, { passive: true })
-    window.addEventListener('touchcancel', onTouchCancel, { passive: true })
+    window.addEventListener('pointerdown', onPointerDown, { passive: true })
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
+    window.addEventListener('pointerup', onPointerUp, { passive: true })
+    window.addEventListener('pointercancel', onPointerCancel, { passive: true })
     window.addEventListener('keydown', onKey)
     document.body.classList.add('is-home')
     return () => {
       window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchmove', onTouchMove)
-      window.removeEventListener('touchend', onTouchEnd)
-      window.removeEventListener('touchcancel', onTouchCancel)
+      window.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('pointercancel', onPointerCancel)
       window.removeEventListener('keydown', onKey)
       document.body.classList.remove('is-home')
     }
