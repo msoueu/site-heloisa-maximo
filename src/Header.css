@@ -218,7 +218,7 @@ body.is-home .header-theme {
 
   :root[data-theme='escuro'] .header-nav-links,
   :root[data-theme='escuro'] body.is-home .header-nav-links {
-    background: #2b2323;
+    background: #000;
   }
 
   .header-nav-links.is-aberto,
