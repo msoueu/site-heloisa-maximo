@@ -1,7 +1,7 @@
 import { useState, useEffect, useLayoutEffect, useCallback, lazy, Suspense } from 'react'
 import Header from './Header'
 import Home, { ModelBoundary } from './Home'
-import { SobrePage, ConteudoPage, AtuacaoPage, ContatoPage } from './Pages'
+import { SobrePage, ConteudoPage, AtuacaoPage, ContatoPage, ParceriasPage } from './Pages'
 import { lerRota, navegar, migrarEnderecoAntigo, interceptarLink } from './rotas'
 import { aplicarMetadados } from './metadados'
 import useTheme from './useTheme'
@@ -89,6 +89,7 @@ export default function App() {
       {rota === 'conteudo' && <ConteudoPage abrir={abrir} />}
       {rota === 'atuacao' && <AtuacaoPage abrir={abrir} />}
       {rota === 'contato' && <ContatoPage abrir={abrir} />}
+      {rota === 'parcerias' && <ParceriasPage abrir={abrir} />}
       {rota === 'diagnostico' && <Suspense fallback={null}><DiagnosticoPage abrir={abrir} /></Suspense>}
       {rota === 'perguntas' && <Suspense fallback={null}><PerguntasPage abrir={abrir} /></Suspense>}
       {rota === 'privacidade' && <Suspense fallback={null}><PrivacidadePage abrir={abrir} /></Suspense>}

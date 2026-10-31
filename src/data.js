@@ -14,7 +14,9 @@ export const PERFIL = {
 
 export const DEV = {
   nome: 'Emy',
-  github: 'https://github.com/msoueu'
+  github: 'https://github.com/msoueu',
+  email: '',
+  foto: '/criador.jpg'
 }
 
 export const CONTATO = {
@@ -26,6 +28,13 @@ export const CONTATO = {
   telefone: '',
   email: ''
 }
+
+// shortcut: exemplos só no ambiente local para ver o protótipo, tirar quando houver parceiros reais
+export const PARCERIAS = process.env.NODE_ENV === 'development' ? [
+  { titulo: 'Parceiro de exemplo 1', texto: 'Texto de exemplo sobre esta parceria: quem é, como trabalha junto com a advogada e por que essa parceria existe.', foto: '/conteudo/advocacia-por-elas.jpg', link: 'https://example.com' },
+  { titulo: 'Parceiro de exemplo 2', texto: 'Outro texto de exemplo, um pouco mais curto, para ver como a página se comporta.', foto: '/conteudo/prefem-se.jpg', link: 'https://example.com' },
+  { titulo: 'Parceiro de exemplo 3', texto: 'Parceria sem foto e sem link: o espaço da imagem mostra o monograma.' }
+] : []
 
 export const DESTAQUES = [
   { titulo: 'Plantão 24h', texto: 'Atendimento imediato em urgências, como prisões em flagrante.' },

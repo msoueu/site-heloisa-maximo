@@ -8,7 +8,8 @@ const LINKS = [
   { label: 'Conteúdo', pagina: 'conteudo' },
   { label: 'Atuação', pagina: 'atuacao' },
   { label: 'Contato', pagina: 'contato' },
-  { label: 'Perguntas', sufixo: ' frequentes', pagina: 'perguntas' }
+  { label: 'Perguntas', sufixo: ' frequentes', pagina: 'perguntas' },
+  { label: 'Parcerias', pagina: 'parcerias' }
 ]
 
 export default function Header({ rota, endereco, irPara, abrir, tema, alternarTema }) {

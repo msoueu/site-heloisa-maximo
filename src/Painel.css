@@ -283,7 +283,28 @@
 
 .adm-nav {
   display: grid;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.adm-nav-grupo {
+  display: grid;
   gap: 2px;
+}
+
+.adm-nav-grupo p {
+  padding: 0 12px 2px;
+  color: var(--a-gold);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.adm-aba {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--a-gold);
+  font-size: 13px;
 }
 
 .adm-nav-curto {
@@ -294,8 +315,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 40px;
-  padding: 0 12px;
+  min-height: 36px;
+  padding: 4px 12px;
   border-radius: 10px;
   color: var(--a-muted);
   font-size: 14px;

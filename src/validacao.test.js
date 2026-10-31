@@ -18,6 +18,9 @@ test('recusa campos errados', () => {
   expect(validarConteudo(com({ contato: { ...base.contato, email: 'sem-arroba' } }))).toMatch(/e-mail/)
   expect(validarConteudo(com({ contato: { ...base.contato, instagram: 'javascript:alert(1)' } }))).toMatch(/Instagram/)
   expect(validarConteudo(com({ conteudos: [{ titulo: '' }] }))).toMatch(/título/)
+  expect(validarConteudo(com({ parcerias: [{ titulo: '' }] }))).toMatch(/nome/)
+  expect(validarConteudo(com({ parcerias: [{ titulo: 'Escritório', link: 'javascript:alert(1)' }] }))).toMatch(/https/)
+  expect(validarConteudo(com({ parcerias: [{ titulo: 'Escritório', link: '' }] }))).toBeNull()
 })
 
 test('valida o arquivo pelo tipo e pelo tamanho', () => {

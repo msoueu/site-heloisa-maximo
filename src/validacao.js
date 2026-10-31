@@ -27,7 +27,7 @@ export function validarArquivo(arquivo, video) {
   return null
 }
 
-export function validarConteudo({ perfil, contato, conteudos }) {
+export function validarConteudo({ perfil, contato, conteudos, parcerias = [] }) {
   if (!perfil.nome.trim()) return 'Preencha o seu nome em Sobre você.'
   if (!whatsappValido(contato.whatsapp)) return 'Confira o número do WhatsApp em Formas de contato.'
   if (contato.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contato.email)) {
@@ -37,5 +37,7 @@ export function validarConteudo({ perfil, contato, conteudos }) {
     return 'O link do Instagram precisa começar com https://.'
   }
   if (conteudos.some((c) => !c.titulo.trim())) return 'Há publicação sem título em Publicações.'
+  if (parcerias.some((p) => !p.titulo.trim())) return 'Há parceria sem nome em Parceiros.'
+  if (parcerias.some((p) => p.link && !enderecoSeguro(p.link))) return 'O link da parceria precisa começar com https://.'
   return null
 }

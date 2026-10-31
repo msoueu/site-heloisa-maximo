@@ -10,19 +10,15 @@ import {
 import { APARENCIA, CONTATO } from './data'
 import './Painel.css'
 
-// pagina: o que a prévia abre primeiro. adicionar e campos: os nomes usados na lista dessa seção
+// grupo: a aba do site onde o item aparece. pagina: o que a prévia abre primeiro.
+// adicionar e campos: os nomes usados na lista dessa seção
+const AJUSTES = 'Ajustes gerais'
+
 const SECOES = [
-  {
-    id: 'conteudos',
-    label: 'Publicações',
-    Icone: Documento,
-    pagina: 'conteudo',
-    descricao: 'Seus artigos, fotos e vídeos. A primeira publicação da lista também aparece na página inicial.'
-  },
-  { id: 'contato', label: 'Formas de contato', Icone: Telefone, pagina: 'contato', descricao: 'WhatsApp, telefone, e-mail e Instagram que aparecem no site.' },
-  { id: 'perfil', label: 'Sobre você', Icone: Pessoa, pagina: 'sobre', descricao: 'Seu nome, sua apresentação e sua foto.' },
+  { id: 'perfil', grupo: 'Sobre', label: 'Sobre você', Icone: Pessoa, pagina: 'sobre', descricao: 'Seu nome, sua apresentação e sua foto. O nome e a frase também aparecem na página inicial.' },
   {
     id: 'destaques',
+    grupo: 'Sobre',
     label: 'Pontos ao lado da foto',
     Icone: Estrela,
     pagina: 'sobre',
@@ -30,33 +26,58 @@ const SECOES = [
     descricao: 'As frases curtas que aparecem ao lado da sua foto.'
   },
   {
+    id: 'conteudos',
+    grupo: 'Conteúdo',
+    label: 'Publicações',
+    Icone: Documento,
+    pagina: 'conteudo',
+    descricao: 'Seus artigos, fotos e vídeos. A primeira publicação da lista também aparece na página inicial.'
+  },
+  {
     id: 'areas',
+    grupo: 'Atuação',
     label: 'Áreas de atuação',
     Icone: Balanca,
     pagina: 'atuacao',
     adicionar: 'Adicionar área',
-    descricao: 'As áreas em que você trabalha, mostradas na página Atuação.'
+    descricao: 'As áreas em que você trabalha.'
   },
   {
     id: 'etapas',
+    grupo: 'Atuação',
     label: 'Etapas do atendimento',
     Icone: Passos,
     pagina: 'atuacao',
     adicionar: 'Adicionar etapa',
-    descricao: 'O caminho do primeiro contato até o fim do caso, mostrado na página Atuação.'
+    descricao: 'O caminho do primeiro contato até o fim do caso.'
   },
+  { id: 'contato', grupo: 'Contato', label: 'Formas de contato', Icone: Telefone, pagina: 'contato', descricao: 'WhatsApp, telefone, e-mail e Instagram. O WhatsApp também é usado nos botões de todo o site.' },
   {
     id: 'perguntas',
-    label: 'Perguntas frequentes',
+    grupo: 'Perguntas frequentes',
+    label: 'Perguntas e respostas',
     Icone: Documento,
     pagina: 'perguntas',
     adicionar: 'Adicionar pergunta',
     campos: ['Pergunta', 'Resposta'],
-    descricao: 'As perguntas e respostas mostradas na página Perguntas frequentes.'
+    descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
-  { id: 'aparencia', label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' },
-  { id: 'conta', label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
+  {
+    id: 'parcerias',
+    grupo: 'Parcerias',
+    label: 'Parceiros',
+    Icone: Estrela,
+    pagina: 'parcerias',
+    adicionar: 'Adicionar parceria',
+    campos: ['Nome', 'Sobre a parceria'],
+    parceria: true,
+    descricao: 'Pessoas e instituições parceiras. Enquanto a lista estiver vazia, a página avisa que elas aparecerão em breve.'
+  },
+  { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' },
+  { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
 ]
+
+const GRUPOS = [...new Set(SECOES.map((s) => s.grupo))]
 
 const PAGINAS = [
   ['', 'Página inicial'],
@@ -64,7 +85,8 @@ const PAGINAS = [
   ['conteudo', 'Conteúdo'],
   ['atuacao', 'Atuação'],
   ['contato', 'Contato'],
-  ['perguntas', 'Perguntas frequentes']
+  ['perguntas', 'Perguntas frequentes'],
+  ['parcerias', 'Parcerias']
 ]
 
 const FONTES_TEXTO = [
@@ -249,15 +271,15 @@ function NovaSenha({ aoConcluir }) {
   )
 }
 
-function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }) {
-  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }))
+function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, parcerias }) {
+  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, parcerias }))
 }
 
 function Editor({ usuario }) {
   const site = useSite()
   const { email } = usuario
   const [rascunho, setRascunho] = useState(() => copiar(site))
-  const [secao, setSecao] = useState('conteudos')
+  const [secao, setSecao] = useState(SECOES[0].id)
   const [pendente, setPendente] = useState(false)
   const [salvando, setSalvando] = useState(false)
   const [aviso, setAviso] = useState(null)
@@ -325,16 +347,25 @@ function Editor({ usuario }) {
         <label className="adm-campo adm-nav-curto">
           <span className="adm-rotulo">O que você quer mudar?</span>
           <select value={secao} onChange={(e) => setSecao(e.target.value)}>
-            {SECOES.map(({ id, label }) => <option key={id} value={id}>{label}</option>)}
+            {GRUPOS.map((grupo) => (
+              <optgroup key={grupo} label={grupo}>
+                {SECOES.filter((s) => s.grupo === grupo).map(({ id, label }) => <option key={id} value={id}>{label}</option>)}
+              </optgroup>
+            ))}
           </select>
         </label>
         <nav className="adm-nav">
-          {SECOES.map(({ id, label, Icone }) => (
-            <button key={id} className={secao === id ? 'is-active' : ''} onClick={() => setSecao(id)}>
-              <Icone />
-              <span>{label}</span>
-              {contagem(id) !== null && <em>{contagem(id)}</em>}
-            </button>
+          {GRUPOS.map((grupo) => (
+            <div key={grupo} className="adm-nav-grupo">
+              <p>{grupo}</p>
+              {SECOES.filter((s) => s.grupo === grupo).map(({ id, label, Icone }) => (
+                <button key={id} className={secao === id ? 'is-active' : ''} onClick={() => setSecao(id)}>
+                  <Icone />
+                  <span>{label}</span>
+                  {contagem(id) !== null && <em>{contagem(id)}</em>}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="adm-side-rodape">
@@ -354,6 +385,7 @@ function Editor({ usuario }) {
       <main className="adm-main">
         <header className="adm-head">
           <div>
+            <small className="adm-aba">{atual.grupo === AJUSTES ? AJUSTES : `Aba ${atual.grupo} do site`}</small>
             <h1>{atual.label}</h1>
             <p>{atual.descricao}</p>
           </div>
@@ -383,7 +415,7 @@ function Editor({ usuario }) {
           {secao === 'contato' && <Contato contato={rascunho.contato} mudar={(v) => alterar('contato', v)} />}
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
           {secao === 'aparencia' && <Aparencia aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />}
-          {['destaques', 'areas', 'etapas', 'perguntas'].includes(secao) && (
+          {['destaques', 'areas', 'etapas', 'perguntas', 'parcerias'].includes(secao) && (
             <ListaSimples key={secao} secao={atual} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
           )}
         </div>
@@ -792,6 +824,12 @@ function ListaSimples({ secao, lista, mudar }) {
           <div className="adm-item-campos">
             <Campo label={rotuloTitulo} valor={item.titulo} mudar={(v) => editar(i, 'titulo', v)} />
             <Campo label={rotuloTexto} valor={item.texto} mudar={(v) => editar(i, 'texto', v)} longo={2} />
+            {secao.parceria && (
+              <>
+                <Campo label="Link do site (se tiver)" type="url" placeholder="https://" valor={item.link || ''} mudar={(v) => editar(i, 'link', v)} />
+                <Arquivo label="Foto (se tiver)" valor={item.foto} mudar={(v) => editar(i, 'foto', v)} aceita={TIPOS_IMAGEM} />
+              </>
+            )}
           </div>
           <div className="adm-item-acoes">
             <Ordenar i={i} total={lista.length} aoMover={(para) => mudar(mover(lista, i, para))} />

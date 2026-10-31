@@ -11,6 +11,7 @@ O conteúdo é informativo e não substitui a análise individual de um caso. Na
 - [Áreas de atuação](https://site-heloisa-maximo.vercel.app/atuacao): áreas e etapas do atendimento
 - [Conteúdo jurídico](https://site-heloisa-maximo.vercel.app/conteudo): casos, palestras e explicações sobre Direito Penal
 - [Perguntas frequentes](https://site-heloisa-maximo.vercel.app/perguntas): respostas gerais sobre prisão, intimação, habeas corpus e sigilo
+- [Parcerias](https://site-heloisa-maximo.vercel.app/parcerias): pessoas e instituições parceiras
 - [Contato](https://site-heloisa-maximo.vercel.app/contato): canais de atendimento
 - [Analisar meu caso](https://site-heloisa-maximo.vercel.app/diagnostico): quatro perguntas para organizar as informações antes de falar com a advogada
 

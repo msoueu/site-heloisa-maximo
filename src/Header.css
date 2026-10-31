@@ -193,7 +193,7 @@ body.is-home .header-theme {
 }
 
 
-@media (max-width: 1180px) {
+@media (max-width: 1240px) {
   .header-nav {
     padding: 16px 24px;
   }

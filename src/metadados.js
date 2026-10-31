@@ -29,6 +29,10 @@ const PAGINAS = {
     titulo: `Perguntas frequentes · ${NOME}`,
     descricao: 'Respostas gerais sobre prisão, audiência de custódia, intimação, habeas corpus e sigilo na advocacia criminal.'
   },
+  parcerias: {
+    titulo: `Parcerias · ${NOME}`,
+    descricao: 'Pessoas e instituições parceiras de Heloisa Máximo, advogada criminalista.'
+  },
   privacidade: {
     titulo: `Política de Privacidade · ${NOME}`,
     descricao: 'Como os dados pessoais são tratados no site de Heloisa Máximo, conforme a LGPD.'

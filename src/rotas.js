@@ -1,4 +1,4 @@
-const ROTAS = ['sobre', 'conteudo', 'atuacao', 'contato', 'diagnostico', 'perguntas', 'privacidade', 'termos', 'painel']
+const ROTAS = ['sobre', 'conteudo', 'atuacao', 'contato', 'diagnostico', 'perguntas', 'parcerias', 'privacidade', 'termos', 'painel']
 
 // O link de nova senha chega como #access_token=...&type=recovery; o cliente do Supabase limpa
 // esse trecho da URL ao iniciar, então a origem é lida antes de o painel carregar

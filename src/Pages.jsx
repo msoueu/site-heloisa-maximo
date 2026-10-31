@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEV } from './data'
 import { useSite as useSiteReal, linkWhatsApp } from './SiteData'
-import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
+import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino, GitHub, Pausa, Tocar } from './Icons'
 import './Pages.css'
 
 // Enquanto o campo OAB do painel estiver vazio, o número aparece como xxxx
@@ -91,6 +91,7 @@ function Rodape({ abrir }) {
           <button onClick={() => abrir('atuacao')}>Áreas de atuação</button>
           <button onClick={() => abrir('contato')}>Contato</button>
           <button onClick={() => abrir('perguntas')}>Perguntas frequentes</button>
+          <button onClick={() => abrir('parcerias')}>Parcerias</button>
         </nav>
       </div>
       <div className="page-footer-base">
@@ -349,6 +350,122 @@ export function ContatoPage({ abrir }) {
           <div><strong>Onde atua</strong>{perfil.local}</div>
         </li>
       </ul>
+    </Pagina>
+  )
+}
+
+const TEMPO_VITRINE = 6000
+const ARRASTE_VITRINE = 50
+
+// Passa sozinha e espera enquanto a pessoa lê o texto ou navega pelo teclado; o botão pausa de vez
+function Vitrine({ lista }) {
+  const [indice, setIndice] = useState(0)
+  const [pausada, setPausada] = useState(false)
+  const [parada, setParada] = useState(false)
+  const inicio = useRef(0)
+  const total = lista.length
+  const atual = indice % total
+  const parceria = lista[atual]
+  const passar = (n) => setIndice((atual + n + total) % total)
+
+  useEffect(() => {
+    if (pausada || parada || total < 2) return
+    const id = setTimeout(() => setIndice((i) => (i + 1) % total), TEMPO_VITRINE)
+    return () => clearTimeout(id)
+  }, [indice, pausada, parada, total])
+
+  const soltar = (e) => {
+    const distancia = e.clientX - inicio.current
+    if (Math.abs(distancia) >= ARRASTE_VITRINE) passar(distancia < 0 ? 1 : -1)
+  }
+
+  return (
+    <section
+      className="vitrine"
+      aria-roledescription="carrossel"
+      aria-label="Parcerias"
+      onFocus={(e) => setParada(e.target.matches(':focus-visible'))}
+      onBlur={() => setParada(false)}
+    >
+      <div className="vitrine-palco">
+        <div
+          className="vitrine-foto"
+          key={atual}
+          onPointerDown={(e) => { inicio.current = e.clientX }}
+          onPointerUp={soltar}
+        >
+          {parceria.foto ? <img src={parceria.foto} alt="" draggable={false} /> : <span />}
+        </div>
+        {total > 1 && (
+          <>
+            <button className="vitrine-seta vitrine-anterior" onClick={() => passar(-1)} aria-label="Parceria anterior"><Voltar width={20} height={20} /></button>
+            <button className="vitrine-seta vitrine-proxima" onClick={() => passar(1)} aria-label="Próxima parceria"><Seta width={20} height={20} /></button>
+            <div className="vitrine-pontos">
+              {lista.map((p, i) => (
+                <button
+                  key={p.titulo}
+                  className={i === atual ? 'is-active' : ''}
+                  aria-label={`Ver parceria ${i + 1} de ${total}`}
+                  aria-current={i === atual}
+                  onClick={() => setIndice(i)}
+                />
+              ))}
+            </div>
+            <button className="vitrine-seta vitrine-pausa" onClick={() => setPausada(!pausada)} aria-label={pausada ? 'Continuar passando' : 'Pausar'}>
+              {pausada ? <Tocar width={16} height={16} /> : <Pausa width={16} height={16} />}
+            </button>
+          </>
+        )}
+      </div>
+      <div className="vitrine-lado" onMouseEnter={() => setParada(true)} onMouseLeave={() => setParada(false)}>
+        <div aria-live={pausada || parada ? 'polite' : 'off'}>
+          <div className="vitrine-texto" key={atual}>
+            <h2>{parceria.titulo}</h2>
+            <p>{parceria.texto}</p>
+            {parceria.link && <a href={parceria.link} target="_blank" rel="noreferrer"><i /> Conhecer</a>}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export function ParceriasPage({ abrir }) {
+  const { parcerias } = useSite()
+
+  return (
+    <Pagina abrir={abrir} chamada={false}>
+      <header className="page-header">
+        <h1>Parcerias</h1>
+        <p className="page-lead">
+          {parcerias.length ? 'Pessoas e instituições que caminham ao lado deste trabalho.' : 'As parcerias serão apresentadas aqui em breve.'}
+        </p>
+      </header>
+
+      <div>
+        {parcerias.length > 0 && <Vitrine lista={parcerias} />}
+
+        <h2 className="feixe-titulo">Desenvolvedora do site</h2>
+        <div className="parceria-criador">
+          <img src={DEV.foto} alt={`Foto de ${DEV.nome}`} onError={(e) => { e.target.hidden = true }} />
+          <p>
+            <strong>{DEV.nome}</strong>, desenvolvedora web. Criei este site do início ao fim: design, código e painel de edição.
+            Se você também precisa de um site, vamos conversar.
+          </p>
+        </div>
+        <ul className="canais">
+          {DEV.email && (
+            <li>
+              <span className="canal-icone"><Email /></span>
+              <div><strong>E-mail</strong><a href={`mailto:${DEV.email}`}>{DEV.email}</a></div>
+            </li>
+          )}
+          <li>
+            <span className="canal-icone"><GitHub /></span>
+            <div><strong>GitHub</strong><a href={DEV.github} target="_blank" rel="noreferrer">{DEV.github.replace('https://', '')}</a></div>
+          </li>
+        </ul>
+      </div>
     </Pagina>
   )
 }

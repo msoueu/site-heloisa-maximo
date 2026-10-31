@@ -60,6 +60,14 @@ export const Cadeado = (p) => (
   <svg {...base} {...p}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
 )
 
+export const Pausa = (p) => (
+  <svg {...base} {...p}><path d="M9 5v14M15 5v14" /></svg>
+)
+
+export const Tocar = (p) => (
+  <svg {...base} {...p}><path d="M7 5l12 7-12 7z" /></svg>
+)
+
 export const Estrela = (p) => (
   <svg {...base} {...p}><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
 )
