@@ -43,17 +43,14 @@
   gap: 12px;
 }
 
+/* O mesmo monograma do cabeçalho do site */
 .adm-mark {
-  display: grid;
   flex: none;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid var(--a-line-forte);
-  border-radius: 50%;
-  color: var(--a-gold);
-  font-family: var(--serif);
-  font-size: 15px;
+  width: 34px;
+  height: 40px;
+  background: var(--a-gold);
+  -webkit-mask: url('./monograma.png') center / contain no-repeat;
+  mask: url('./monograma.png') center / contain no-repeat;
 }
 
 .adm-marca strong {
@@ -363,18 +360,6 @@
   min-width: 0;
   padding: 12px 8px 4px;
   border-top: 1px solid var(--a-line);
-}
-
-.adm-avatar {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--a-hover);
-  color: var(--a-gold);
-  font-weight: 600;
 }
 
 .adm-usuario-email {

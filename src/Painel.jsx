@@ -114,7 +114,7 @@ function TelaCentral({ children }) {
 function Marca() {
   return (
     <div className="adm-marca">
-      <span className="adm-mark">HM</span>
+      <span className="adm-mark" />
       <div>
         <strong>Heloisa Máximo</strong>
         <small>Painel do site</small>
@@ -342,7 +342,7 @@ function Editor({ usuario }) {
             <Externo /> Ver site
           </a>
           <div className="adm-usuario">
-            <span className="adm-avatar">{email.slice(0, 1).toUpperCase()}</span>
+            <span className="adm-mark" />
             <span className="adm-usuario-email" title={email}>{email}</span>
           </div>
           <button className="adm-side-link" onClick={() => supabase.auth.signOut()}>
@@ -750,9 +750,14 @@ function Perfil({ perfil, mudar }) {
           </div>
         </Bloco>
       </div>
-      <Bloco titulo="Sua foto">
-        <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita={TIPOS_IMAGEM} redondo />
-      </Bloco>
+      <div className="adm-pilha">
+        <Bloco titulo="Sua foto">
+          <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita={TIPOS_IMAGEM} redondo />
+        </Bloco>
+        <Bloco titulo="Foto do WhatsApp" descricao="Aparece na conversa da análise do caso. Sem ela, entra a sua foto principal.">
+          <Arquivo valor={perfil.fotoWhatsapp} mudar={campo('fotoWhatsapp')} aceita={TIPOS_IMAGEM} redondo />
+        </Bloco>
+      </div>
     </div>
   )
 }

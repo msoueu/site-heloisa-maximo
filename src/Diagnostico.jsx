@@ -54,6 +54,7 @@ function Balao({ minha, children }) {
 
 // Celular com a conversa: as mensagens são automáticas e isso fica dito na tela
 function Celular({ analise }) {
+  const { perfil } = useSite()
   const pergunta = PERGUNTAS[analise.atual]
   const href = useLinkResumo(analise.respostas)
   const [digitando, setDigitando] = useState(true)
@@ -73,7 +74,7 @@ function Celular({ analise }) {
   return (
     <div className="tel">
       <div className="tel-topo">
-        <span className="tel-avatar">HM</span>
+        <img className="tel-avatar" src={perfil.fotoWhatsapp || perfil.foto} alt="" />
         <div><strong>Heloisa Máximo</strong><small>Advocacia Criminal</small></div>
       </div>
       <div className="tel-conversa" ref={conversa} aria-live="polite">

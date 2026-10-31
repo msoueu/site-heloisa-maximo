@@ -19,7 +19,7 @@ export function Realce({ children }) {
   ))
 }
 
-const FORMATO_HORA = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Maceio', timeStyle: 'medium' })
+const FORMATO_HORA = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', timeStyle: 'medium' })
 
 export function Horario() {
   const [agora, setAgora] = useState(() => FORMATO_HORA.format(new Date()))
@@ -27,7 +27,7 @@ export function Horario() {
     const id = setInterval(() => setAgora(FORMATO_HORA.format(new Date())), 1000)
     return () => clearInterval(id)
   }, [])
-  return <p className="sinal-relogio"><span /> Plantão 24h · Sergipe {agora}</p>
+  return <p className="sinal-relogio"><span /> Plantão 24h · Horário de Brasília {agora}</p>
 }
 
 // Cada .sinal aparece e desenha sua linha ao entrar na tela
@@ -91,7 +91,6 @@ function Rodape({ abrir }) {
           <button onClick={() => abrir('atuacao')}>Áreas de atuação</button>
           <button onClick={() => abrir('contato')}>Contato</button>
           <button onClick={() => abrir('perguntas')}>Perguntas frequentes</button>
-          <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer">WhatsApp</a>
         </nav>
       </div>
       <div className="page-footer-base">
