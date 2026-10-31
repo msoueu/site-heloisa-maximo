@@ -43,7 +43,7 @@ Sem essas variáveis o site funciona normalmente com os textos de `src/data.js`;
 
 ## Painel de edição
 
-O painel fica em `/#/painel`. A configuração do Supabase está em [supabase/LEIA-ME.md](supabase/LEIA-ME.md).
+O painel fica em `/painel`. A configuração do Supabase está em [supabase/LEIA-ME.md](supabase/LEIA-ME.md).
 
 ## Estrutura
 

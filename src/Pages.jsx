@@ -96,8 +96,8 @@ function Rodape({ abrir }) {
       </div>
       <div className="page-footer-base">
         <nav aria-label="Informações legais">
-          <a href="#/privacidade" onClick={(e) => { e.preventDefault(); abrir('privacidade') }}>Política de Privacidade</a>
-          <a href="#/termos" onClick={(e) => { e.preventDefault(); abrir('termos') }}>Termos de Uso</a>
+          <a href="/privacidade" onClick={(e) => { e.preventDefault(); abrir('privacidade') }}>Política de Privacidade</a>
+          <a href="/termos" onClick={(e) => { e.preventDefault(); abrir('termos') }}>Termos de Uso</a>
         </nav>
         <p>© {new Date().getFullYear()} {perfil.nome}. Todos os direitos reservados.{perfil.oab && ` ${perfil.oab}.`}</p>
         <p>
@@ -124,7 +124,7 @@ export function Pagina({ abrir, chamada = true, plantao = true, children }) {
   return (
     <main className="page" id="conteudo" tabIndex={-1}>
       <div className="page-inner">
-        <a className="page-back" href="#/">
+        <a className="page-back" href="/">
           <Voltar width={18} height={18} /> Voltar ao início
         </a>
         {plantao && <Horario />}
@@ -179,7 +179,7 @@ export function SobrePage({ abrir }) {
             <p>A dignidade humana não aceita meios-termos: ela é, por definição, inegociável.</p>
             <cite>
               {perfil.nome}, em{' '}
-              <a href="#/conteudo/carcere-de-frente">“O cárcere visto de frente: a dignidade humana é inegociável”</a>
+              <a href="/conteudo/carcere-de-frente">“O cárcere visto de frente: a dignidade humana é inegociável”</a>
             </cite>
           </blockquote>
         </section>
@@ -208,8 +208,8 @@ function Midia({ c }) {
 
 export function ConteudoPage({ abrir }) {
   const { conteudos } = useSite()
-  // #/conteudo/carcere-de-frente abre direto nessa publicação
-  const [ativo, setAtivo] = useState(() => Math.max(0, conteudos.findIndex((p) => p.id === window.location.hash.split('/')[2])))
+  // /conteudo/carcere-de-frente abre direto nessa publicação
+  const [ativo, setAtivo] = useState(() => Math.max(0, conteudos.findIndex((p) => p.id === window.location.pathname.split('/')[2])))
   const leitor = useRef()
   const c = conteudos[ativo] || conteudos[0]
 
@@ -316,7 +316,7 @@ export function ContatoPage({ abrir }) {
           <p>Plantão 24h, para casos como prisões em flagrante.</p>
           <span>Falar agora <Seta width={22} height={22} /></span>
         </a>
-        <a className="porta" href="#/diagnostico">
+        <a className="porta" href="/diagnostico">
           <Papeis width={28} height={28} />
           <h2>Analisar meu caso</h2>
           <p>Responda quatro perguntas rápidas para a advogada entender a sua situação.</p>

@@ -1,6 +1,6 @@
 # Painel de edição do site
 
-O painel fica em **`/#/painel`** (ex.: `https://seusite.com.br/#/painel`). Nenhum link do site
+O painel fica em **`/painel`** (ex.: `https://seusite.com.br/painel`). Nenhum link do site
 leva até ele, mas quem protege o conteúdo é o login: sem a conta da advogada, ninguém consegue
 salvar nada, mesmo que descubra o endereço.
 
@@ -25,9 +25,27 @@ salvar nada, mesmo que descubra o endereço.
    `.env` na pasta `siteheloa` (use `.env.example` como modelo). Na hospedagem (Vercel, Netlify
    etc.), cadastre as mesmas duas variáveis.
 8. Reinicie o `npm start` (ou publique de novo) para o site ler o `.env`.
+9. **SQL Editor** > New query > cole o conteúdo de `seguranca.sql` > Run. Ele libera a gravação para a
+   conta autorizada e limita tamanho e formato dos arquivos. Sem esse passo, publicar pelo painel falha.
 
 No primeiro **Salvar alterações** do painel, o conteúdo atual do site é gravado no banco. A partir
 daí, tudo que ela editar aparece no site na hora, sem precisar publicar de novo.
+
+## E-mail de recuperação de senha
+
+O envio gratuito do Supabase só entrega para a equipe do projeto. Para o "Esqueci minha senha" chegar
+à advogada, o Supabase envia pelo próprio Gmail dela, sem custo:
+
+1. Na conta Google dela, ative a **Verificação em duas etapas** e crie uma **senha de app** em
+   https://myaccount.google.com/apppasswords.
+2. No Supabase, abra **Authentication > Emails > SMTP Settings**, ative **Enable custom SMTP** e preencha:
+   - **Sender email** e **Username**: o Gmail dela
+   - **Sender name**: Painel do site
+   - **Host**: `smtp.gmail.com`
+   - **Port**: `465`
+   - **Password**: a senha de app (não é a senha do Gmail)
+
+A senha de app é secreta: fica só no Supabase, nunca no código.
 
 ## Limites do plano gratuito
 

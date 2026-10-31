@@ -2,7 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { Environment, Lightformer } from '@react-three/drei'
 import { Suspense, memo } from 'react'
 import Justica from './Justica'
-import { LEVE } from './Poeira'
+import { LEVE } from './ambiente'
 
 // memo: o Environment refaz o cubemap a cada render
 const Estudio = memo(function Estudio() {

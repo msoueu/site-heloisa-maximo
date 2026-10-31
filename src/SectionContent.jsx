@@ -34,7 +34,7 @@ export default function SectionContent({ current, abrir }) {
         <Tag onClick={() => abrir('sobre')}>SOBRE</Tag>
         <h2 className="panel-titulo">{perfil.titulo}</h2>
         <div className="panel-sobre">
-          <img src={perfil.foto} alt={perfil.nome} className="panel-foto" />
+          <img src={perfil.foto} alt={perfil.nome} className="panel-foto" loading="lazy" decoding="async" />
           <ul className="panel-facts">
             {destaques.map((d) => (
               <li key={d.titulo}>
@@ -94,7 +94,7 @@ export default function SectionContent({ current, abrir }) {
             <a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a>
           </li>
         </ul>
-        <a href="#/diagnostico" className="panel-btn panel-btn-solid">
+        <a href="/diagnostico" className="panel-btn panel-btn-solid">
           Analisar meu caso <Seta />
         </a>
         <button className="panel-link panel-link-contato" onClick={() => abrir('contato')}>

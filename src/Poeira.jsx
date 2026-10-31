@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-
-// Celular e tablet: menos pixels, menos partículas e 30 quadros por segundo
-export const LEVE = window.matchMedia('(pointer: coarse)').matches
+import { LEVE } from './ambiente'
 
 // O movimento é todo calculado no shader a partir de uTempo
 const QUANTIDADE = LEVE ? 110 : 260

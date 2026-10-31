@@ -57,6 +57,8 @@ Recomenda-se que informações sigilosas ou documentos relacionados a casos conc
 
 As respostas informadas na página de análise do caso permanecem no navegador do visitante e não são armazenadas pelo website. Elas somente são encaminhadas se o visitante optar por enviá-las pelo WhatsApp, hipótese em que se aplica o item 3.2.
 
+Ao escolher essa opção, o texto com as respostas é repassado ao WhatsApp no endereço do link aberto pelo navegador e aparece pronto na conversa, podendo ser alterado. A mensagem só é enviada à advogada quando o próprio visitante a confirma.
+
 ## 4. Finalidades e fundamentos legais
 
 O tratamento de dados pessoais deverá observar os princípios estabelecidos no art. 6º da LGPD, especialmente finalidade, adequação, necessidade, transparência, segurança e prevenção.
@@ -99,7 +101,11 @@ Essa informação tem como finalidade preservar a preferência visual selecionad
 
 O armazenamento local da preferência não exige, por si só, o fornecimento de informações cadastrais ou a identificação pessoal do visitante.
 
-### 5.2. Tecnologias utilizadas por terceiros
+### 5.2. Área restrita de administração
+
+A área de administração é utilizada exclusivamente para a gestão do conteúdo do website. Os dados de sessão dessa área ficam armazenados no navegador de quem realiza o acesso autorizado, não se aplicando aos demais visitantes.
+
+### 5.3. Tecnologias utilizadas por terceiros
 
 Os fornecedores de infraestrutura tecnológica poderão empregar recursos técnicos próprios necessários à disponibilização, à segurança e à operação de seus serviços.
 

@@ -1,3 +1,5 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /painel
+
+Sitemap: https://site-heloisa-maximo.vercel.app/sitemap.xml

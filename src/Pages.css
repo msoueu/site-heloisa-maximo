@@ -221,7 +221,7 @@
   border: 1px solid transparent;
   border-radius: 6px;
   background:
-    linear-gradient(rgba(26, 13, 15, 0.9), rgba(26, 13, 15, 0.9)) padding-box,
+    linear-gradient(var(--cartao), var(--cartao)) padding-box,
     radial-gradient(300px circle at var(--x) var(--y), var(--gold-bright), rgba(201, 185, 154, 0.2) 100%) border-box;
   background-attachment: fixed;
 }

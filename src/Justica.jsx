@@ -1,7 +1,8 @@
 import { useRef, useMemo, useEffect } from 'react'
 import { useFrame, useThree, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
-import Poeira, { LEVE } from './Poeira'
+import Poeira from './Poeira'
+import { LEVE } from './ambiente'
 
 // Modelo de RaresXS (CC BY 4.0). Os .bin são gerados por scripts/preparar-estatua.mjs
 

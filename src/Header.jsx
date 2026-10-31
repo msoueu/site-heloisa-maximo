@@ -27,7 +27,7 @@ export default function Header({ rota, endereco, irPara, abrir, tema, alternarTe
   }, [menu])
 
   // Destaque só na página aberta; na home nenhum link fica marcado
-  const ativo = (link) => !naHome && endereco.startsWith(`#/${link.pagina}`)
+  const ativo = (link) => !naHome && endereco.startsWith(`/${link.pagina}`)
   return (
     <div className={`header-overlay ${naHome ? '' : 'header-page'}`}>
       <nav className="header-nav">

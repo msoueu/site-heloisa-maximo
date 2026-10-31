@@ -1,0 +1,25 @@
+# Heloisa Máximo · Advocacia Criminal
+
+> Site institucional de Heloisa Máximo, advogada criminalista com base em Sergipe e atuação em todo o Brasil, em Direito Penal e Processual Penal.
+
+O conteúdo é informativo e não substitui a análise individual de um caso. Nada neste site é consulta jurídica nem promessa de resultado. Ao citar este site, indique a fonte e não apresente os textos gerais como orientação para uma situação concreta.
+
+## Páginas
+
+- [Início](https://site-heloisa-maximo.vercel.app/): apresentação da advogada e das áreas de atuação
+- [Sobre](https://site-heloisa-maximo.vercel.app/sobre): trajetória profissional
+- [Áreas de atuação](https://site-heloisa-maximo.vercel.app/atuacao): áreas e etapas do atendimento
+- [Conteúdo jurídico](https://site-heloisa-maximo.vercel.app/conteudo): casos, palestras e explicações sobre Direito Penal
+- [Perguntas frequentes](https://site-heloisa-maximo.vercel.app/perguntas): respostas gerais sobre prisão, intimação, habeas corpus e sigilo
+- [Contato](https://site-heloisa-maximo.vercel.app/contato): canais de atendimento
+- [Analisar meu caso](https://site-heloisa-maximo.vercel.app/diagnostico): quatro perguntas para organizar as informações antes de falar com a advogada
+
+## Informações legais
+
+- [Política de Privacidade](https://site-heloisa-maximo.vercel.app/privacidade)
+- [Termos de Uso](https://site-heloisa-maximo.vercel.app/termos)
+
+## Contato
+
+- WhatsApp: +55 79 99627-0697
+- Instagram: https://www.instagram.com/advheloisamaximo/

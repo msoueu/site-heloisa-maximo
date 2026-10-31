@@ -31,11 +31,11 @@ export default function PerguntasPage({ abrir }) {
       </div>
 
       <section className="fq-pessoa">
-        <img src={perfil.foto} alt={`Retrato de ${perfil.nome}`} />
+        <img src={perfil.foto} alt={`Retrato de ${perfil.nome}`} loading="lazy" decoding="async" />
         <div>
           <h2>Não encontrou a sua dúvida?</h2>
           <p>
-            <a href="#/diagnostico">Analisar meu caso</a>
+            <a href="/diagnostico">Analisar meu caso</a>
             <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer">Falar com a advogada</a>
           </p>
         </div>

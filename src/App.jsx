@@ -2,7 +2,8 @@ import { useState, useEffect, useLayoutEffect, useCallback, lazy, Suspense } fro
 import Header from './Header'
 import Home, { ModelBoundary } from './Home'
 import { SobrePage, ConteudoPage, AtuacaoPage, ContatoPage } from './Pages'
-import { veioDeRecuperacao } from './SiteData'
+import { lerRota, navegar, migrarEnderecoAntigo, interceptarLink } from './rotas'
+import { aplicarMetadados } from './metadados'
 import useTheme from './useTheme'
 import './App.css'
 
@@ -13,24 +14,11 @@ const PrivacidadePage = lazy(() => import('./Legal').then((m) => ({ default: m.P
 const TermosPage = lazy(() => import('./Legal').then((m) => ({ default: m.TermosPage })))
 const Particulas = lazy(() => import('./Particulas'))
 
-// Rotas por hash (#/sobre, #/conteudo) funcionam em hospedagem estática sem configuração
-function lerRota() {
-  const h = window.location.hash
-  if (h.startsWith('#/sobre')) return 'sobre'
-  if (h.startsWith('#/conteudo')) return 'conteudo'
-  if (h.startsWith('#/atuacao')) return 'atuacao'
-  if (h.startsWith('#/contato')) return 'contato'
-  if (h.startsWith('#/diagnostico')) return 'diagnostico'
-  if (h.startsWith('#/perguntas')) return 'perguntas'
-  if (h.startsWith('#/privacidade')) return 'privacidade'
-  if (h.startsWith('#/termos')) return 'termos'
-  if (h.startsWith('#/painel') || veioDeRecuperacao) return 'painel'
-  return 'home'
-}
+migrarEnderecoAntigo()
 
-// #/sobre/atuacao desce até o id "atuacao" depois que a página renderiza
+// /sobre/atuacao desce até o id "atuacao" depois que a página renderiza
 function rolarParaAncora() {
-  const ancora = window.location.hash.split('/')[2]
+  const ancora = window.location.pathname.split('/')[2]
   if (!ancora) {
     window.scrollTo(0, 0)
     return
@@ -42,33 +30,36 @@ function rolarParaAncora() {
 
 export default function App() {
   const [rota, setRota] = useState(lerRota)
-  const [endereco, setEndereco] = useState(window.location.hash)
+  const [endereco, setEndereco] = useState(window.location.pathname)
   const [current, setCurrent] = useState(0)
   const [tema, alternarTema] = useTheme()
 
   useEffect(() => {
-    const onHash = () => {
+    const onEndereco = () => {
       setRota(lerRota())
-      setEndereco(window.location.hash)
+      setEndereco(window.location.pathname)
     }
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
+    window.addEventListener('popstate', onEndereco)
+    document.addEventListener('click', interceptarLink)
+    return () => {
+      window.removeEventListener('popstate', onEndereco)
+      document.removeEventListener('click', interceptarLink)
+    }
   }, [])
+
+  useEffect(() => aplicarMetadados(rota), [rota, endereco])
 
   // Depois de a página nova entrar: antes disso, a rolagem ainda é medida na página que está saindo
   useLayoutEffect(rolarParaAncora, [endereco])
 
   const abrir = useCallback((pagina) => {
-    if (window.location.hash === `#/${pagina}`) window.scrollTo({ top: 0, behavior: 'smooth' })
-    else window.location.hash = `/${pagina}`
+    if (window.location.pathname === `/${pagina}`) window.scrollTo({ top: 0, behavior: 'smooth' })
+    else navegar(`/${pagina}`)
   }, [])
 
   const irPara = useCallback((secao) => {
     setCurrent(secao)
-    if (lerRota() !== 'home') {
-      window.history.pushState(null, '', window.location.pathname)
-      setRota('home')
-    }
+    if (lerRota() !== 'home') navegar('/')
   }, [])
 
   return (

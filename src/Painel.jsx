@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
-import { supabase, useSite, BUCKET, veioDeRecuperacao, linkWhatsApp, aceitaMensagem } from './SiteData'
+import { useEffect, useRef, useState } from 'react'
+import { useSite, linkWhatsApp, aceitaMensagem } from './SiteData'
+import { supabase, BUCKET } from './supabase'
+import { veioDeRecuperacao } from './rotas'
+import { validarArquivo, validarConteudo, TIPOS_IMAGEM, TIPOS_VIDEO } from './validacao'
 import {
   Documento, Telefone, Pessoa, Estrela, Balanca, Passos, Sair, Externo, Mais, Lixeira,
-  Cima, Baixo, Imagem, Video, Check, Voltar, Letra
+  Cima, Baixo, Imagem, Video, Check, Voltar, Letra, Cadeado
 } from './Icons'
 import { APARENCIA, CONTATO } from './data'
 import './Painel.css'
@@ -51,7 +54,8 @@ const SECOES = [
     campos: ['Pergunta', 'Resposta'],
     descricao: 'As perguntas e respostas mostradas na página Perguntas frequentes.'
   },
-  { id: 'aparencia', label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' }
+  { id: 'aparencia', label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' },
+  { id: 'conta', label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
 ]
 
 const PAGINAS = [
@@ -100,7 +104,7 @@ export default function Painel() {
   if (sessao === undefined) return <TelaCentral><p className="adm-muted">Carregando…</p></TelaCentral>
   if (recuperando) return <NovaSenha aoConcluir={() => setRecuperando(false)} />
   if (!sessao) return <Login />
-  return <Editor email={sessao.user.email} />
+  return <Editor usuario={sessao.user} />
 }
 
 function TelaCentral({ children }) {
@@ -124,25 +128,24 @@ function NaoConfigurado() {
     <TelaCentral>
       <div className="adm-auth-card">
         <Marca />
-        <h1>Painel não configurado</h1>
-        <p className="adm-muted">
-          Cadastre <code>REACT_APP_SUPABASE_URL</code> e <code>REACT_APP_SUPABASE_ANON_KEY</code> e
-          publique de novo. O passo a passo está em <code>supabase/LEIA-ME.md</code>.
-        </p>
+        <h1>Painel indisponível</h1>
+        <p className="adm-muted">Fale com quem cuida do site.</p>
       </div>
     </TelaCentral>
   )
 }
 
 function mensagemDeErro(error) {
-  if (error.code === 'invalid_credentials') return 'E-mail ou senha incorretos.'
-  if (error.code === 'email_not_confirmed') {
-    return 'Este e-mail ainda não foi confirmado. Fale com quem cuida do site.'
-  }
+  // Mesma resposta para senha errada e conta sem confirmar: o erro não revela quais e-mails existem
+  if (error.code === 'invalid_credentials' || error.code === 'email_not_confirmed') return 'E-mail ou senha incorretos.'
   if (error.status === 429) return 'Muitas tentativas. Aguarde alguns minutos e tente de novo.'
   if (!error.status) return 'Não foi possível conectar. Confira sua internet e tente de novo.'
   return 'Não foi possível entrar agora. Tente de novo em alguns minutos.'
 }
+
+// shortcut: trava só desta aba, para evitar erro de digitação em série; o limite real é o do Supabase
+const LIMITE_TENTATIVAS = 5
+const ESPERA_TENTATIVAS = 60000
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -150,14 +153,26 @@ function Login() {
   const [erro, setErro] = useState('')
   const [aviso, setAviso] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const falhas = useRef(0)
+  const liberadoEm = useRef(0)
 
   const entrar = async (e) => {
     e.preventDefault()
+    if (Date.now() < liberadoEm.current) {
+      setErro('Muitas tentativas. Aguarde um minuto e tente de novo.')
+      return
+    }
     setEnviando(true)
     setErro('')
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
     setEnviando(false)
-    if (error) setErro(mensagemDeErro(error))
+    if (!error) return
+    setErro(mensagemDeErro(error))
+    falhas.current += 1
+    if (falhas.current >= LIMITE_TENTATIVAS) {
+      falhas.current = 0
+      liberadoEm.current = Date.now() + ESPERA_TENTATIVAS
+    }
   }
 
   const esqueci = async () => {
@@ -166,7 +181,9 @@ function Login() {
       setErro('Digite seu e-mail acima para receber o link de nova senha.')
       return
     }
+    setEnviando(true)
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin })
+    setEnviando(false)
     if (error) setErro('Não foi possível enviar o e-mail agora.')
     else {
       setErro('')
@@ -189,7 +206,7 @@ function Login() {
         <button className="adm-btn adm-btn-primario adm-btn-cheio" disabled={enviando}>
           {enviando ? 'Entrando…' : 'Entrar'}
         </button>
-        <button type="button" className="adm-btn-texto" onClick={esqueci}>Esqueci minha senha</button>
+        <button type="button" className="adm-btn-texto" onClick={esqueci} disabled={enviando}>Esqueci minha senha</button>
       </form>
     </TelaCentral>
   )
@@ -198,17 +215,20 @@ function Login() {
 function NovaSenha({ aoConcluir }) {
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
   const salvar = async (e) => {
     e.preventDefault()
-    if (senha.length < 8) {
-      setErro('A senha precisa ter pelo menos 8 caracteres.')
+    if (senha.length < 12) {
+      setErro('A senha precisa ter pelo menos 12 caracteres.')
       return
     }
+    setEnviando(true)
     const { error } = await supabase.auth.updateUser({ password: senha })
+    setEnviando(false)
     if (error) setErro('Não foi possível trocar a senha. Peça um novo link.')
     else {
-      window.history.replaceState(null, '', '/#/painel')
+      window.history.replaceState(null, '', '/painel')
       aoConcluir()
     }
   }
@@ -219,11 +239,11 @@ function NovaSenha({ aoConcluir }) {
         <Marca />
         <div>
           <h1>Criar nova senha</h1>
-          <p className="adm-muted">Use pelo menos 8 caracteres.</p>
+          <p className="adm-muted">Use pelo menos 12 caracteres.</p>
         </div>
         <Campo label="Nova senha" type="password" autoComplete="new-password" valor={senha} mudar={setSenha} required />
         {erro && <p className="adm-alerta adm-alerta-erro">{erro}</p>}
-        <button className="adm-btn adm-btn-primario adm-btn-cheio">Salvar senha</button>
+        <button className="adm-btn adm-btn-primario adm-btn-cheio" disabled={enviando}>Salvar senha</button>
       </form>
     </TelaCentral>
   )
@@ -233,8 +253,9 @@ function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparenci
   return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }))
 }
 
-function Editor({ email }) {
+function Editor({ usuario }) {
   const site = useSite()
+  const { email } = usuario
   const [rascunho, setRascunho] = useState(() => copiar(site))
   const [secao, setSecao] = useState('conteudos')
   const [pendente, setPendente] = useState(false)
@@ -264,17 +285,23 @@ function Editor({ email }) {
   }
 
   const salvar = async () => {
-    setSalvando(true)
-    try {
-      await site.salvar(rascunho)
-      setPendente(false)
+    const problema = validarConteudo(rascunho)
+    if (problema) {
       setPrevia(false)
-      setAviso({ tipo: 'ok', texto: 'Pronto! Suas mudanças já estão no site.' })
-    } catch (erro) {
-      console.error(erro)
-      setAviso({ tipo: 'erro', texto: 'Não foi possível publicar. Confira sua internet e tente de novo.' })
+      setAviso({ tipo: 'erro', texto: problema })
+      return
     }
+    setSalvando(true)
+    const { error } = await supabase.from('site').upsert({ id: 1, dados: rascunho })
     setSalvando(false)
+    if (error) {
+      setAviso({ tipo: 'erro', texto: 'Não foi possível publicar. Confira sua internet e tente de novo.' })
+      return
+    }
+    site.atualizar(rascunho)
+    setPendente(false)
+    setPrevia(false)
+    setAviso({ tipo: 'ok', texto: 'Pronto! Suas mudanças já estão no site.' })
   }
 
   const descartar = () => {
@@ -311,7 +338,7 @@ function Editor({ email }) {
           ))}
         </nav>
         <div className="adm-side-rodape">
-          <a className="adm-side-link" href="#/" target="_blank" rel="noreferrer">
+          <a className="adm-side-link" href="/" target="_blank" rel="noreferrer">
             <Externo /> Ver site
           </a>
           <div className="adm-usuario">
@@ -330,7 +357,7 @@ function Editor({ email }) {
             <h1>{atual.label}</h1>
             <p>{atual.descricao}</p>
           </div>
-          <div className="adm-head-acoes">
+          {secao !== 'conta' && <div className="adm-head-acoes">
             <span className={`adm-status ${pendente ? 'is-pendente' : ''}`}>
               {pendente ? 'Mudanças ainda não publicadas' : <><Check width={14} height={14} /> Tudo publicado</>}
             </span>
@@ -339,16 +366,19 @@ function Editor({ email }) {
             <button className="adm-btn adm-btn-primario" onClick={salvar} disabled={!pendente || salvando}>
               {salvando ? 'Publicando…' : 'Publicar no site'}
             </button>
-          </div>
+          </div>}
         </header>
 
-        <ol className="adm-passos">
-          <li>Escolha no menu o que quer mudar</li>
-          <li>Clique em Ver como vai ficar</li>
-          <li>Se gostou, clique em Publicar no site</li>
-        </ol>
+        {secao !== 'conta' && (
+          <ol className="adm-passos">
+            <li>Escolha no menu o que quer mudar</li>
+            <li>Clique em Ver como vai ficar</li>
+            <li>Se gostou, clique em Publicar no site</li>
+          </ol>
+        )}
 
         <div className="adm-corpo">
+          {secao === 'conta' && <Conta usuario={usuario} />}
           {secao === 'conteudos' && <Publicacoes lista={rascunho.conteudos} mudar={(v) => alterar('conteudos', v)} />}
           {secao === 'contato' && <Contato contato={rascunho.contato} mudar={(v) => alterar('contato', v)} />}
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
@@ -412,7 +442,7 @@ function Previa({ inicial, pendente, salvando, publicar, fechar }) {
           ? 'Isto é só uma prévia. Quem visita o site ainda não vê estas mudanças.'
           : 'Você ainda não mudou nada. O site está assim agora.'}
       </p>
-      <iframe src={`/?previa=1#/${pagina}`} title="Prévia do site" className={`is-${aparelho}`} />
+      <iframe src={`/${pagina}?previa=1`} title="Prévia do site" className={`is-${aparelho}`} />
     </div>
   )
 }
@@ -452,13 +482,18 @@ function Arquivo({ label, valor, mudar, aceita, redondo }) {
     const arquivo = e.target.files[0]
     e.target.value = ''
     if (!arquivo) return
+    const problema = validarArquivo(arquivo, video)
+    if (problema) {
+      setErro(problema)
+      return
+    }
     setEnviando(true)
     setErro('')
     const nome = `${Date.now()}-${arquivo.name.normalize('NFD').replace(/[^\w.-]/g, '')}`
     const { error } = await supabase.storage.from(BUCKET).upload(nome, arquivo)
     setEnviando(false)
     if (error) {
-      setErro(`Falha no envio: ${error.message}`)
+      setErro('Não foi possível enviar o arquivo. Tente de novo.')
       return
     }
     mudar(supabase.storage.from(BUCKET).getPublicUrl(nome).data.publicUrl)
@@ -557,6 +592,84 @@ function Faixa({ label, valor, mudar, min, max }) {
   )
 }
 
+function erroDaConta(error) {
+  if (error.code === 'email_exists') return 'Esse e-mail já está em uso em outra conta.'
+  if (error.code === 'same_password') return 'A nova senha precisa ser diferente da atual.'
+  if (error.code === 'weak_password') return 'Essa senha é fácil de adivinhar. Escolha outra.'
+  if (error.status === 429) return 'Muitas tentativas. Aguarde alguns minutos e tente de novo.'
+  if (!error.status) return 'Não foi possível conectar. Confira sua internet e tente de novo.'
+  return 'Não foi possível salvar agora. Tente de novo em alguns minutos.'
+}
+
+const TROCAS = {
+  senha: { label: 'Nova senha', type: 'password', autoComplete: 'new-password', dica: 'Use pelo menos 12 caracteres.' },
+  email: { label: 'Novo e-mail', type: 'email', autoComplete: 'email' }
+}
+
+function Conta({ usuario }) {
+  const [troca, setTroca] = useState('senha')
+  const [atual, setAtual] = useState('')
+  const [valor, setValor] = useState('')
+  const [erro, setErro] = useState('')
+  const [ok, setOk] = useState('')
+  const [enviando, setEnviando] = useState(false)
+
+  const escolher = (opcao) => {
+    setTroca(opcao)
+    setValor('')
+    setErro('')
+    setOk('')
+  }
+
+  const salvar = async (e) => {
+    e.preventDefault()
+    setErro('')
+    setOk('')
+    if (troca === 'senha' && valor.length < 12) return setErro('A senha precisa ter pelo menos 12 caracteres.')
+
+    setEnviando(true)
+    // Pede a senha de novo: um computador esquecido aberto não entrega o acesso a outra pessoa
+    const { error: semAcesso } = await supabase.auth.signInWithPassword({ email: usuario.email, password: atual })
+    if (semAcesso) {
+      setEnviando(false)
+      return setErro(semAcesso.code === 'invalid_credentials' ? 'A senha atual está incorreta.' : mensagemDeErro(semAcesso))
+    }
+    const { data, error } = await supabase.auth.updateUser(troca === 'senha' ? { password: valor } : { email: valor })
+    setEnviando(false)
+    if (error) return setErro(erroDaConta(error))
+
+    setAtual('')
+    setValor('')
+    if (troca === 'senha') setOk('Senha trocada.')
+    else if (data.user.email === valor.toLowerCase()) setOk('E-mail trocado. Use o novo para entrar.')
+    else setOk('Enviamos um link de confirmação. O e-mail só muda depois que você confirmar.')
+  }
+
+  return (
+    <div className="adm-pilha">
+      <Bloco titulo="Seus dados de acesso">
+        <p className="adm-muted">E-mail: {usuario.email}</p>
+      </Bloco>
+      <Bloco titulo="Fazer uma troca">
+        <form className="adm-pilha" onSubmit={salvar}>
+          <label className="adm-campo">
+            <span className="adm-rotulo">O que você quer trocar?</span>
+            <select value={troca} onChange={(e) => escolher(e.target.value)}>
+              <option value="senha">Senha</option>
+              <option value="email">E-mail de acesso</option>
+            </select>
+          </label>
+          <Campo key={troca} {...TROCAS[troca]} valor={valor} mudar={setValor} required />
+          <Campo label="Senha atual" type="password" autoComplete="current-password" valor={atual} mudar={setAtual} required dica="Se não lembrar, saia do painel e use Esqueci minha senha." />
+          {erro && <p className="adm-alerta adm-alerta-erro" role="alert">{erro}</p>}
+          {ok && <p className="adm-alerta adm-alerta-ok" role="status">{ok}</p>}
+          <button className="adm-btn adm-btn-primario adm-btn-auto" disabled={enviando}>{enviando ? 'Salvando…' : 'Salvar troca'}</button>
+        </form>
+      </Bloco>
+    </div>
+  )
+}
+
 function Contato({ contato, mudar }) {
   const campo = (chave) => (v) => mudar({ ...contato, [chave]: v })
   return (
@@ -638,7 +751,7 @@ function Perfil({ perfil, mudar }) {
         </Bloco>
       </div>
       <Bloco titulo="Sua foto">
-        <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita="image/*" redondo />
+        <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita={TIPOS_IMAGEM} redondo />
       </Bloco>
     </div>
   )
@@ -809,14 +922,14 @@ function EditarPublicacao({ pub, naHome, mudar, excluir, voltar }) {
             </div>
             {tipo === 'imagem' && (
               <>
-                <Arquivo valor={pub.imagem || ''} mudar={(v) => mudar({ imagem: v })} aceita="image/*" />
+                <Arquivo valor={pub.imagem || ''} mudar={(v) => mudar({ imagem: v })} aceita={TIPOS_IMAGEM} />
                 <Campo label="O que aparece na foto" valor={pub.imagemAlt || ''} mudar={(v) => mudar({ imagemAlt: v })} dica="Descreva em uma frase. Pessoas cegas ouvem esse texto no celular ou computador." />
               </>
             )}
             {tipo === 'video' && (
               <>
-                <Arquivo valor={pub.video || ''} mudar={(v) => mudar({ video: v })} aceita="video/mp4,video/webm" />
-                <Arquivo label="Foto de capa do vídeo (não é obrigatória)" valor={pub.poster || ''} mudar={(v) => mudar({ poster: v })} aceita="image/*" />
+                <Arquivo valor={pub.video || ''} mudar={(v) => mudar({ video: v })} aceita={TIPOS_VIDEO} />
+                <Arquivo label="Foto de capa do vídeo (não é obrigatória)" valor={pub.poster || ''} mudar={(v) => mudar({ poster: v })} aceita={TIPOS_IMAGEM} />
               </>
             )}
           </Bloco>
