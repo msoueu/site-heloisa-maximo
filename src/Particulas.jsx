@@ -4,7 +4,6 @@ import { LEVE } from './ambiente'
 const COR = '243, 212, 154'
 const QUANTIDADE = LEVE ? 45 : 110
 const INTERVALO = 1000 / 30
-const CALMO = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function nova(largura, altura) {
   return {
@@ -35,7 +34,7 @@ export default function Particulas() {
     }
 
     const desenhar = (agora) => {
-      quadro = CALMO ? null : requestAnimationFrame(desenhar)
+      quadro = requestAnimationFrame(desenhar)
       if (agora - anterior < INTERVALO) return
       const dt = Math.min(agora - anterior, 100) / 1000
       anterior = agora
