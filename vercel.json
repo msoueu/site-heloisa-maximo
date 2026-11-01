@@ -1,44 +1,38 @@
 {
-  "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "rewrites": [
-    { "source": "/:pagina(sobre|conteudo|atuacao|contato|diagnostico|perguntas|privacidade|termos|painel)", "destination": "/:pagina/index.html" },
-    { "source": "/conteudo/:id", "destination": "/conteudo/index.html" }
-  ],
-  "headers": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://ubaxnokpsymfimsrjxvn.supabase.co; media-src 'self' https://ubaxnokpsymfimsrjxvn.supabase.co; connect-src 'self' https://ubaxnokpsymfimsrjxvn.supabase.co wss://ubaxnokpsymfimsrjxvn.supabase.co; worker-src 'self' blob:; frame-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
-        },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
-        { "key": "Access-Control-Allow-Origin", "value": "https://advheloisamaximo.vercel.app" }
-      ]
+      "src": "/(.*)",
+      "continue": true,
+      "headers": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://ubaxnokpsymfimsrjxvn.supabase.co; media-src 'self' https://ubaxnokpsymfimsrjxvn.supabase.co; connect-src 'self' https://ubaxnokpsymfimsrjxvn.supabase.co wss://ubaxnokpsymfimsrjxvn.supabase.co; worker-src 'self' blob:; frame-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Access-Control-Allow-Origin": "https://advheloisamaximo.vercel.app"
+      }
     },
     {
-      "source": "/painel",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
-      ]
+      "src": "/painel",
+      "continue": true,
+      "headers": { "X-Robots-Tag": "noindex, nofollow" }
     },
     {
-      "source": "/static/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "src": "/static/(.*)",
+      "continue": true,
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" }
     },
     {
-      "source": "/(justica.*|marmore.*|Prancheta1\\.jpg|Heloisa\\.webp|og\\.png|conteudo/.*\\.(?:jpg|mp4))",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
-      ]
-    }
+      "src": "/(justica.*|marmore.*|Prancheta1\\.jpg|Heloisa\\.webp|og\\.png|conteudo/.*\\.(?:jpg|mp4))",
+      "continue": true,
+      "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" }
+    },
+    { "handle": "filesystem" },
+    { "src": "/(sobre|conteudo|atuacao|contato|diagnostico|perguntas|privacidade|termos|painel)/?", "dest": "/$1/index.html" },
+    { "src": "/conteudo/[^/]+/?", "dest": "/conteudo/index.html" },
+    { "src": "/.*", "status": 404, "dest": "/404.html" }
   ]
 }
