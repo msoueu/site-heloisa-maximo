@@ -1,10 +1,12 @@
-import { useEffect, Suspense, Component, lazy } from 'react'
+import { useEffect, useState, Suspense, Component, lazy } from 'react'
 import { DEV } from './data'
 import { GitHub } from './Icons'
 import Dots from './Dots'
 import SectionContent from './SectionContent'
 
 const Cena = lazy(() => import('./Cena'))
+// O texto vem primeiro: o 3D é pesado e no celular travaria a página logo ao abrir
+const ATRASO_3D = 1500
 
 export class ModelBoundary extends Component {
   state = { failed: false }
@@ -21,7 +23,14 @@ const INTERVALO = 320
 const ARRASTE_MINIMO = 50
 const FORCA_ARRASTE = 0.35
 
-export default function Home({ current, setCurrent, abrir }) {
+export default function Home({ current, setCurrent }) {
+  const [cena, setCena] = useState(false)
+
+  useEffect(() => {
+    const id = setTimeout(() => setCena(true), ATRASO_3D)
+    return () => clearTimeout(id)
+  }, [])
+
   useEffect(() => {
     let ultimoPasso = -Infinity
     let ultimoEvento = -Infinity
@@ -110,7 +119,7 @@ export default function Home({ current, setCurrent, abrir }) {
       <div className="app-canvas" aria-hidden="true">
         <ModelBoundary>
           <Suspense fallback={null}>
-            <Cena current={current} />
+            {cena && <Cena current={current} />}
           </Suspense>
         </ModelBoundary>
       </div>
@@ -119,7 +128,7 @@ export default function Home({ current, setCurrent, abrir }) {
 
       <Dots current={current} total={TOTAL} setCurrent={setCurrent} />
 
-      <SectionContent current={current} abrir={abrir} />
+      <SectionContent current={current} />
 
       <a className="dev-credit" href={DEV.github} target="_blank" rel="noreferrer">
         <GitHub width={16} height={16} /> Site por {DEV.nome}

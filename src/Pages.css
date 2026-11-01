@@ -547,13 +547,13 @@
   justify-items: start;
 }
 
-.page-footer-links button {
+.page-footer-links a {
   color: inherit;
   text-align: left;
 }
 
 .page-footer li a:hover,
-.page-footer-links button:hover,
+.page-footer-links a:hover,
 .page-footer-links a:hover {
   color: var(--gold-bright);
 }

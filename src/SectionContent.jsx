@@ -2,16 +2,15 @@ import './SectionContent.css'
 import { useSite } from './SiteData'
 import { Seta, Instagram, Local, Relogio } from './Icons'
 
-function Tag({ children, onClick }) {
-  if (!onClick) return <p className="panel-tag">{children}</p>
+function Tag({ children, href }) {
   return (
-    <button className="panel-tag panel-tag-link" onClick={onClick}>
+    <a className="panel-tag panel-tag-link" href={href}>
       {children} <Seta />
-    </button>
+    </a>
   )
 }
 
-export default function SectionContent({ current, abrir }) {
+export default function SectionContent({ current }) {
   const { perfil, contato, destaques, areas, conteudos } = useSite()
   const destaque = conteudos[0]
   const painel = (i) => `section-panel ${current === i ? 'panel-active' : 'panel-hidden'}`
@@ -19,19 +18,19 @@ export default function SectionContent({ current, abrir }) {
   return (
     <main className="section-content" id="conteudo" tabIndex={-1}>
       <section className={painel(0)}>
-        <Tag onClick={() => abrir('sobre')}>ADVOCACIA CRIMINAL</Tag>
+        <Tag href="/sobre">ADVOCACIA CRIMINAL</Tag>
         <div className="panel-intro">
           <h1 className="panel-name">{perfil.nome}</h1>
           <p className="panel-desc">{perfil.slogan}</p>
           <p className="panel-sub">{perfil.especialidade} · Atuação Nacional</p>
         </div>
-        <button className="panel-link" onClick={() => abrir('sobre')}>
+        <a className="panel-link" href="/sobre">
           Conheça a advogada <Seta />
-        </button>
+        </a>
       </section>
 
       <section className={painel(1)}>
-        <Tag onClick={() => abrir('sobre')}>SOBRE</Tag>
+        <Tag href="/sobre">SOBRE</Tag>
         <h2 className="panel-titulo">{perfil.titulo}</h2>
         <div className="panel-sobre">
           <img src={perfil.foto} alt={perfil.nome} className="panel-foto" loading="lazy" decoding="async" />
@@ -44,27 +43,27 @@ export default function SectionContent({ current, abrir }) {
             ))}
           </ul>
         </div>
-        <button className="panel-link" onClick={() => abrir('sobre')}>
+        <a className="panel-link" href="/sobre">
           Conheça a trajetória completa <Seta />
-        </button>
+        </a>
       </section>
 
       <section className={`${painel(2)} panel-conteudo`}>
         {destaque && (
           <>
-            <Tag onClick={() => abrir('conteudo')}>CONTEÚDO JURÍDICO</Tag>
+            <Tag href="/conteudo">CONTEÚDO JURÍDICO</Tag>
             <h2 className="panel-titulo">{destaque.titulo}</h2>
             <p className="panel-desc">{destaque.texto[0]}</p>
             <p className="panel-desc">{destaque.resumo}</p>
-            <button className="panel-link" onClick={() => abrir('conteudo')}>
+            <a className="panel-link" href="/conteudo">
               Ver mais conteúdo jurídico <Seta />
-            </button>
+            </a>
           </>
         )}
       </section>
 
       <section className={painel(3)}>
-        <Tag onClick={() => abrir('atuacao')}>ÁREAS DE ATUAÇÃO</Tag>
+        <Tag href="/atuacao">ÁREAS DE ATUAÇÃO</Tag>
         <h2 className="panel-titulo">Defesa em todas as fases do processo penal</h2>
         <ol className="panel-areas">
           {areas.map((a) => (
@@ -73,13 +72,13 @@ export default function SectionContent({ current, abrir }) {
             </li>
           ))}
         </ol>
-        <button className="panel-link" onClick={() => abrir('atuacao')}>
+        <a className="panel-link" href="/atuacao">
           Ver todas as áreas <Seta />
-        </button>
+        </a>
       </section>
 
       <section className={painel(4)}>
-        <Tag onClick={() => abrir('contato')}>CONTATO</Tag>
+        <Tag href="/contato">CONTATO</Tag>
         <h2 className="panel-name">Contato</h2>
         <p className="panel-desc">
           Fale com a advogada pelo WhatsApp ou conte sua situação em quatro perguntas rápidas. Sua
@@ -96,9 +95,9 @@ export default function SectionContent({ current, abrir }) {
         <a href="/diagnostico" className="panel-btn panel-btn-solid">
           Contar minha situação <Seta />
         </a>
-        <button className="panel-link panel-link-contato" onClick={() => abrir('contato')}>
+        <a className="panel-link panel-link-contato" href="/contato">
           Todas as formas de contato <Seta />
-        </button>
+        </a>
       </section>
     </main>
   )

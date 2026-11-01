@@ -230,7 +230,8 @@
 }
 
 .panel-tag-link {
-  cursor: pointer;
+  width: fit-content;
+  text-decoration: none;
   transition: color 0.3s, gap 0.4s var(--ease);
 }
 
@@ -260,6 +261,7 @@
   font-size: 0.9375rem;
   font-weight: 600;
   letter-spacing: 1px;
+  text-decoration: none;
   text-transform: uppercase;
   transition: border-color 0.3s, gap 0.4s var(--ease);
 }

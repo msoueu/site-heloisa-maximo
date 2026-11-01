@@ -4,12 +4,12 @@ import { Baixo } from './Icons'
 import { Pagina, Realce } from './Pages'
 import './Perguntas.css'
 
-export default function PerguntasPage({ abrir }) {
+export default function PerguntasPage() {
   const { perguntas, contato, perfil } = useSite()
   const [aberta, setAberta] = useState(0)
 
   return (
-    <Pagina abrir={abrir} chamada={false}>
+    <Pagina chamada={false}>
       <header className="page-header">
         <h1>Perguntas frequentes</h1>
         <p className="page-lead">

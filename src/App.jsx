@@ -1,9 +1,10 @@
-import { useState, useEffect, useLayoutEffect, useCallback, lazy, Suspense } from 'react'
+import { useState, useEffect, useLayoutEffect, lazy, Suspense } from 'react'
 import Header from './Header'
 import Home, { ModelBoundary } from './Home'
-import { SobrePage, ConteudoPage, AtuacaoPage, ContatoPage } from './Pages'
-import { lerRota, navegar, migrarEnderecoAntigo, interceptarLink } from './rotas'
+import { SobrePage, ConteudoPage, AtuacaoPage, ContatoPage, NaoEncontradaPage } from './Pages'
+import { lerRota, migrarEnderecoAntigo, interceptarLink } from './rotas'
 import { aplicarMetadados } from './metadados'
+import { useSite } from './SiteData'
 import useTheme from './useTheme'
 import './App.css'
 
@@ -33,6 +34,7 @@ export default function App() {
   const [endereco, setEndereco] = useState(window.location.pathname)
   const [current, setCurrent] = useState(0)
   const [tema, alternarTema] = useTheme()
+  const { conteudos } = useSite()
 
   useEffect(() => {
     const onEndereco = () => {
@@ -47,20 +49,10 @@ export default function App() {
     }
   }, [])
 
-  useEffect(() => aplicarMetadados(rota), [rota, endereco])
+  useEffect(() => aplicarMetadados(rota, conteudos), [rota, endereco, conteudos])
 
   // Depois de a página nova entrar: antes disso, a rolagem ainda é medida na página que está saindo
   useLayoutEffect(rolarParaAncora, [endereco])
-
-  const abrir = useCallback((pagina) => {
-    if (window.location.pathname === `/${pagina}`) window.scrollTo({ top: 0, behavior: 'smooth' })
-    else navegar(`/${pagina}`)
-  }, [])
-
-  const irPara = useCallback((secao) => {
-    setCurrent(secao)
-    if (lerRota() !== 'home') navegar('/')
-  }, [])
 
   return (
     <>
@@ -74,8 +66,7 @@ export default function App() {
       {rota !== 'painel' && <Header
         rota={rota}
         endereco={endereco}
-        irPara={irPara}
-        abrir={abrir}
+        irPara={setCurrent}
         tema={tema}
         alternarTema={alternarTema}
       />}
@@ -84,16 +75,17 @@ export default function App() {
         <ModelBoundary><Suspense fallback={null}><Particulas /></Suspense></ModelBoundary>
       )}
 
-      {rota === 'home' && <Home current={current} setCurrent={setCurrent} abrir={abrir} />}
-      {rota === 'sobre' && <SobrePage abrir={abrir} />}
-      {rota === 'conteudo' && <ConteudoPage abrir={abrir} />}
-      {rota === 'atuacao' && <AtuacaoPage abrir={abrir} />}
-      {rota === 'contato' && <ContatoPage abrir={abrir} />}
-      {rota === 'diagnostico' && <Suspense fallback={null}><DiagnosticoPage abrir={abrir} /></Suspense>}
-      {rota === 'perguntas' && <Suspense fallback={null}><PerguntasPage abrir={abrir} /></Suspense>}
-      {rota === 'privacidade' && <Suspense fallback={null}><PrivacidadePage abrir={abrir} /></Suspense>}
-      {rota === 'termos' && <Suspense fallback={null}><TermosPage abrir={abrir} /></Suspense>}
+      {rota === 'home' && <Home current={current} setCurrent={setCurrent} />}
+      {rota === 'sobre' && <SobrePage />}
+      {rota === 'conteudo' && <ConteudoPage />}
+      {rota === 'atuacao' && <AtuacaoPage />}
+      {rota === 'contato' && <ContatoPage />}
+      {rota === 'diagnostico' && <Suspense fallback={null}><DiagnosticoPage /></Suspense>}
+      {rota === 'perguntas' && <Suspense fallback={null}><PerguntasPage /></Suspense>}
+      {rota === 'privacidade' && <Suspense fallback={null}><PrivacidadePage /></Suspense>}
+      {rota === 'termos' && <Suspense fallback={null}><TermosPage /></Suspense>}
       {rota === 'painel' && <Suspense fallback={null}><Painel /></Suspense>}
+      {rota === 'naoEncontrada' && <NaoEncontradaPage />}
     </>
   )
 }

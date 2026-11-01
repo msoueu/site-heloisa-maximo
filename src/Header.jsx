@@ -11,7 +11,7 @@ const LINKS = [
   { label: 'Perguntas', sufixo: ' frequentes', pagina: 'perguntas' }
 ]
 
-export default function Header({ rota, endereco, irPara, abrir, tema, alternarTema }) {
+export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
   const { contato } = useSite()
   const naHome = rota === 'home'
   const [menu, setMenu] = useState(false)
@@ -31,21 +31,22 @@ export default function Header({ rota, endereco, irPara, abrir, tema, alternarTe
   return (
     <div className={`header-overlay ${naHome ? '' : 'header-page'}`}>
       <nav className="header-nav">
-        <button className="header-logo" onClick={() => { setMenu(false); irPara(0) }} aria-label="Início">
+        <a className="header-logo" href="/" onClick={() => { setMenu(false); irPara(0) }} aria-label="Início">
           <span className="header-logo-mark" />
           <span className="header-logo-text">Heloisa Maximo<small>Advocacia Criminal</small></span>
-        </button>
+        </a>
 
         <div className="header-right">
           <div id="menu-site" className={`header-nav-links ${menu ? 'is-aberto' : ''}`}>
             {LINKS.map((link) => (
-              <button
+              <a
                 key={link.label}
+                href={`/${link.pagina}`}
                 className={ativo(link) ? 'is-active' : ''}
-                onClick={() => { setMenu(false); abrir(link.pagina) }}
+                onClick={() => setMenu(false)}
               >
                 {link.label}{link.sufixo && <span>{link.sufixo}</span>}
-              </button>
+              </a>
             ))}
           </div>
           <button

@@ -105,11 +105,11 @@ function Celular({ analise }) {
   )
 }
 
-export default function DiagnosticoPage({ abrir }) {
+export default function DiagnosticoPage() {
   const analise = useAnalise()
 
   return (
-    <Pagina abrir={abrir} chamada={false}>
+    <Pagina chamada={false}>
       <header className="page-header diag-topo">
         <h1>Conte sua situação</h1>
         <p className="page-lead">

@@ -11,10 +11,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </SiteProvider>
   </React.StrictMode>
 )
-
-if (window.location.pathname === '/') {
-  ['/justica.bin', '/marmore.bin'].forEach((href) => {
-    const link = Object.assign(document.createElement('link'), { rel: 'preload', as: 'fetch', href, crossOrigin: 'anonymous' })
-    document.head.append(link)
-  })
-}

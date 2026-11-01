@@ -37,18 +37,28 @@ const PAGINAS = {
     titulo: `Termos de Uso · ${NOME}`,
     descricao: 'Condições de uso do site institucional de Heloisa Maximo.'
   },
-  painel: { titulo: `Painel · ${NOME}`, descricao: 'Área restrita.' }
+  painel: { titulo: `Painel · ${NOME}`, descricao: 'Área restrita.' },
+  naoEncontrada: { titulo: `Página não encontrada · ${NOME}`, descricao: 'Este endereço não existe ou mudou de lugar.' }
+}
+
+// Também usado por scripts/gerar-paginas.mjs
+export function metadadosDaPagina(rota, conteudo) {
+  return conteudo ? { titulo: `${conteudo.titulo} · ${NOME}`, descricao: conteudo.resumo } : PAGINAS[rota]
 }
 
 const definir = (seletor, atributo, valor) => document.querySelector(seletor)?.setAttribute(atributo, valor)
 
-export function aplicarMetadados(rota) {
-  const { titulo, descricao } = PAGINAS[rota]
-  const endereco = window.location.origin + window.location.pathname
+export function aplicarMetadados(rota, conteudos) {
+  const id = rota === 'conteudo' && window.location.pathname.split('/')[2]
+  const conteudo = id ? conteudos.find((c) => c.id === id) : undefined
+  const { titulo, descricao } = metadadosDaPagina(rota, conteudo)
+  // Publicação que não existe aponta para a lista
+  const endereco = window.location.origin + (id && !conteudo ? '/conteudo' : window.location.pathname)
+  const oculta = rota === 'painel' || rota === 'naoEncontrada'
 
   document.title = titulo
   definir('meta[name="description"]', 'content', descricao)
-  definir('meta[name="robots"]', 'content', rota === 'painel' ? 'noindex, nofollow' : 'index, follow')
+  definir('meta[name="robots"]', 'content', oculta ? 'noindex, nofollow' : 'index, follow')
   definir('link[rel="canonical"]', 'href', endereco)
   definir('meta[property="og:url"]', 'content', endereco)
   definir('meta[property="og:title"]', 'content', titulo)

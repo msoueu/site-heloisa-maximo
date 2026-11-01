@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useSite, linkWhatsApp, aceitaMensagem } from './SiteData'
+import { useSite, linkWhatsApp, aceitaMensagem, carregarFonte } from './SiteData'
 import { supabase, BUCKET } from './supabase'
 import { veioDeRecuperacao } from './rotas'
 import { validarArquivo, validarConteudo, TIPOS_IMAGEM, TIPOS_VIDEO } from './validacao'
@@ -551,6 +551,10 @@ function Arquivo({ label, valor, mudar, aceita, redondo }) {
 
 function Aparencia({ aparencia, mudar }) {
   const campo = (chave) => (v) => mudar({ ...aparencia, [chave]: v })
+  useEffect(() => {
+    carregarFonte(aparencia.fonte)
+    carregarFonte(aparencia.titulo)
+  }, [aparencia.fonte, aparencia.titulo])
   const amostra = {
     fontFamily: `'${aparencia.fonte}', sans-serif`,
     fontSize: `${1.1875 * aparencia.tamanho}rem`

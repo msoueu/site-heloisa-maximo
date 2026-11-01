@@ -1,4 +1,15 @@
 // {{INSCRICAO}}, {{OAB}} e {{OAB_LINHA}} vêm do campo OAB do painel; vazio, somem do texto
+export function preencher(texto, oab) {
+  const partes = oab.match(/OAB\s*\/?\s*([A-Za-z]{2})\s*(?:n[º°o]\s*)?([\dx.]+)/i)
+  const inscricao = partes
+    ? `, inscrita na Ordem dos Advogados do Brasil, Seccional ${partes[1].toUpperCase()}, sob o nº ${partes[2]}`
+    : oab && `, inscrita na Ordem dos Advogados do Brasil (${oab})`
+  const numero = partes ? `OAB/${partes[1].toUpperCase()} nº ${partes[2]}` : oab
+  return texto
+    .replace('{{INSCRICAO}}', inscricao)
+    .replace('{{OAB_LINHA}}', numero && ` — ${numero}`)
+    .replace(/\{\{OAB\}\}\r?\n/, numero ? `${numero}\n` : '')
+}
 
 export const PRIVACIDADE = `# Política de Privacidade
 

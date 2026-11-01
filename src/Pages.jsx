@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { DEV } from './data'
+import { DEV, TRAJETORIA } from './data'
 import { useSite, linkWhatsApp } from './SiteData'
 import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
 import './Pages.css'
@@ -61,7 +61,7 @@ export function BotaoWhatsApp() {
   )
 }
 
-function Rodape({ abrir }) {
+function Rodape() {
   const { perfil, contato } = useSite()
   return (
     <footer className="page-footer">
@@ -80,17 +80,17 @@ function Rodape({ abrir }) {
           <li><Instagram /><a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a></li>
         </ul>
         <nav className="page-footer-links" aria-label="Páginas do site">
-          <button onClick={() => abrir('sobre')}>Sobre</button>
-          <button onClick={() => abrir('conteudo')}>Conteúdo jurídico</button>
-          <button onClick={() => abrir('atuacao')}>Áreas de atuação</button>
-          <button onClick={() => abrir('contato')}>Contato</button>
-          <button onClick={() => abrir('perguntas')}>Perguntas frequentes</button>
+          <a href="/sobre">Sobre</a>
+          <a href="/conteudo">Conteúdo jurídico</a>
+          <a href="/atuacao">Áreas de atuação</a>
+          <a href="/contato">Contato</a>
+          <a href="/perguntas">Perguntas frequentes</a>
         </nav>
       </div>
       <div className="page-footer-base">
         <nav aria-label="Informações legais">
-          <a href="/privacidade" onClick={(e) => { e.preventDefault(); abrir('privacidade') }}>Política de Privacidade</a>
-          <a href="/termos" onClick={(e) => { e.preventDefault(); abrir('termos') }}>Termos de Uso</a>
+          <a href="/privacidade">Política de Privacidade</a>
+          <a href="/termos">Termos de Uso</a>
         </nav>
         <p>© {new Date().getFullYear()} {perfil.nome}. Todos os direitos reservados.{perfil.oab && ` ${perfil.oab}.`}</p>
         <p>Conteúdo de caráter exclusivamente informativo.</p>
@@ -110,7 +110,7 @@ function Rodape({ abrir }) {
   )
 }
 
-export function Pagina({ abrir, chamada = true, plantao = true, children }) {
+export function Pagina({ chamada = true, plantao = true, children }) {
   return (
     <main className="page" id="conteudo" tabIndex={-1}>
       <div className="page-inner">
@@ -129,17 +129,17 @@ export function Pagina({ abrir, chamada = true, plantao = true, children }) {
           <BotaoWhatsApp />
         </section>
       )}
-      <Rodape abrir={abrir} />
+      <Rodape />
     </main>
   )
 }
 
-export function SobrePage({ abrir }) {
+export function SobrePage() {
   const { perfil, destaques } = useSite()
   const raiz = useSinal()
 
   return (
-    <Pagina abrir={abrir}>
+    <Pagina>
       <div ref={raiz}>
         <header className="sinal sinal-topo">
           <div>
@@ -156,10 +156,7 @@ export function SobrePage({ abrir }) {
         <section className="sinal sinal-linha">
           <h2>Trajetória</h2>
           <div className="page-texto">
-            <p><Realce>{`Heloisa Maximo é advogada criminalista, com atuação dedicada ao Direito Penal e ao Direito Processual Penal, da fase de investigação aos tribunais.`}</Realce></p>
-            <p><Realce>{`Representando a Jovem Advocacia, foi palestrante do projeto “Advocacia por Elas”, da OAB/SE, debatendo o enfrentamento à violência doméstica no interior do estado.`}</Realce></p>
-            <p><Realce>{`Atuou no PREFEM/SE em conjunto com o Mecanismo Estadual de Prevenção e Combate à Tortura, acompanhando de perto a realidade do sistema prisional. Essa experiência reforça sua convicção de que a dignidade humana é inegociável.`}</Realce></p>
-            <p><Realce>{`Também atua na assistência a vítimas e a suas famílias, acompanhando a investigação e o processo.`}</Realce></p>
+            {TRAJETORIA.map((p) => <p key={p}><Realce>{p}</Realce></p>)}
           </div>
         </section>
 
@@ -181,9 +178,9 @@ export function SobrePage({ abrir }) {
           </section>
         ))}
 
-        <button className="page-seguir" onClick={() => abrir('atuacao')}>
+        <a className="page-seguir" href="/atuacao">
           Ver as áreas de atuação <Seta width={20} height={20} />
-        </button>
+        </a>
       </div>
     </Pagina>
   )
@@ -196,7 +193,7 @@ function Midia({ c }) {
   return c.imagem ? <img src={c.imagem} alt={c.imagemAlt} /> : null
 }
 
-export function ConteudoPage({ abrir }) {
+export function ConteudoPage() {
   const { conteudos } = useSite()
   // /conteudo/carcere-de-frente abre direto nessa publicação
   const [ativo, setAtivo] = useState(() => Math.max(0, conteudos.findIndex((p) => p.id === window.location.pathname.split('/')[2])))
@@ -210,7 +207,7 @@ export function ConteudoPage({ abrir }) {
   }
 
   return (
-    <Pagina abrir={abrir} chamada={false}>
+    <Pagina chamada={false}>
       <header className="page-header">
         <h1>Direito e reflexões</h1>
         <p className="page-lead"><Realce>Palestras e explicações sobre Direito Penal em linguagem acessível.</Realce></p>
@@ -246,12 +243,12 @@ export function ConteudoPage({ abrir }) {
 // Segue a ordem das etapas; se forem acrescentadas no painel, os ícones se repetem
 const ICONES_ETAPA = [Telefone, Papeis, Escudo, Sino]
 
-export function AtuacaoPage({ abrir }) {
+export function AtuacaoPage() {
   const { areas, etapas } = useSite()
   const raiz = useFeixe()
 
   return (
-    <Pagina abrir={abrir}>
+    <Pagina>
       <header className="page-header">
         <h1>Defesa em todas as fases do processo penal</h1>
         <p className="page-lead">Atuação exclusiva na área criminal, do inquérito aos tribunais.</p>
@@ -286,12 +283,23 @@ export function AtuacaoPage({ abrir }) {
   )
 }
 
-export function ContatoPage({ abrir }) {
+export function NaoEncontradaPage() {
+  return (
+    <Pagina chamada={false} plantao={false}>
+      <header className="page-header">
+        <h1>Página não encontrada</h1>
+        <p className="page-lead">Este endereço não existe ou mudou de lugar.</p>
+      </header>
+    </Pagina>
+  )
+}
+
+export function ContatoPage() {
   const { perfil, contato } = useSite()
   const zap = linkWhatsApp(contato.whatsapp, contato.mensagem)
 
   return (
-    <Pagina abrir={abrir} chamada={false}>
+    <Pagina chamada={false}>
       <header className="page-header">
         <h1>Contato</h1>
         <p className="page-lead">

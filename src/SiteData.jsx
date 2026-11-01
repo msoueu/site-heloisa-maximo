@@ -13,7 +13,27 @@ const PADRAO = {
   perguntas: PERGUNTAS_FREQUENTES
 }
 
+const PESOS_FONTE = {
+  'Source Sans 3': '400;700',
+  'Lato': '400;700',
+  'Nunito Sans': '400;700',
+  'Atkinson Hyperlegible': '400;700',
+  'EB Garamond': '400;500',
+  'Libre Baskerville': '400;700',
+  'Lora': '400;500'
+}
+
+// Baixa só a letra em uso; Georgia já vem no aparelho
+export function carregarFonte(nome) {
+  const id = `fonte-${nome}`
+  if (!PESOS_FONTE[nome] || document.getElementById(id)) return
+  const href = `https://fonts.googleapis.com/css2?family=${nome.replace(/ /g, '+')}:wght@${PESOS_FONTE[nome]}&display=swap`
+  document.head.append(Object.assign(document.createElement('link'), { id, rel: 'stylesheet', href }))
+}
+
 export function aplicarAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaque }) {
+  carregarFonte(fonte)
+  carregarFonte(titulo)
   const raiz = document.documentElement
   raiz.style.setProperty('--pagina-fonte', `'${fonte}', sans-serif`)
   raiz.style.setProperty('--pagina-titulo', `'${titulo}', Georgia, serif`)

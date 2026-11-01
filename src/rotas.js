@@ -7,7 +7,8 @@ export const veioDeRecuperacao = window.location.hash.includes('type=recovery')
 export function lerRota() {
   if (veioDeRecuperacao) return 'painel'
   const pagina = window.location.pathname.split('/')[1]
-  return ROTAS.includes(pagina) ? pagina : 'home'
+  if (!pagina) return 'home'
+  return ROTAS.includes(pagina) ? pagina : 'naoEncontrada'
 }
 
 export function navegar(caminho) {
@@ -27,5 +28,6 @@ export function interceptarLink(e) {
   const link = e.target.closest('a')
   if (!link || link.target || link.origin !== window.location.origin) return
   e.preventDefault()
-  navegar(link.pathname)
+  if (link.pathname === window.location.pathname) window.scrollTo({ top: 0, behavior: 'smooth' })
+  else navegar(link.pathname)
 }
