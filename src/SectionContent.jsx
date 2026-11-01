@@ -80,11 +80,10 @@ export default function SectionContent({ current, abrir }) {
 
       <section className={painel(4)}>
         <Tag onClick={() => abrir('contato')}>CONTATO</Tag>
-        <h2 className="panel-name">Cada hora conta.</h2>
+        <h2 className="panel-name">Contato</h2>
         <p className="panel-desc">
-          Em uma situação criminal, a primeira orientação faz toda a diferença. Faça o diagnóstico
-          rápido do seu caso em menos de 5 minutos e fale diretamente com a advogada, com sigilo
-          absoluto.
+          Fale com a advogada pelo WhatsApp ou conte sua situação em quatro perguntas rápidas. Sua
+          conversa é protegida pelo sigilo profissional, nos termos da lei.
         </p>
         <ul className="panel-contact">
           <li><Relogio /> Plantão 24h para urgências</li>
@@ -95,7 +94,7 @@ export default function SectionContent({ current, abrir }) {
           </li>
         </ul>
         <a href="/diagnostico" className="panel-btn panel-btn-solid">
-          Analisar meu caso <Seta />
+          Contar minha situação <Seta />
         </a>
         <button className="panel-link panel-link-contato" onClick={() => abrir('contato')}>
           Todas as formas de contato <Seta />

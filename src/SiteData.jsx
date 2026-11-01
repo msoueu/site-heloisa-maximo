@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES, PARCERIAS } from './data'
+import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES } from './data'
 import { CONFIGURADO, SUPABASE_URL, SUPABASE_CHAVE } from './ambiente'
 
 const PADRAO = {
@@ -10,8 +10,7 @@ const PADRAO = {
   etapas: ETAPAS,
   conteudos: CONTEUDOS,
   aparencia: APARENCIA,
-  perguntas: PERGUNTAS_FREQUENTES,
-  parcerias: PARCERIAS
+  perguntas: PERGUNTAS_FREQUENTES
 }
 
 export function aplicarAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaque }) {

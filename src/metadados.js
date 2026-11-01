@@ -3,7 +3,7 @@ const NOME = 'Heloisa Máximo'
 const PAGINAS = {
   home: {
     titulo: `${NOME} · Advocacia Criminal`,
-    descricao: 'Heloisa Máximo, advogada criminalista. Defesa técnica, humanizada e combativa em Direito Penal e Processual Penal, com base em Sergipe e atuação em todo o Brasil.'
+    descricao: 'Heloisa Máximo, advogada criminalista. Atuação em Direito Penal e Processual Penal, com base em Sergipe e atuação em todo o Brasil.'
   },
   sobre: {
     titulo: `Sobre · ${NOME}`,
@@ -11,7 +11,7 @@ const PAGINAS = {
   },
   conteudo: {
     titulo: `Conteúdo jurídico · ${NOME}`,
-    descricao: 'Casos, palestras e explicações sobre Direito Penal em linguagem acessível.'
+    descricao: 'Palestras e explicações sobre Direito Penal em linguagem acessível.'
   },
   atuacao: {
     titulo: `Áreas de atuação · ${NOME}`,
@@ -22,16 +22,12 @@ const PAGINAS = {
     descricao: 'Fale com Heloisa Máximo, advogada criminalista, pelo WhatsApp ou pelo Instagram. Atendimento confidencial.'
   },
   diagnostico: {
-    titulo: `Analisar meu caso · ${NOME}`,
+    titulo: `Conte sua situação · ${NOME}`,
     descricao: 'Responda quatro perguntas rápidas para organizar as informações antes de falar com a advogada. Não é consulta jurídica.'
   },
   perguntas: {
     titulo: `Perguntas frequentes · ${NOME}`,
     descricao: 'Respostas gerais sobre prisão, audiência de custódia, intimação, habeas corpus e sigilo na advocacia criminal.'
-  },
-  parcerias: {
-    titulo: `Parcerias · ${NOME}`,
-    descricao: 'Pessoas e instituições parceiras de Heloisa Máximo, advogada criminalista.'
   },
   privacidade: {
     titulo: `Política de Privacidade · ${NOME}`,

@@ -2,7 +2,7 @@
 
 export const PRIVACIDADE = `# Política de Privacidade
 
-**Última atualização: outubro de 2026.**
+**Última atualização: novembro de 2026.**
 
 ## 1. Apresentação e identificação da responsável
 
@@ -53,9 +53,9 @@ O tratamento dessas informações observará sua finalidade específica, a neces
 
 Recomenda-se que informações sigilosas ou documentos relacionados a casos concretos sejam compartilhados somente pelos canais e procedimentos indicados durante o atendimento profissional.
 
-### 3.3. Análise do caso
+### 3.3. Conte sua situação
 
-As respostas informadas na página de análise do caso permanecem no navegador do visitante e não são armazenadas pelo website. Elas somente são encaminhadas se o visitante optar por enviá-las pelo WhatsApp, hipótese em que se aplica o item 3.2.
+As respostas informadas na página “Conte sua situação” permanecem no navegador do visitante e não são armazenadas pelo website. Elas somente são encaminhadas se o visitante optar por enviá-las pelo WhatsApp, hipótese em que se aplica o item 3.2.
 
 Ao escolher essa opção, o texto com as respostas é repassado ao WhatsApp no endereço do link aberto pelo navegador e aparece pronto na conversa, podendo ser alterado. A mensagem só é enviada à advogada quando o próprio visitante a confirma.
 

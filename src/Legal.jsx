@@ -1,4 +1,5 @@
-import { Pagina, useSite } from './Pages'
+import { Pagina } from './Pages'
+import { useSite } from './SiteData'
 import { PRIVACIDADE, TERMOS } from './textosLegais'
 
 const INLINE = /(\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\([^)]+\))/g

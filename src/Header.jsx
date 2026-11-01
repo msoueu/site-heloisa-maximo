@@ -8,8 +8,7 @@ const LINKS = [
   { label: 'Conteúdo', pagina: 'conteudo' },
   { label: 'Atuação', pagina: 'atuacao' },
   { label: 'Contato', pagina: 'contato' },
-  { label: 'Perguntas', sufixo: ' frequentes', pagina: 'perguntas' },
-  { label: 'Parcerias', pagina: 'parcerias' }
+  { label: 'Perguntas', sufixo: ' frequentes', pagina: 'perguntas' }
 ]
 
 export default function Header({ rota, endereco, irPara, abrir, tema, alternarTema }) {
@@ -75,7 +74,7 @@ export default function Header({ rota, endereco, irPara, abrir, tema, alternarTe
           Falar no WhatsApp
         </a>
         <div className="cta-selos">
-          <span><Relogio width={18} height={18} /> Atendimento 24h</span>
+          <span><Relogio width={18} height={18} /> Plantão 24h para urgências</span>
           <span><Escudo width={18} height={18} /> Atendimento confidencial</span>
         </div>
       </div>

@@ -62,17 +62,6 @@ const SECOES = [
     campos: ['Pergunta', 'Resposta'],
     descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
-  {
-    id: 'parcerias',
-    grupo: 'Parcerias',
-    label: 'Parceiros',
-    Icone: Estrela,
-    pagina: 'parcerias',
-    adicionar: 'Adicionar parceria',
-    campos: ['Nome', 'Sobre a parceria'],
-    parceria: true,
-    descricao: 'Pessoas e instituições parceiras. Enquanto a lista estiver vazia, a página avisa que elas aparecerão em breve.'
-  },
   { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' },
   { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
 ]
@@ -85,8 +74,7 @@ const PAGINAS = [
   ['conteudo', 'Conteúdo'],
   ['atuacao', 'Atuação'],
   ['contato', 'Contato'],
-  ['perguntas', 'Perguntas frequentes'],
-  ['parcerias', 'Parcerias']
+  ['perguntas', 'Perguntas frequentes']
 ]
 
 const FONTES_TEXTO = [
@@ -271,8 +259,8 @@ function NovaSenha({ aoConcluir }) {
   )
 }
 
-function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, parcerias }) {
-  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, parcerias }))
+function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }) {
+  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }))
 }
 
 function Editor({ usuario }) {
@@ -415,7 +403,7 @@ function Editor({ usuario }) {
           {secao === 'contato' && <Contato contato={rascunho.contato} mudar={(v) => alterar('contato', v)} />}
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
           {secao === 'aparencia' && <Aparencia aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />}
-          {['destaques', 'areas', 'etapas', 'perguntas', 'parcerias'].includes(secao) && (
+          {['destaques', 'areas', 'etapas', 'perguntas'].includes(secao) && (
             <ListaSimples key={secao} secao={atual} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
           )}
         </div>
@@ -590,10 +578,9 @@ function Aparencia({ aparencia, mudar }) {
       </Bloco>
       <Bloco titulo="Amostra">
         <div className="adm-previa" data-destaque={aparencia.destaque}>
-          <p style={titulo}>Cada hora conta.</p>
+          <p style={titulo}>Contato</p>
           <p style={amostra}>
-            Fale diretamente com a advogada, com <strong className="realce">sigilo absoluto</strong>.
-            Atendimento em <strong className="realce">Plantão 24h</strong> para urgências.
+            Fale com a advogada pelo WhatsApp. Sua conversa é protegida pelo <strong className="realce">sigilo profissional</strong>.
           </p>
         </div>
         <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={() => mudar({ ...APARENCIA })}>
@@ -706,7 +693,7 @@ function Contato({ contato, mudar }) {
   const campo = (chave) => (v) => mudar({ ...contato, [chave]: v })
   return (
     <div className="adm-pilha">
-      <Bloco titulo="WhatsApp" descricao="Para onde vão os botões “Falar no WhatsApp” e a análise do caso.">
+      <Bloco titulo="WhatsApp" descricao="Para onde vão os botões “Falar no WhatsApp” e as respostas de “Conte sua situação”.">
         <Campo
           label="Número do WhatsApp"
           valor={contato.whatsapp}
@@ -715,7 +702,7 @@ function Contato({ contato, mudar }) {
         />
         {!aceitaMensagem(contato.whatsapp) && (
           <p className="adm-alerta adm-alerta-erro">
-            Este link não leva a mensagem automática nem as respostas da análise do caso. Digite aqui o número com DDD.
+            Este link não leva a mensagem automática nem as respostas de “Conte sua situação”. Digite aqui o número com DDD.
           </p>
         )}
         {contato.whatsapp && (
@@ -736,7 +723,7 @@ function Contato({ contato, mudar }) {
           dica="Se deixar em branco, volta a mensagem original."
         />
         <Campo
-          label="Na análise do caso"
+          label="Em “Conte sua situação”"
           valor={contato.mensagemAnalise ?? CONTATO.mensagemAnalise}
           mudar={campo('mensagemAnalise')}
           longo={5}
@@ -786,7 +773,7 @@ function Perfil({ perfil, mudar }) {
         <Bloco titulo="Sua foto">
           <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita={TIPOS_IMAGEM} redondo />
         </Bloco>
-        <Bloco titulo="Foto do WhatsApp" descricao="Aparece na conversa da análise do caso. Sem ela, entra a sua foto principal.">
+        <Bloco titulo="Foto do WhatsApp" descricao="Aparece na conversa de “Conte sua situação”. Sem ela, entra a sua foto principal.">
           <Arquivo valor={perfil.fotoWhatsapp} mudar={campo('fotoWhatsapp')} aceita={TIPOS_IMAGEM} redondo />
         </Bloco>
       </div>
@@ -824,12 +811,6 @@ function ListaSimples({ secao, lista, mudar }) {
           <div className="adm-item-campos">
             <Campo label={rotuloTitulo} valor={item.titulo} mudar={(v) => editar(i, 'titulo', v)} />
             <Campo label={rotuloTexto} valor={item.texto} mudar={(v) => editar(i, 'texto', v)} longo={2} />
-            {secao.parceria && (
-              <>
-                <Campo label="Link do site (se tiver)" type="url" placeholder="https://" valor={item.link || ''} mudar={(v) => editar(i, 'link', v)} />
-                <Arquivo label="Foto (se tiver)" valor={item.foto} mudar={(v) => editar(i, 'foto', v)} aceita={TIPOS_IMAGEM} />
-              </>
-            )}
           </div>
           <div className="adm-item-acoes">
             <Ordenar i={i} total={lista.length} aoMover={(para) => mudar(mover(lista, i, para))} />

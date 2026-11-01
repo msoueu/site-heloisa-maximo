@@ -1,17 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEV } from './data'
-import { useSite as useSiteReal, linkWhatsApp } from './SiteData'
-import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino, GitHub, Pausa, Tocar } from './Icons'
+import { useSite, linkWhatsApp } from './SiteData'
+import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
 import './Pages.css'
 
-// Enquanto o campo OAB do painel estiver vazio, o número aparece como xxxx
-export function useSite() {
-  const site = useSiteReal()
-  return { ...site, perfil: { ...site.perfil, oab: site.perfil.oab || 'OAB/SE xxxx' } }
-}
-
 // Termos destacados nos textos; vale também para o que for editado no painel
-const TERMOS = /(Direito Processual Penal|Direito Penal|técnica jurídica rigorosa|atendimento humanizado|postura combativa|dignidade humana|sigilo absoluto|sigilo profissional|total sigilo|Plantão 24h|prisões em flagrante|audiência de custódia|Jovem Advocacia|Advocacia por Elas|PREFEM\/SE|vítimas|instâncias superiores|Tribunal do Júri|crimes dolosos contra a vida|liberdade|defesa técnica|recursos às instâncias superiores|progressão de regime|todo o Brasil|verdade real|riscos e possibilidades|próximos passos|linguagem simples|conclusão do processo)/gi
+const TERMOS = /(Direito Processual Penal|Direito Penal|dignidade humana|sigilo profissional|Plantão 24h|prisões em flagrante|audiência de custódia|Jovem Advocacia|Advocacia por Elas|PREFEM\/SE|vítimas|instâncias superiores|Tribunal do Júri|crimes dolosos contra a vida|liberdade|defesa técnica|recursos às instâncias superiores|progressão de regime|todo o Brasil|verdade real|riscos e possibilidades|próximos passos|linguagem simples|conclusão do processo)/gi
 
 export function Realce({ children }) {
   return String(children).split(TERMOS).map((trecho, i) => (
@@ -91,7 +85,6 @@ function Rodape({ abrir }) {
           <button onClick={() => abrir('atuacao')}>Áreas de atuação</button>
           <button onClick={() => abrir('contato')}>Contato</button>
           <button onClick={() => abrir('perguntas')}>Perguntas frequentes</button>
-          <button onClick={() => abrir('parcerias')}>Parcerias</button>
         </nav>
       </div>
       <div className="page-footer-base">
@@ -100,10 +93,7 @@ function Rodape({ abrir }) {
           <a href="/termos" onClick={(e) => { e.preventDefault(); abrir('termos') }}>Termos de Uso</a>
         </nav>
         <p>© {new Date().getFullYear()} {perfil.nome}. Todos os direitos reservados.{perfil.oab && ` ${perfil.oab}.`}</p>
-        <p>
-          Conteúdo de caráter exclusivamente informativo, em conformidade com o Código de Ética e
-          Disciplina da OAB e o Provimento nº 205/2021.
-        </p>
+        <p>Conteúdo de caráter exclusivamente informativo.</p>
         <p className="page-footer-creditos">
           <a href={DEV.github} target="_blank" rel="noreferrer">Site por {DEV.nome}</a>
           {/* crédito exigido pela licença CC BY 4.0 do modelo */}
@@ -133,8 +123,8 @@ export function Pagina({ abrir, chamada = true, plantao = true, children }) {
       {chamada && (
         <section className="page-chamada">
           <div>
-            <h2>Precisa de orientação agora?</h2>
-            <p>Fale diretamente com a advogada, com sigilo absoluto. Plantão 24h para urgências.</p>
+            <h2>Contato</h2>
+            <p>Fale com a advogada pelo WhatsApp. Sua conversa é protegida pelo sigilo profissional, nos termos da lei.</p>
           </div>
           <BotaoWhatsApp />
         </section>
@@ -164,12 +154,12 @@ export function SobrePage({ abrir }) {
         </header>
 
         <section className="sinal sinal-linha">
-          <h2>Uma advocacia que vai além dos autos</h2>
+          <h2>Trajetória</h2>
           <div className="page-texto">
-            <p><Realce>{`Heloisa Máximo é advogada criminalista, com atuação dedicada ao Direito Penal e ao Direito Processual Penal. Seu trabalho se apoia em três pilares: a técnica jurídica rigorosa, o atendimento humanizado e a postura combativa na defesa de cada cliente.`}</Realce></p>
+            <p><Realce>{`Heloisa Máximo é advogada criminalista, com atuação dedicada ao Direito Penal e ao Direito Processual Penal, da fase de investigação aos tribunais.`}</Realce></p>
             <p><Realce>{`Representando a Jovem Advocacia, foi palestrante do projeto “Advocacia por Elas”, da OAB/SE, debatendo o enfrentamento à violência doméstica no interior do estado.`}</Realce></p>
             <p><Realce>{`Atuou no PREFEM/SE em conjunto com o Mecanismo Estadual de Prevenção e Combate à Tortura, acompanhando de perto a realidade do sistema prisional. Essa experiência reforça sua convicção de que a dignidade humana é inegociável.`}</Realce></p>
-            <p><Realce>{`Também atua na defesa dos interesses de vítimas e de suas famílias, buscando as instâncias superiores sempre que necessário para que nenhuma investigação seja interrompida antes do tempo.`}</Realce></p>
+            <p><Realce>{`Também atua na assistência a vítimas e a suas famílias, acompanhando a investigação e o processo.`}</Realce></p>
           </div>
         </section>
 
@@ -220,10 +210,10 @@ export function ConteudoPage({ abrir }) {
   }
 
   return (
-    <Pagina abrir={abrir}>
+    <Pagina abrir={abrir} chamada={false}>
       <header className="page-header">
-        <h1>Direito, atuação e reflexões</h1>
-        <p className="page-lead"><Realce>Casos, palestras e explicações sobre Direito Penal em linguagem acessível.</Realce></p>
+        <h1>Direito e reflexões</h1>
+        <p className="page-lead"><Realce>Palestras e explicações sobre Direito Penal em linguagem acessível.</Realce></p>
       </header>
 
       {c && (
@@ -303,29 +293,29 @@ export function ContatoPage({ abrir }) {
   return (
     <Pagina abrir={abrir} chamada={false}>
       <header className="page-header">
-        <h1>Cada hora conta.</h1>
+        <h1>Contato</h1>
         <p className="page-lead">
-          <Realce>{'Em uma situação criminal, a primeira orientação faz toda a diferença. Fale diretamente com a advogada, com sigilo absoluto.'}</Realce>
+          Fale com a advogada pelo WhatsApp ou pelo Instagram.
         </p>
       </header>
 
       <div className="portas">
         <a className="porta porta-urgente" href={zap} target="_blank" rel="noreferrer">
           <Relogio width={28} height={28} />
-          <h2>É uma urgência</h2>
-          <p>Plantão 24h, para casos como prisões em flagrante.</p>
-          <span>Falar agora <Seta width={22} height={22} /></span>
+          <h2>Falar com a advogada</h2>
+          <p>Plantão 24h para urgências, como prisões em flagrante.</p>
+          <span>Abrir o WhatsApp <Seta width={22} height={22} /></span>
         </a>
         <a className="porta" href="/diagnostico">
           <Papeis width={28} height={28} />
-          <h2>Analisar meu caso</h2>
-          <p>Responda quatro perguntas rápidas para a advogada entender a sua situação.</p>
+          <h2>Contar minha situação</h2>
+          <p>Responda quatro perguntas rápidas para organizar as informações antes do contato.</p>
           <span>Começar <Seta width={22} height={22} /></span>
         </a>
       </div>
 
       <p className="contato-sigilo">
-        Sua conversa é protegida pelo <Realce>sigilo profissional</Realce>.
+        Sua conversa é protegida pelo <Realce>sigilo profissional</Realce>, nos termos da lei.
       </p>
 
       <ul className="canais">
@@ -350,122 +340,6 @@ export function ContatoPage({ abrir }) {
           <div><strong>Onde atua</strong>{perfil.local}</div>
         </li>
       </ul>
-    </Pagina>
-  )
-}
-
-const TEMPO_VITRINE = 6000
-const ARRASTE_VITRINE = 50
-
-// Passa sozinha e espera enquanto a pessoa lê o texto ou navega pelo teclado; o botão pausa de vez
-function Vitrine({ lista }) {
-  const [indice, setIndice] = useState(0)
-  const [pausada, setPausada] = useState(false)
-  const [parada, setParada] = useState(false)
-  const inicio = useRef(0)
-  const total = lista.length
-  const atual = indice % total
-  const parceria = lista[atual]
-  const passar = (n) => setIndice((atual + n + total) % total)
-
-  useEffect(() => {
-    if (pausada || parada || total < 2) return
-    const id = setTimeout(() => setIndice((i) => (i + 1) % total), TEMPO_VITRINE)
-    return () => clearTimeout(id)
-  }, [indice, pausada, parada, total])
-
-  const soltar = (e) => {
-    const distancia = e.clientX - inicio.current
-    if (Math.abs(distancia) >= ARRASTE_VITRINE) passar(distancia < 0 ? 1 : -1)
-  }
-
-  return (
-    <section
-      className="vitrine"
-      aria-roledescription="carrossel"
-      aria-label="Parcerias"
-      onFocus={(e) => setParada(e.target.matches(':focus-visible'))}
-      onBlur={() => setParada(false)}
-    >
-      <div className="vitrine-palco">
-        <div
-          className="vitrine-foto"
-          key={atual}
-          onPointerDown={(e) => { inicio.current = e.clientX }}
-          onPointerUp={soltar}
-        >
-          {parceria.foto ? <img src={parceria.foto} alt="" draggable={false} /> : <span />}
-        </div>
-        {total > 1 && (
-          <>
-            <button className="vitrine-seta vitrine-anterior" onClick={() => passar(-1)} aria-label="Parceria anterior"><Voltar width={20} height={20} /></button>
-            <button className="vitrine-seta vitrine-proxima" onClick={() => passar(1)} aria-label="Próxima parceria"><Seta width={20} height={20} /></button>
-            <div className="vitrine-pontos">
-              {lista.map((p, i) => (
-                <button
-                  key={p.titulo}
-                  className={i === atual ? 'is-active' : ''}
-                  aria-label={`Ver parceria ${i + 1} de ${total}`}
-                  aria-current={i === atual}
-                  onClick={() => setIndice(i)}
-                />
-              ))}
-            </div>
-            <button className="vitrine-seta vitrine-pausa" onClick={() => setPausada(!pausada)} aria-label={pausada ? 'Continuar passando' : 'Pausar'}>
-              {pausada ? <Tocar width={16} height={16} /> : <Pausa width={16} height={16} />}
-            </button>
-          </>
-        )}
-      </div>
-      <div className="vitrine-lado" onMouseEnter={() => setParada(true)} onMouseLeave={() => setParada(false)}>
-        <div aria-live={pausada || parada ? 'polite' : 'off'}>
-          <div className="vitrine-texto" key={atual}>
-            <h2>{parceria.titulo}</h2>
-            <p>{parceria.texto}</p>
-            {parceria.link && <a href={parceria.link} target="_blank" rel="noreferrer"><i /> Conhecer</a>}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-export function ParceriasPage({ abrir }) {
-  const { parcerias } = useSite()
-
-  return (
-    <Pagina abrir={abrir} chamada={false}>
-      <header className="page-header">
-        <h1>Parcerias</h1>
-        <p className="page-lead">
-          {parcerias.length ? 'Pessoas e instituições que caminham ao lado deste trabalho.' : 'As parcerias serão apresentadas aqui em breve.'}
-        </p>
-      </header>
-
-      <div>
-        {parcerias.length > 0 && <Vitrine lista={parcerias} />}
-
-        <h2 className="feixe-titulo">Desenvolvedora do site</h2>
-        <div className="parceria-criador">
-          <img src={DEV.foto} alt={`Foto de ${DEV.nome}`} onError={(e) => { e.target.hidden = true }} />
-          <p>
-            <strong>{DEV.nome}</strong>, desenvolvedora web. Criei este site do início ao fim: design, código e painel de edição.
-            Se você também precisa de um site, vamos conversar.
-          </p>
-        </div>
-        <ul className="canais">
-          {DEV.email && (
-            <li>
-              <span className="canal-icone"><Email /></span>
-              <div><strong>E-mail</strong><a href={`mailto:${DEV.email}`}>{DEV.email}</a></div>
-            </li>
-          )}
-          <li>
-            <span className="canal-icone"><GitHub /></span>
-            <div><strong>GitHub</strong><a href={DEV.github} target="_blank" rel="noreferrer">{DEV.github.replace('https://', '')}</a></div>
-          </li>
-        </ul>
-      </div>
     </Pagina>
   )
 }

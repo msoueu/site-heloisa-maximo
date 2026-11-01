@@ -13,9 +13,8 @@ const PERGUNTAS = [
   },
   { id: 'Quem', texto: 'Quem precisa de ajuda?', opcoes: ['Eu', 'Um familiar', 'Outra pessoa'] },
   { id: 'Quando', texto: 'Quando aconteceu?', opcoes: ['Agora ou nas últimas 24 horas', 'Nesta semana', 'Há mais tempo'] },
-  { id: 'Advogado', texto: 'Já existe advogado no caso?', opcoes: ['Não', 'Sim, mas quero outra opinião', 'Não sei'] }
+  { id: 'Advogado', texto: 'Já existe advogado no caso?', opcoes: ['Não', 'Sim', 'Não sei'] }
 ]
-const URGENTES = ['Prisão em flagrante', 'Agora ou nas últimas 24 horas']
 const ESPERA_DIGITANDO = 900
 
 function useAnalise() {
@@ -25,7 +24,6 @@ function useAnalise() {
     respostas,
     atual,
     completa: atual === -1,
-    urgente: Object.values(respostas).some((r) => URGENTES.includes(r)),
     responder: (id, opcao) => setRespostas((r) => ({ ...r, [id]: opcao })),
     reiniciar: () => setRespostas({})
   }
@@ -79,7 +77,7 @@ function Celular({ analise }) {
       </div>
       <div className="tel-conversa" ref={conversa} aria-live="polite">
         <p className="tel-aviso">Mensagens automáticas</p>
-        <Balao>Olá! Vou fazer quatro perguntas rápidas para a advogada entender a sua situação.</Balao>
+        <Balao>Olá! Vou fazer quatro perguntas rápidas para organizar as informações.</Balao>
         {respondidas.map((p) => (
           <div key={p.id}>
             <Balao>{p.texto}</Balao>
@@ -89,11 +87,7 @@ function Celular({ analise }) {
         {digitando && <div className="tel-balao tel-digitando" aria-label="Digitando"><i /><i /><i /></div>}
         {!digitando && !analise.completa && <Balao>{pergunta.texto}</Balao>}
         {!digitando && analise.completa && (
-          <Balao>
-            {analise.urgente
-              ? 'Sua situação pede atenção imediata. O plantão 24h atende urgências como esta.'
-              : 'Pronto! Com essas respostas, a advogada já começa a conversa entendendo o seu momento.'}
-          </Balao>
+          <Balao>Pronto. Se quiser, envie essas respostas para a advogada pelo WhatsApp.</Balao>
         )}
       </div>
       <div className="tel-respostas">
@@ -102,8 +96,8 @@ function Celular({ analise }) {
         ))}
         {!digitando && analise.completa && (
           <>
-            <a href={href} target="_blank" rel="noreferrer"><WhatsApp width={20} height={20} /> {analise.urgente ? 'Falar agora' : 'Enviar para a advogada'}</a>
-            <button onClick={analise.reiniciar}>Refazer a análise</button>
+            <a href={href} target="_blank" rel="noreferrer"><WhatsApp width={20} height={20} /> Enviar para a advogada</a>
+            <button onClick={analise.reiniciar}>Recomeçar</button>
           </>
         )}
       </div>
@@ -117,9 +111,9 @@ export default function DiagnosticoPage({ abrir }) {
   return (
     <Pagina abrir={abrir} chamada={false}>
       <header className="page-header diag-topo">
-        <h1>Analisar meu caso</h1>
+        <h1>Conte sua situação</h1>
         <p className="page-lead">
-          Responda quatro perguntas rápidas para a advogada entender a sua situação. Leva menos de um minuto.
+          Responda quatro perguntas rápidas para organizar as informações antes do contato. Leva menos de um minuto.
         </p>
         <ul className="nota-selos">
           <li><Escudo /> Atendimento confidencial</li>
@@ -131,7 +125,7 @@ export default function DiagnosticoPage({ abrir }) {
       <Celular analise={analise} />
 
       <p className="nota-legal">
-        <Info /> <span><strong>Importante:</strong> esta análise só organiza as informações para a conversa. Ela <strong>não é consulta jurídica</strong>, não avalia o seu caso e <strong>não indica resultado</strong>.</span>
+        <Info /> <span><strong>Importante:</strong> esta página só organiza as informações para a conversa. Ela <strong>não é consulta jurídica</strong>, não avalia o seu caso e <strong>não indica resultado</strong>.</span>
       </p>
     </Pagina>
   )

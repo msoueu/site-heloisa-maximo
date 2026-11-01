@@ -9,11 +9,10 @@ O conteúdo é informativo e não substitui a análise individual de um caso. Na
 - [Início](https://advheloisamaximo.vercel.app/): apresentação da advogada e das áreas de atuação
 - [Sobre](https://advheloisamaximo.vercel.app/sobre): trajetória profissional
 - [Áreas de atuação](https://advheloisamaximo.vercel.app/atuacao): áreas e etapas do atendimento
-- [Conteúdo jurídico](https://advheloisamaximo.vercel.app/conteudo): casos, palestras e explicações sobre Direito Penal
+- [Conteúdo jurídico](https://advheloisamaximo.vercel.app/conteudo): palestras e explicações sobre Direito Penal
 - [Perguntas frequentes](https://advheloisamaximo.vercel.app/perguntas): respostas gerais sobre prisão, intimação, habeas corpus e sigilo
-- [Parcerias](https://advheloisamaximo.vercel.app/parcerias): pessoas e instituições parceiras
 - [Contato](https://advheloisamaximo.vercel.app/contato): canais de atendimento
-- [Analisar meu caso](https://advheloisamaximo.vercel.app/diagnostico): quatro perguntas para organizar as informações antes de falar com a advogada
+- [Conte sua situação](https://advheloisamaximo.vercel.app/diagnostico): quatro perguntas para organizar as informações antes de falar com a advogada
 
 ## Informações legais
 

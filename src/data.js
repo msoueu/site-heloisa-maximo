@@ -3,41 +3,32 @@
 export const PERFIL = {
   nome: 'Heloisa Máximo',
   titulo: 'Advogada Criminalista',
-  slogan: 'Defesa técnica, humanizada e combativa.',
+  slogan: 'Defesa e orientação na área criminal.',
   especialidade: 'Direito Penal e Processual Penal',
   local: 'Sergipe · Atuação em todo o Brasil',
   foto: '/Heloisa.webp',
   // Preencha para exibir no site (deixe vazio para ocultar)
-  oab: '', // ex.: 'OAB/SE 0000'
+  oab: 'OAB/SE 18.236',
   formacao: '' // ex.: 'Bacharel em Direito pela ...'
 }
 
 export const DEV = {
   nome: 'Emy',
-  github: 'https://github.com/msoueu',
-  email: '',
-  foto: '/criador.jpg'
+  github: 'https://github.com/msoueu'
 }
 
 export const CONTATO = {
   whatsapp: '+55 79 99627-0697',
   mensagem: 'Olá, Dra. Heloisa Máximo! Vim pelo seu site e gostaria de falar com a senhora.',
-  mensagemAnalise: 'Olá, Dra. Heloisa Máximo! Vim pelo seu site e gostaria de falar com a senhora sobre um caso.\n\nFiz a análise rápida e respondi o seguinte:',
+  mensagemAnalise: 'Olá, Dra. Heloisa Máximo! Vim pelo seu site e gostaria de falar com a senhora sobre um caso.\n\nOrganizei as informações e respondi o seguinte:',
   instagram: 'https://www.instagram.com/advheloisamaximo/',
   instagramUser: '@advheloisamaximo',
   telefone: '',
   email: ''
 }
 
-// shortcut: exemplos só no ambiente local para ver o protótipo, tirar quando houver parceiros reais
-export const PARCERIAS = process.env.NODE_ENV === 'development' ? [
-  { titulo: 'Parceiro de exemplo 1', texto: 'Texto de exemplo sobre esta parceria: quem é, como trabalha junto com a advogada e por que essa parceria existe.', foto: '/conteudo/advocacia-por-elas.jpg', link: 'https://example.com' },
-  { titulo: 'Parceiro de exemplo 2', texto: 'Outro texto de exemplo, um pouco mais curto, para ver como a página se comporta.', foto: '/conteudo/prefem-se.jpg', link: 'https://example.com' },
-  { titulo: 'Parceiro de exemplo 3', texto: 'Parceria sem foto e sem link: o espaço da imagem mostra o monograma.' }
-] : []
-
 export const DESTAQUES = [
-  { titulo: 'Plantão 24h', texto: 'Atendimento imediato em urgências, como prisões em flagrante.' },
+  { titulo: 'Plantão 24h', texto: 'Contato disponível para urgências, como prisões em flagrante. O retorno depende da disponibilidade da advogada.' },
   { titulo: 'Penal e Processual Penal', texto: 'Atuação exclusiva na área criminal, do inquérito aos tribunais.' },
   { titulo: 'Atuação nacional', texto: 'Base em Sergipe, com atendimento em todo o Brasil.' },
   { titulo: 'Jovem Advocacia OAB/SE', texto: 'Palestrante do projeto “Advocacia por Elas”.' }
@@ -46,11 +37,11 @@ export const DESTAQUES = [
 export const AREAS = [
   {
     titulo: 'Prisão em flagrante',
-    texto: 'Atuação imediata na delegacia e na audiência de custódia, buscando a liberdade do cliente.'
+    texto: 'Acompanhamento na delegacia e na audiência de custódia.'
   },
   {
     titulo: 'Inquérito e ação penal',
-    texto: 'Defesa técnica desde a fase de investigação até a sentença, com estratégia em cada etapa.'
+    texto: 'Defesa técnica desde a fase de investigação até a sentença.'
   },
   {
     titulo: 'Habeas corpus e recursos',
@@ -58,11 +49,11 @@ export const AREAS = [
   },
   {
     titulo: 'Tribunal do Júri',
-    texto: 'Atuação em crimes dolosos contra a vida, com preparo técnico e oratória.'
+    texto: 'Atuação em crimes dolosos contra a vida, em todas as fases do júri.'
   },
   {
     titulo: 'Assistência à vítima',
-    texto: 'Defesa dos interesses de vítimas e de suas famílias para que a investigação não pare.'
+    texto: 'Acompanhamento de vítimas e de suas famílias na investigação e no processo.'
   },
   {
     titulo: 'Execução penal',
@@ -71,29 +62,26 @@ export const AREAS = [
 ]
 
 export const ETAPAS = [
-  { titulo: 'Primeiro contato', texto: 'Você fala diretamente com a advogada pelo WhatsApp, com total sigilo.' },
+  { titulo: 'Primeiro contato', texto: 'Você fala com a advogada pelo WhatsApp.' },
   { titulo: 'Análise do caso', texto: 'Estudo dos fatos e documentos para entender riscos e possibilidades.' },
   { titulo: 'Estratégia de defesa', texto: 'Definição clara dos próximos passos, explicada em linguagem simples.' },
-  { titulo: 'Acompanhamento', texto: 'Atualizações constantes até a conclusão do processo.' }
+  { titulo: 'Acompanhamento', texto: 'Informações sobre o andamento até a conclusão do processo.' }
 ]
 
 // O primeiro item aparece na página inicial
 export const CONTEUDOS = [
   {
-    id: 'verdade-real',
-    categoria: 'Atuação',
-    data: 'Abril de 2026',
-    titulo: 'Pela memória de quem se foi e pela verdade real dos fatos',
+    id: 'direitos-da-vitima',
+    categoria: 'Explicação',
+    data: 'Novembro de 2026',
+    titulo: 'Arquivamento do inquérito: o que a vítima pode fazer',
     resumo:
-      'Diante do arquivamento do caso pelo Ministério Público, buscamos a instância superior para garantir que a investigação não seja interrompida precocemente.',
+      'Quando o inquérito é arquivado, a vítima deve ser comunicada e pode pedir que a decisão seja revista dentro do Ministério Público.',
     texto: [
-      'O luto de uma família que perde um ente querido em circunstâncias violentas não admite lacunas ou dúvidas. Na defesa dos interesses da família das vítimas, nossa atuação vai além dos autos; busca-se o conforto que apenas a justiça e a verdade podem proporcionar.',
-      'Diante do arquivamento do caso pelo Ministério Público, buscamos a instância superior para garantir que a investigação não seja interrompida precocemente.',
-      'A justiça pode ser um caminho longo, mas é o único caminho capaz de trazer algum alento a quem ficou. Pela memória de quem se foi e pela verdade real dos fatos.'
-    ],
-    video: '/conteudo/verdade-real.mp4',
-    poster: '/conteudo/verdade-real.jpg',
-    videoLegenda: 'Heloisa Máximo em entrevista à TV Sergipe (SE2)'
+      'O arquivamento acontece quando o Ministério Público entende que não há elementos para seguir com a investigação ou oferecer denúncia. Isso não impede que a vítima conheça os motivos da decisão e questione esse entendimento.',
+      'Segundo o art. 28, § 1º, do Código de Processo Penal, a vítima ou seu representante legal que não concordar com o arquivamento pode, em até 30 dias do recebimento da comunicação, levar o tema à instância de revisão do próprio Ministério Público.',
+      'Cada situação tem particularidades, e este texto é apenas informativo. Ele não substitui a análise individual de um caso.'
+    ]
   },
   {
     id: 'advocacia-por-elas',
@@ -130,7 +118,7 @@ export const CONTEUDOS = [
 export const PERGUNTAS_FREQUENTES = [
   {
     titulo: 'Alguém da minha família foi preso. O que fazer primeiro?',
-    texto: 'Procure uma advogada o quanto antes. Toda pessoa presa tem direito de comunicar a prisão à família e de ter assistência de advogado, e a orientação logo no início ajuda a proteger esses direitos.'
+    texto: 'Procure a orientação de um advogado ou advogada o quanto antes. Toda pessoa presa tem direito de comunicar a prisão à família e de ter assistência de advogado, e a orientação logo no início ajuda a proteger esses direitos.'
   },
   {
     titulo: 'O que é a audiência de custódia?',
@@ -138,7 +126,7 @@ export const PERGUNTAS_FREQUENTES = [
   },
   {
     titulo: 'Sou obrigado a falar na delegacia?',
-    texto: 'Não. A Constituição garante o direito de permanecer calado, e esse silêncio não pode ser usado contra você. Antes de prestar depoimento, o ideal é conversar com uma advogada.'
+    texto: 'Sobre os fatos, não. A Constituição garante o direito de permanecer calado, e esse silêncio não pode ser usado contra você. Os dados de identificação pessoal, porém, devem ser informados. Se possível, converse com um advogado ou advogada antes de prestar depoimento.'
   },
   {
     titulo: 'Recebi uma intimação da delegacia. O que eu faço?',
@@ -154,7 +142,7 @@ export const PERGUNTAS_FREQUENTES = [
   },
   {
     titulo: 'A conversa com a advogada é sigilosa?',
-    texto: 'Sim. O que você conta à advogada no exercício da profissão é protegido pelo sigilo profissional.'
+    texto: 'Sim. O que você conta à advogada no exercício da profissão é protegido pelo sigilo profissional, nos termos da lei.'
   },
   {
     titulo: 'A advogada atende fora de Sergipe?',
