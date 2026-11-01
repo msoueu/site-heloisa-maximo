@@ -2,7 +2,7 @@
 
 Site institucional da advogada criminalista Heloisa Máximo.
 
-Site publicado: https://site-heloisa-maximo.vercel.app
+Site publicado: https://advheloisamaximo.vercel.app
 
 ## Tecnologias
 

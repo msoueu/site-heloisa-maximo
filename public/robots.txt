@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /painel
 
-Sitemap: https://site-heloisa-maximo.vercel.app/sitemap.xml
+Sitemap: https://advheloisamaximo.vercel.app/sitemap.xml
