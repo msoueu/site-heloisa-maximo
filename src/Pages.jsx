@@ -195,13 +195,13 @@ function Midia({ c }) {
 
 export function ConteudoPage() {
   const { conteudos } = useSite()
-  // /conteudo/carcere-de-frente abre direto nessa publicação
-  const [ativo, setAtivo] = useState(() => Math.max(0, conteudos.findIndex((p) => p.id === window.location.pathname.split('/')[2])))
+  // /conteudo/carcere-de-frente abre direto nessa publicação; pelo id, porque a lista do painel chega depois
+  const [ativo, setAtivo] = useState(() => window.location.pathname.split('/')[2])
   const leitor = useRef()
-  const c = conteudos[ativo] || conteudos[0]
+  const c = conteudos.find((p) => p.id === ativo) || conteudos[0]
 
-  const escolher = (i) => {
-    setAtivo(i)
+  const escolher = (id) => {
+    setAtivo(id)
     // O leitor é recriado a cada publicação: a rolagem espera o novo entrar na página
     requestAnimationFrame(() => leitor.current.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
@@ -216,12 +216,12 @@ export function ConteudoPage() {
       {c && (
         <div className="indice">
           <div>
-            {conteudos.map((item, i) => (
+            {conteudos.map((item) => (
               <button
                 key={item.id}
                 aria-pressed={item.id === c.id}
-                onClick={() => escolher(i)}
-                onMouseEnter={() => setAtivo(i)}
+                onClick={() => escolher(item.id)}
+                onMouseEnter={() => setAtivo(item.id)}
               >
                 <span>{item.categoria}{item.data && `, ${item.data}`}</span>
                 {item.titulo}
