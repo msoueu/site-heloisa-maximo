@@ -126,7 +126,7 @@ function Marca() {
     <div className="adm-marca">
       <span className="adm-mark" />
       <div>
-        <strong>Heloisa Máximo</strong>
+        <strong>Heloisa Maximo</strong>
         <small>Painel do site</small>
       </div>
     </div>

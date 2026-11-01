@@ -1,13 +1,13 @@
-const NOME = 'Heloisa Máximo'
+const NOME = 'Heloisa Maximo'
 
 const PAGINAS = {
   home: {
     titulo: `${NOME} · Advocacia Criminal`,
-    descricao: 'Heloisa Máximo, advogada criminalista. Atuação em Direito Penal e Processual Penal, com base em Sergipe e atuação em todo o Brasil.'
+    descricao: 'Heloisa Maximo, advogada criminalista. Atuação em Direito Penal e Processual Penal, com base em Sergipe e atuação em todo o Brasil.'
   },
   sobre: {
     titulo: `Sobre · ${NOME}`,
-    descricao: 'Conheça a trajetória de Heloisa Máximo, advogada criminalista com base em Sergipe e atuação em todo o Brasil.'
+    descricao: 'Conheça a trajetória de Heloisa Maximo, advogada criminalista com base em Sergipe e atuação em todo o Brasil.'
   },
   conteudo: {
     titulo: `Conteúdo jurídico · ${NOME}`,
@@ -19,7 +19,7 @@ const PAGINAS = {
   },
   contato: {
     titulo: `Contato · ${NOME}`,
-    descricao: 'Fale com Heloisa Máximo, advogada criminalista, pelo WhatsApp ou pelo Instagram. Atendimento confidencial.'
+    descricao: 'Fale com Heloisa Maximo, advogada criminalista, pelo WhatsApp ou pelo Instagram. Atendimento confidencial.'
   },
   diagnostico: {
     titulo: `Conte sua situação · ${NOME}`,
@@ -31,11 +31,11 @@ const PAGINAS = {
   },
   privacidade: {
     titulo: `Política de Privacidade · ${NOME}`,
-    descricao: 'Como os dados pessoais são tratados no site de Heloisa Máximo, conforme a LGPD.'
+    descricao: 'Como os dados pessoais são tratados no site de Heloisa Maximo, conforme a LGPD.'
   },
   termos: {
     titulo: `Termos de Uso · ${NOME}`,
-    descricao: 'Condições de uso do site institucional de Heloisa Máximo.'
+    descricao: 'Condições de uso do site institucional de Heloisa Maximo.'
   },
   painel: { titulo: `Painel · ${NOME}`, descricao: 'Área restrita.' }
 }

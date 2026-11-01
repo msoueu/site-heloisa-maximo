@@ -156,7 +156,7 @@ export function SobrePage({ abrir }) {
         <section className="sinal sinal-linha">
           <h2>Trajetória</h2>
           <div className="page-texto">
-            <p><Realce>{`Heloisa Máximo é advogada criminalista, com atuação dedicada ao Direito Penal e ao Direito Processual Penal, da fase de investigação aos tribunais.`}</Realce></p>
+            <p><Realce>{`Heloisa Maximo é advogada criminalista, com atuação dedicada ao Direito Penal e ao Direito Processual Penal, da fase de investigação aos tribunais.`}</Realce></p>
             <p><Realce>{`Representando a Jovem Advocacia, foi palestrante do projeto “Advocacia por Elas”, da OAB/SE, debatendo o enfrentamento à violência doméstica no interior do estado.`}</Realce></p>
             <p><Realce>{`Atuou no PREFEM/SE em conjunto com o Mecanismo Estadual de Prevenção e Combate à Tortura, acompanhando de perto a realidade do sistema prisional. Essa experiência reforça sua convicção de que a dignidade humana é inegociável.`}</Realce></p>
             <p><Realce>{`Também atua na assistência a vítimas e a suas famílias, acompanhando a investigação e o processo.`}</Realce></p>

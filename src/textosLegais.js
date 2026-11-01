@@ -6,11 +6,11 @@ export const PRIVACIDADE = `# Política de Privacidade
 
 ## 1. Apresentação e identificação da responsável
 
-A presente Política de Privacidade estabelece as diretrizes aplicáveis ao tratamento de dados pessoais realizado no âmbito do website de **Heloisa Máximo**, advogada criminalista{{INSCRICAO}}.
+A presente Política de Privacidade estabelece as diretrizes aplicáveis ao tratamento de dados pessoais realizado no âmbito do website de **Heloisa Maximo**, advogada criminalista{{INSCRICAO}}.
 
 O tratamento de dados pessoais observará as disposições da Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais — LGPD), da Lei nº 12.965/2014 (Marco Civil da Internet) e das demais normas aplicáveis à proteção da privacidade e ao exercício profissional da advocacia.
 
-Heloisa Máximo atua como controladora dos dados pessoais cujo tratamento esteja sob sua responsabilidade, competindo-lhe determinar as respectivas finalidades e os meios utilizados, nos termos da legislação vigente.
+Heloisa Maximo atua como controladora dos dados pessoais cujo tratamento esteja sob sua responsabilidade, competindo-lhe determinar as respectivas finalidades e os meios utilizados, nos termos da legislação vigente.
 
 Esta política tem por objetivo informar, de maneira clara e acessível, quais dados podem ser tratados, suas finalidades, os fundamentos legais aplicáveis, as condições de armazenamento e compartilhamento e os direitos assegurados aos respectivos titulares.
 
@@ -227,7 +227,7 @@ O titular poderá, ainda, apresentar petições ou reclamações perante a Autor
 
 Para solicitar informações sobre o tratamento de dados pessoais, esclarecer dúvidas ou exercer os direitos previstos na LGPD, o titular poderá entrar em contato com:
 
-**Heloisa Máximo**
+**Heloisa Maximo**
 Advogada{{OAB_LINHA}}
 **Canal de atendimento:** WhatsApp profissional disponibilizado no website.
 
@@ -251,7 +251,7 @@ export const TERMOS = `# Termos de Uso
 
 ## 1. Disposições preliminares
 
-Os presentes Termos de Uso estabelecem as condições aplicáveis ao acesso, à navegação e à utilização do website institucional de **Heloisa Máximo**, advogada criminalista{{INSCRICAO}}.
+Os presentes Termos de Uso estabelecem as condições aplicáveis ao acesso, à navegação e à utilização do website institucional de **Heloisa Maximo**, advogada criminalista{{INSCRICAO}}.
 
 O website destina-se à divulgação de informações institucionais e conteúdos jurídicos de caráter informativo, observadas as disposições do Estatuto da Advocacia e da OAB (Lei nº 8.906/1994), do Código de Ética e Disciplina da OAB, do Provimento nº 205/2021 do Conselho Federal da OAB e das demais normas aplicáveis.
 
@@ -261,7 +261,7 @@ Estes Termos de Uso devem ser interpretados em conjunto com a Política de Priva
 
 ## 2. Identificação e finalidade do website
 
-O website constitui um canal institucional destinado à apresentação da atuação profissional de Heloisa Máximo e à disponibilização de informações relacionadas ao Direito, com ênfase na área criminal.
+O website constitui um canal institucional destinado à apresentação da atuação profissional de Heloisa Maximo e à disponibilização de informações relacionadas ao Direito, com ênfase na área criminal.
 
 Seu conteúdo poderá compreender informações sobre trajetória profissional, áreas de atuação, publicações jurídicas, esclarecimentos gerais e canais de comunicação.
 
@@ -342,7 +342,7 @@ A utilização indevida poderá ensejar a adoção das medidas técnicas e jurí
 
 Os conteúdos originais disponibilizados no website, incluindo textos, artigos, fotografias, elementos gráficos, composições visuais e demais materiais protegidos, estão sujeitos à legislação brasileira de propriedade intelectual, especialmente à Lei nº 9.610/1998 (Lei de Direitos Autorais).
 
-Os direitos sobre esses materiais pertencem aos respectivos titulares, incluindo Heloisa Máximo quando se tratar de conteúdo de sua titularidade, ressalvados os materiais licenciados ou utilizados mediante autorização de terceiros.
+Os direitos sobre esses materiais pertencem aos respectivos titulares, incluindo Heloisa Maximo quando se tratar de conteúdo de sua titularidade, ressalvados os materiais licenciados ou utilizados mediante autorização de terceiros.
 
 A disponibilização pública dos conteúdos não implica transferência de titularidade, cessão de direitos ou concessão de autorização irrestrita para utilização.
 
@@ -392,7 +392,7 @@ Esses links têm finalidade informativa ou de facilitar o acesso aos canais de c
 
 O acesso a websites e plataformas externas sujeita o visitante às respectivas condições de uso, políticas de privacidade e práticas operacionais.
 
-Heloisa Máximo não exerce controle sobre a administração, a disponibilidade, as políticas internas ou as alterações promovidas por serviços independentes de terceiros.
+Heloisa Maximo não exerce controle sobre a administração, a disponibilidade, as políticas internas ou as alterações promovidas por serviços independentes de terceiros.
 
 A inclusão de links externos não representa, necessariamente, recomendação, associação comercial ou concordância com todo o conteúdo disponibilizado pelas respectivas plataformas.
 
@@ -464,7 +464,7 @@ Eventuais controvérsias serão submetidas aos meios de solução juridicamente 
 
 Dúvidas relacionadas ao conteúdo destes Termos de Uso poderão ser encaminhadas pelos canais profissionais disponibilizados no website.
 
-**Heloisa Máximo**
+**Heloisa Maximo**
 Advogada Criminalista
 {{OAB}}
 **Contato:** WhatsApp profissional disponível no website.

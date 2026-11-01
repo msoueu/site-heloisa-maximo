@@ -1,6 +1,6 @@
 {
-  "short_name": "Heloisa Máximo",
-  "name": "Heloisa Máximo · Advocacia Criminal",
+  "short_name": "Heloisa Maximo",
+  "name": "Heloisa Maximo · Advocacia Criminal",
   "icons": [
     {
       "src": "favicon.ico",
@@ -24,7 +24,7 @@
   "display": "standalone",
   "theme_color": "#3c2729",
   "background_color": "#3c2729",
-  "description": "Heloisa Máximo, advogada criminalista.",
+  "description": "Heloisa Maximo, advogada criminalista.",
   "lang": "pt-BR",
   "scope": "/"
 }

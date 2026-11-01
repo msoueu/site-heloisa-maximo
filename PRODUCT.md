@@ -12,7 +12,7 @@ Duas audiências de igual peso. Famílias e pessoas em urgência criminal (pris�
 
 ## Product Purpose
 
-Site institucional da advogada criminalista Heloisa Máximo. Passa autoridade e mantém o plantão e o WhatsApp sempre à mão. Sucesso é o visitante iniciar a conversa no WhatsApp.
+Site institucional da advogada criminalista Heloisa Maximo. Passa autoridade e mantém o plantão e o WhatsApp sempre à mão. Sucesso é o visitante iniciar a conversa no WhatsApp.
 
 ## Positioning
 

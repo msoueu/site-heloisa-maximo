@@ -1,6 +1,6 @@
-# Heloisa Máximo Advocacia
+# Heloisa Maximo Advocacia
 
-Site institucional da advogada criminalista Heloisa Máximo.
+Site institucional da advogada criminalista Heloisa Maximo.
 
 Site publicado: https://advheloisamaximo.vercel.app
 
@@ -66,4 +66,4 @@ Modelo 3D da estátua: [Lady Justice Statue](https://sketchfab.com/3d-models/lad
 
 ## Licença
 
-Todos os direitos reservados. Heloisa Máximo Advocacia.
+Todos os direitos reservados. Heloisa Maximo Advocacia.

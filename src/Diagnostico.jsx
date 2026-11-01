@@ -73,7 +73,7 @@ function Celular({ analise }) {
     <div className="tel">
       <div className="tel-topo">
         <img className="tel-avatar" src={perfil.fotoWhatsapp || perfil.foto} alt="" />
-        <div><strong>Heloisa Máximo</strong><small>Advocacia Criminal</small></div>
+        <div><strong>Heloisa Maximo</strong><small>Advocacia Criminal</small></div>
       </div>
       <div className="tel-conversa" ref={conversa} aria-live="polite">
         <p className="tel-aviso">Mensagens automáticas</p>

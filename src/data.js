@@ -1,7 +1,7 @@
 // Textos, links e informações da advogada usados no site.
 
 export const PERFIL = {
-  nome: 'Heloisa Máximo',
+  nome: 'Heloisa Maximo',
   titulo: 'Advogada Criminalista',
   slogan: 'Defesa e orientação na área criminal.',
   especialidade: 'Direito Penal e Processual Penal',
@@ -19,8 +19,8 @@ export const DEV = {
 
 export const CONTATO = {
   whatsapp: '+55 79 99627-0697',
-  mensagem: 'Olá, Dra. Heloisa Máximo! Vim pelo seu site e gostaria de falar com a senhora.',
-  mensagemAnalise: 'Olá, Dra. Heloisa Máximo! Vim pelo seu site e gostaria de falar com a senhora sobre um caso.\n\nOrganizei as informações e respondi o seguinte:',
+  mensagem: 'Olá, Dra. Heloisa Maximo! Vim pelo seu site e gostaria de falar com a senhora.',
+  mensagemAnalise: 'Olá, Dra. Heloisa Maximo! Vim pelo seu site e gostaria de falar com a senhora sobre um caso.\n\nOrganizei as informações e respondi o seguinte:',
   instagram: 'https://www.instagram.com/advheloisamaximo/',
   instagramUser: '@advheloisamaximo',
   telefone: '',
@@ -91,7 +91,7 @@ export const CONTEUDOS = [
     resumo:
       'Palestra no projeto “Advocacia por Elas”, da OAB/SE, representando a Jovem Advocacia no interior do estado.',
     imagem: '/conteudo/advocacia-por-elas.jpg',
-    imagemAlt: 'Heloisa Máximo falando ao microfone durante palestra',
+    imagemAlt: 'Heloisa Maximo falando ao microfone durante palestra',
     texto: [
       'Na última semana eu tive a honra e o privilégio de estar como palestrante no projeto “Advocacia por Elas” da OAB/SE, representando a Jovem Advocacia no interior do estado.',
       'Ocupar este espaço para debater violência doméstica é compreender que a nossa missão transcende os processos; ela toca na dignidade humana. Março não é um mês de flores, é um mês de vigília.',
@@ -106,7 +106,7 @@ export const CONTEUDOS = [
     resumo:
       'Atuação no PREFEM/SE em conjunto com o Mecanismo Estadual de Prevenção e Combate à Tortura.',
     imagem: '/conteudo/prefem-se.jpg',
-    imagemAlt: 'Heloisa Máximo diante do portão de um pavilhão prisional, segurando uma prancheta',
+    imagemAlt: 'Heloisa Maximo diante do portão de um pavilhão prisional, segurando uma prancheta',
     texto: [
       'É comum que o sistema prisional seja discutido sob o escudo das estatísticas, um distanciamento que, muitas vezes, mascara a crueza da vida real. No entanto, a verdade do cárcere se impõe nos detalhes, que por vezes passam despercebidos ou são minimizados por aqueles que não precisam viver essa realidade.',
       'Minha atuação no PREFEM/SE, em conjunto com o Mecanismo Estadual de Prevenção e Combate à Tortura, não foi apenas uma diligência técnica; foi um confronto necessário com a face mais dura do Estado. Ninguém retorna ileso ao encarar o cárcere de frente; é uma vivência que desarticula qualquer indiferença e transmuta nossa consciência sobre o Direito.',
