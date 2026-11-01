@@ -31,8 +31,9 @@ function useAnalise() {
 
 function useLinkResumo(respostas) {
   const { contato } = useSite()
-  const resumo = PERGUNTAS.map((p) => `${p.texto} ${respostas[p.id]}`).join('\n')
-  const mensagem = `${contato.mensagemAnalise || CONTATO.mensagemAnalise}\n${resumo}`
+  // Os asteriscos viram negrito no WhatsApp
+  const resumo = PERGUNTAS.map((p) => `*${p.texto}*\n${respostas[p.id]}`).join('\n\n')
+  const mensagem = `${contato.mensagemAnalise || CONTATO.mensagemAnalise}\n\n${resumo}`
   return linkWhatsApp(contato.whatsapp, mensagem)
 }
 
