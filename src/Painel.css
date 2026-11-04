@@ -474,6 +474,11 @@
   padding: 32px 40px 80px;
 }
 
+/* Separa o bloco "Letras desta parte" do que vem antes */
+.adm-corpo > * + * {
+  margin-top: 40px;
+}
+
 /* Blocos de formulário */
 .adm-pilha {
   display: grid;
@@ -1007,22 +1012,6 @@
 
 .adm-previa p + p {
   margin-top: 12px;
-}
-
-.adm-previa[data-destaque='negrito'] .realce {
-  color: #fff;
-}
-
-.adm-previa[data-destaque='dourado'] .realce {
-  color: #e6cf9f;
-}
-
-.adm-previa[data-destaque='marca'] .realce {
-  background: linear-gradient(transparent 68%, rgba(230, 207, 159, 0.38) 68%);
-}
-
-.adm-previa[data-destaque='nenhum'] .realce {
-  font-weight: inherit;
 }
 
 .adm-segmentos-dois {

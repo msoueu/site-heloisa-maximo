@@ -9,7 +9,7 @@ export default function PerguntasPage() {
   const [aberta, setAberta] = useState(0)
 
   return (
-    <Pagina chamada={false}>
+    <Pagina chamada={false} parte="perguntas">
       <header className="page-header">
         <h1>Perguntas frequentes</h1>
         <p className="page-lead">

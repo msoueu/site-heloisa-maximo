@@ -1,5 +1,5 @@
 import './SectionContent.css'
-import { useSite } from './SiteData'
+import { useSite, useParte } from './SiteData'
 import { Seta, Instagram, Local, Relogio } from './Icons'
 
 function Tag({ children, href }) {
@@ -13,11 +13,18 @@ function Tag({ children, href }) {
 export default function SectionContent({ current }) {
   const { perfil, contato, destaques, areas, conteudos } = useSite()
   const destaque = conteudos[0]
+  const partes = {
+    perfil: useParte('perfil'),
+    destaques: useParte('destaques'),
+    conteudos: useParte('conteudos'),
+    areas: useParte('areas'),
+    contato: useParte('contato')
+  }
   const painel = (i) => `section-panel ${current === i ? 'panel-active' : 'panel-hidden'}`
 
   return (
     <main className="section-content" id="conteudo" tabIndex={-1}>
-      <section className={painel(0)}>
+      <section className={painel(0)} {...partes.perfil}>
         <Tag href="/sobre">ADVOCACIA CRIMINAL</Tag>
         <div className="panel-intro">
           <h1 className="panel-name">{perfil.nome}</h1>
@@ -34,7 +41,7 @@ export default function SectionContent({ current }) {
         <h2 className="panel-titulo">{perfil.titulo}</h2>
         <div className="panel-sobre">
           <img src={perfil.foto} alt={perfil.nome} className="panel-foto" loading="lazy" decoding="async" />
-          <ul className="panel-facts">
+          <ul className="panel-facts" {...partes.destaques}>
             {destaques.map((d) => (
               <li key={d.titulo}>
                 <strong>{d.titulo}</strong>
@@ -48,7 +55,7 @@ export default function SectionContent({ current }) {
         </a>
       </section>
 
-      <section className={`${painel(2)} panel-conteudo`}>
+      <section className={`${painel(2)} panel-conteudo`} {...partes.conteudos}>
         {destaque && (
           <>
             <Tag href="/conteudo">CONTEÚDO JURÍDICO</Tag>
@@ -65,7 +72,7 @@ export default function SectionContent({ current }) {
       <section className={painel(3)}>
         <Tag href="/atuacao">ÁREAS DE ATUAÇÃO</Tag>
         <h2 className="panel-titulo">Defesa em todas as fases do processo penal</h2>
-        <ol className="panel-areas">
+        <ol className="panel-areas" {...partes.areas}>
           {areas.map((a) => (
             <li key={a.titulo}>
               <span className="area-nome">{a.titulo}</span>
@@ -77,7 +84,7 @@ export default function SectionContent({ current }) {
         </a>
       </section>
 
-      <section className={painel(4)}>
+      <section className={painel(4)} {...partes.contato}>
         <Tag href="/contato">CONTATO</Tag>
         <h2 className="panel-name">Contato</h2>
         <p className="panel-desc">

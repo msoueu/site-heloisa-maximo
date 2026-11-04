@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useSite, linkWhatsApp, aceitaMensagem, carregarFonte } from './SiteData'
+import { useSite, linkWhatsApp, aceitaMensagem, carregarFonte, varsDaAparencia } from './SiteData'
 import { supabase, BUCKET } from './supabase'
 import { veioDeRecuperacao } from './rotas'
 import { validarArquivo, validarConteudo, TIPOS_IMAGEM, TIPOS_VIDEO } from './validacao'
@@ -63,7 +63,7 @@ const SECOES = [
     descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
   { id: 'menu', grupo: AJUSTES, label: 'Nomes das páginas', Icone: Documento, pagina: 'sobre', descricao: 'Como cada página aparece no menu do topo e no rodapé. O endereço da página não muda.' },
-  { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'O tipo de letra vale para o site todo. O tamanho muda só nas páginas internas.' },
+  { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'O tipo de letra vale para o site todo. O tamanho muda só nas páginas internas. Cada parte também pode ter letras próprias, no fim da tela dela.' },
   { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
 ]
 
@@ -404,9 +404,18 @@ function Editor({ usuario }) {
           {secao === 'contato' && <Contato contato={rascunho.contato} mudar={(v) => alterar('contato', v)} />}
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
           {secao === 'menu' && <NomesDasPaginas menu={rascunho.menu} mudar={(v) => alterar('menu', v)} />}
-          {secao === 'aparencia' && <Aparencia aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />}
+          {secao === 'aparencia' && (
+            <Aparencia
+              aparencia={rascunho.aparencia}
+              mudar={(v) => alterar('aparencia', v)}
+              voltar={() => alterar('aparencia', { ...APARENCIA, partes: rascunho.aparencia.partes })}
+            />
+          )}
           {['destaques', 'areas', 'etapas', 'perguntas'].includes(secao) && (
             <ListaSimples key={secao} secao={atual} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
+          )}
+          {PARTES_COM_LETRA.includes(secao) && (
+            <LetrasDaParte key={secao} id={secao} aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />
           )}
         </div>
       </main>
@@ -573,7 +582,47 @@ function NomesDasPaginas({ menu, mudar }) {
   )
 }
 
-function Aparencia({ aparencia, mudar }) {
+const PARTES_COM_LETRA = ['perfil', 'destaques', 'conteudos', 'areas', 'etapas', 'contato', 'perguntas', 'menu']
+
+// As letras de Letras do site, sem as escolhas de cada parte
+const letrasGerais = ({ partes, ...geral }) => geral
+
+function LetrasDaParte({ id, aparencia, mudar }) {
+  const propria = aparencia.partes?.[id]
+  const definir = (valor) => {
+    const partes = { ...aparencia.partes }
+    if (valor) partes[id] = valor
+    else delete partes[id]
+    mudar({ ...aparencia, partes })
+  }
+
+  return (
+    <div className="adm-pilha">
+      <Bloco
+        titulo="Letras desta parte"
+        descricao={propria
+          ? 'Esta parte usa letras próprias. O resto do site continua com as de Letras do site.'
+          : 'Esta parte usa as mesmas letras do site todo, escolhidas em Letras do site.'}
+      >
+        {!propria && (
+          <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={() => definir(letrasGerais(aparencia))}>
+            Usar letras diferentes nesta parte
+          </button>
+        )}
+      </Bloco>
+      {propria && (
+        <Aparencia
+          aparencia={propria}
+          mudar={definir}
+          voltar={() => definir(null)}
+          rotuloVoltar="Voltar às letras do site todo"
+        />
+      )}
+    </div>
+  )
+}
+
+function Aparencia({ aparencia, mudar, voltar, rotuloVoltar = 'Voltar ao que era antes' }) {
   const campo = (chave) => (v) => mudar({ ...aparencia, [chave]: v })
   useEffect(() => {
     carregarFonte(aparencia.fonte)
@@ -605,14 +654,14 @@ function Aparencia({ aparencia, mudar }) {
         <Opcoes label="Estilo" valor={aparencia.destaque} mudar={campo('destaque')} opcoes={DESTAQUES_TEXTO} />
       </Bloco>
       <Bloco titulo="Amostra">
-        <div className="adm-previa" data-destaque={aparencia.destaque}>
+        <div className="adm-previa" style={varsDaAparencia(aparencia)}>
           <p style={titulo}>Contato</p>
           <p style={amostra}>
             Fale com a advogada pelo WhatsApp. Sua conversa é protegida pelo <strong className="realce">sigilo profissional</strong>.
           </p>
         </div>
-        <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={() => mudar({ ...APARENCIA })}>
-          Voltar ao que era antes
+        <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={voltar}>
+          {rotuloVoltar}
         </button>
       </Bloco>
     </div>

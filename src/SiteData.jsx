@@ -46,18 +46,49 @@ export function carregarFonte(nome) {
   document.head.append(link)
 }
 
-export function aplicarAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaque }) {
-  carregarFonte(fonte)
-  carregarFonte(titulo)
-  const raiz = document.documentElement
-  raiz.style.setProperty('--pagina-fonte', `'${fonte}', sans-serif`)
-  raiz.style.setProperty('--pagina-titulo', `'${titulo}', Georgia, serif`)
-  // --sans e --serif levam a mesma letra para a página inicial, o menu e o rodapé
-  raiz.style.setProperty('--sans', `'${fonte}', -apple-system, 'Segoe UI', Roboto, sans-serif`)
-  raiz.style.setProperty('--serif', `'${titulo}', Georgia, 'Times New Roman', serif`)
-  raiz.style.setProperty('--pagina-tamanho', tamanho)
-  raiz.style.setProperty('--pagina-tamanho-titulo', tamanhoTitulo)
-  raiz.dataset.destaque = destaque
+const VARS_DESTAQUE = {
+  negrito: { '--realce-cor': '#fff', '--realce-peso': '700', '--texto-cor': 'var(--muted)' },
+  dourado: { '--realce-cor': 'var(--gold-bright)', '--realce-peso': '700' },
+  marca: { '--realce-peso': '700', '--realce-fundo': 'linear-gradient(transparent 68%, rgba(230, 207, 159, 0.38) 68%)' },
+  nenhum: {}
+}
+
+// As variáveis de CSS de uma escolha de letras; valem no site todo (na raiz) ou numa parte só
+export function varsDaAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaque }) {
+  return {
+    '--pagina-fonte': `'${fonte}', sans-serif`,
+    '--pagina-titulo': `'${titulo}', Georgia, serif`,
+    // --sans e --serif levam a mesma letra para a página inicial, o menu e o rodapé
+    '--sans': `'${fonte}', -apple-system, 'Segoe UI', Roboto, sans-serif`,
+    '--serif': `'${titulo}', Georgia, 'Times New Roman', serif`,
+    '--pagina-tamanho': String(tamanho),
+    '--pagina-tamanho-titulo': String(tamanhoTitulo),
+    // initial descarta o destaque herdado de fora, e o CSS volta ao padrão do var()
+    '--realce-cor': 'initial',
+    '--realce-peso': 'initial',
+    '--realce-fundo': 'initial',
+    '--texto-cor': 'initial',
+    ...VARS_DESTAQUE[destaque]
+  }
+}
+
+export function aplicarAparencia(aparencia) {
+  carregarFonte(aparencia.fonte)
+  carregarFonte(aparencia.titulo)
+  Object.entries(varsDaAparencia(aparencia)).forEach(([nome, valor]) => document.documentElement.style.setProperty(nome, valor))
+}
+
+// Atributos para o elemento de uma parte que tem letras próprias no painel; sem elas, nada muda
+export function useParte(id) {
+  const { aparencia } = useContext(SiteContext)
+  const propria = id && aparencia.partes?.[id]
+  const fonte = propria?.fonte
+  const titulo = propria?.titulo
+  useEffect(() => {
+    if (fonte) carregarFonte(fonte)
+    if (titulo) carregarFonte(titulo)
+  }, [fonte, titulo])
+  return propria ? { 'data-parte': id, style: varsDaAparencia(propria) } : {}
 }
 
 // Links wa.me/message/... são da conta comercial e ignoram o texto: só o número leva a mensagem

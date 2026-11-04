@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEV, TRAJETORIA } from './data'
-import { useSite, linkWhatsApp, nomesDoMenu } from './SiteData'
+import { useSite, useParte, linkWhatsApp, nomesDoMenu } from './SiteData'
 import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
 import './Pages.css'
 
@@ -63,6 +63,7 @@ export function BotaoWhatsApp() {
 
 function Rodape() {
   const { perfil, contato, menu } = useSite()
+  const parteMenu = useParte('menu')
   return (
     <footer className="page-footer">
       <div className="page-footer-grid">
@@ -79,7 +80,7 @@ function Rodape() {
           <li><Local /> {perfil.local}</li>
           <li><Instagram /><a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a></li>
         </ul>
-        <nav className="page-footer-links" aria-label="Páginas do site">
+        <nav className="page-footer-links" aria-label="Páginas do site" {...parteMenu}>
           {nomesDoMenu(menu).map(({ pagina, label }) => <a key={pagina} href={`/${pagina}`}>{label}</a>)}
         </nav>
       </div>
@@ -106,10 +107,11 @@ function Rodape() {
   )
 }
 
-export function Pagina({ chamada = true, plantao = true, children }) {
+export function Pagina({ chamada = true, plantao = true, parte, children }) {
+  const propsParte = useParte(parte)
   return (
     <main className="page" id="conteudo" tabIndex={-1}>
-      <div className="page-inner">
+      <div className="page-inner" {...propsParte}>
         <a className="page-back" href="/">
           <Voltar width={18} height={18} /> Voltar ao início
         </a>
@@ -133,11 +135,13 @@ export function Pagina({ chamada = true, plantao = true, children }) {
 export function SobrePage() {
   const { perfil, destaques } = useSite()
   const raiz = useSinal()
+  const partePerfil = useParte('perfil')
+  const parteDestaques = useParte('destaques')
 
   return (
     <Pagina>
       <div ref={raiz}>
-        <header className="sinal sinal-topo">
+        <header className="sinal sinal-topo" {...partePerfil}>
           <div>
             <h1>{perfil.nome}</h1>
             <p className="page-lead">{perfil.titulo}, com atuação em {perfil.especialidade}.</p>
@@ -167,12 +171,14 @@ export function SobrePage() {
           </blockquote>
         </section>
 
-        {destaques.map((d) => (
-          <section className="sinal sinal-linha" key={d.titulo}>
-            <h2>{d.titulo}</h2>
-            <p><Realce>{d.texto}</Realce></p>
-          </section>
-        ))}
+        <div {...parteDestaques}>
+          {destaques.map((d) => (
+            <section className="sinal sinal-linha" key={d.titulo}>
+              <h2>{d.titulo}</h2>
+              <p><Realce>{d.texto}</Realce></p>
+            </section>
+          ))}
+        </div>
 
         <a className="page-seguir" href="/atuacao">
           Ver as áreas de atuação <Seta width={20} height={20} />
@@ -203,7 +209,7 @@ export function ConteudoPage() {
   }
 
   return (
-    <Pagina chamada={false}>
+    <Pagina chamada={false} parte="conteudos">
       <header className="page-header">
         <h1>Direito e reflexões</h1>
         <p className="page-lead"><Realce>Palestras e explicações sobre Direito Penal em linguagem acessível.</Realce></p>
@@ -242,6 +248,8 @@ const ICONES_ETAPA = [Telefone, Papeis, Escudo, Sino]
 export function AtuacaoPage() {
   const { areas, etapas } = useSite()
   const raiz = useFeixe()
+  const parteAreas = useParte('areas')
+  const parteEtapas = useParte('etapas')
 
   return (
     <Pagina>
@@ -251,7 +259,7 @@ export function AtuacaoPage() {
       </header>
 
       <div ref={raiz}>
-        <div className="feixe-grade">
+        <div className="feixe-grade" {...parteAreas}>
           {areas.map((a) => (
             <article className="feixe-bloco" key={a.titulo}>
               <h2>{a.titulo}</h2>
@@ -260,8 +268,8 @@ export function AtuacaoPage() {
           ))}
         </div>
 
-        <h2 className="feixe-titulo">Do primeiro contato à conclusão do caso</h2>
-        <ol className="etapas">
+        <h2 className="feixe-titulo" {...parteEtapas}>Do primeiro contato à conclusão do caso</h2>
+        <ol className="etapas" {...parteEtapas}>
           {etapas.map((e, i) => {
             const Icone = ICONES_ETAPA[i % ICONES_ETAPA.length]
             return (
@@ -295,7 +303,7 @@ export function ContatoPage() {
   const zap = linkWhatsApp(contato.whatsapp, contato.mensagem)
 
   return (
-    <Pagina chamada={false}>
+    <Pagina chamada={false} parte="contato">
       <header className="page-header">
         <h1>Contato</h1>
         <p className="page-lead">

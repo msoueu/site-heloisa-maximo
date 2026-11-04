@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import './Header.css'
-import { useSite, linkWhatsApp, nomesDoMenu } from './SiteData'
+import { useSite, useParte, linkWhatsApp, nomesDoMenu } from './SiteData'
 import { Sol, Lua, Relogio, Escudo, Menu, Fechar, WhatsApp } from './Icons'
 
 export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
   const { contato, menu: nomes } = useSite()
+  const parteMenu = useParte('menu')
   const naHome = rota === 'home'
   const [menu, setMenu] = useState(false)
 
@@ -29,7 +30,7 @@ export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
         </a>
 
         <div className="header-right">
-          <div id="menu-site" className={`header-nav-links ${menu ? 'is-aberto' : ''}`}>
+          <div id="menu-site" className={`header-nav-links ${menu ? 'is-aberto' : ''}`} {...parteMenu}>
             {nomesDoMenu(nomes).map((link) => (
               <a
                 key={link.pagina}

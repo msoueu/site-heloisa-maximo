@@ -735,25 +735,23 @@
   }
 }
 
-:root[data-destaque='negrito'] .realce {
-  color: #fff;
-  font-weight: 700;
+/* Os valores vêm de varsDaAparencia (SiteData.jsx), no site todo ou em cada parte */
+.realce {
+  color: var(--realce-cor, inherit);
+  font-weight: var(--realce-peso, inherit);
+  background: var(--realce-fundo, none);
 }
 
-:root[data-destaque='negrito'] .page-texto p {
-  color: var(--muted);
+.page-texto p {
+  color: var(--texto-cor, inherit);
 }
 
-:root[data-destaque='dourado'] .realce {
-  color: var(--gold-bright);
-  font-weight: 700;
+/* Parte com letras próprias no painel: o texto sem regra própria herda dela */
+:where([data-parte]) {
+  font-family: var(--sans);
 }
 
-:root[data-destaque='marca'] .realce {
-  font-weight: 700;
-  background: linear-gradient(transparent 68%, rgba(230, 207, 159, 0.38) 68%);
-}
-
-:root[data-destaque='nenhum'] .realce {
-  font-weight: inherit;
+/* Só no conteúdo da página: o rodapé tem tamanhos próprios */
+:where(.page-inner[data-parte], .page-inner [data-parte]) {
+  font-size: calc(1.1875rem * var(--pagina-tamanho, 1));
 }
