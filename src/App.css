@@ -1,5 +1,5 @@
 :root {
-  --bg: #3c2729;
+  --bg: #3e282c;
   --gold: #c9b99a;
   --gold-bright: #e6cf9f;
   --ivory: #f5f0eb;
@@ -86,13 +86,7 @@ button {
   position: fixed;
   inset: 0;
   z-index: 1;
-  background: var(--bg) center / cover; /* o CRA tenta empacotar url(/...) do CSS, então a imagem vai no style em App.jsx */
-  transition: filter 0.6s var(--ease);
-}
-
-/* Escurece o fundo mantendo os 3 tons de diferença do monograma, iguais aos do tema claro */
-:root[data-theme='escuro'] .app-bg {
-  filter: grayscale(1) brightness(0.776) contrast(1.288);
+  background: var(--bg);
 }
 
 .app-vignette {

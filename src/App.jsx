@@ -56,7 +56,7 @@ export default function App() {
 
   return (
     <>
-      <div className="app-bg" style={{ backgroundImage: 'url(/Prancheta1.jpg)' }} />
+      <div className="app-bg" />
       <div className="app-vignette" />
 
       <button className="pular" onClick={() => document.getElementById('conteudo')?.focus()}>

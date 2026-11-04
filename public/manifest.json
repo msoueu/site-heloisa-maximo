@@ -22,8 +22,8 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#3c2729",
-  "background_color": "#3c2729",
+  "theme_color": "#3e282c",
+  "background_color": "#3e282c",
   "description": "Heloisa Maximo, advogada criminalista.",
   "lang": "pt-BR",
   "scope": "/"
