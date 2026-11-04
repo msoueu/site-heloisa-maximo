@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import './Header.css'
-import { useSite, linkWhatsApp, nomesDoMenu } from './SiteData'
+import { useSite, linkWhatsApp, nomesDoMenu, Texto } from './SiteData'
 import { Sol, Lua, Relogio, Escudo, Menu, Fechar, WhatsApp } from './Icons'
 
 export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
-  const { contato, menu: nomes } = useSite()
+  const { contato, menu: nomes, textos } = useSite()
   const naHome = rota === 'home'
   const [menu, setMenu] = useState(false)
 
@@ -25,7 +25,7 @@ export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
       <nav className="header-nav">
         <a className="header-logo" href="/" onClick={() => { setMenu(false); irPara(0) }} aria-label="Início">
           <span className="header-logo-mark" />
-          <span className="header-logo-text">Heloisa Maximo<small>Advocacia Criminal</small></span>
+          <span className="header-logo-text"><Texto de={textos} campo="geral.marca" /><small><Texto de={textos} campo="geral.area" /></small></span>
         </a>
 
         <div className="header-right">
@@ -64,11 +64,11 @@ export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
       <div className="header-cta">
         <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer">
           <WhatsApp />
-          Falar no WhatsApp
+          <Texto de={textos} campo="geral.botaoWhatsApp" />
         </a>
         <div className="cta-selos">
-          <span><Relogio width={18} height={18} /> Plantão 24h para urgências</span>
-          <span><Escudo width={18} height={18} /> Atendimento confidencial</span>
+          <span><Relogio width={18} height={18} /> <Texto de={textos} campo="geral.selo1" /></span>
+          <span><Escudo width={18} height={18} /> <Texto de={textos} campo="geral.selo2" /></span>
         </div>
       </div>
     </div>

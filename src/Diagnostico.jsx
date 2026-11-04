@@ -1,26 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
-import { useSite, linkWhatsApp } from './SiteData'
+import { useSite, linkWhatsApp, Texto } from './SiteData'
 import { CONTATO } from './data'
 import { WhatsApp, Check, Escudo, Relogio, Info } from './Icons'
-import { Pagina } from './Pages'
+import { Pagina, Realce } from './Pages'
 import './Diagnostico.css'
 
-const PERGUNTAS = [
-  {
-    id: 'Situação',
-    texto: 'O que está acontecendo?',
-    opcoes: ['Prisão em flagrante', 'Investigação ou inquérito', 'Processo em andamento', 'Sou vítima ou familiar de vítima', 'Cumprimento de pena', 'Outra situação']
-  },
-  { id: 'Quem', texto: 'Quem precisa de ajuda?', opcoes: ['Eu', 'Um familiar', 'Outra pessoa'] },
-  { id: 'Quando', texto: 'Quando aconteceu?', opcoes: ['Agora ou nas últimas 24 horas', 'Nesta semana', 'Há mais tempo'] },
-  { id: 'Advogado', texto: 'Já existe advogado no caso?', opcoes: ['Não', 'Sim', 'Não sei'] }
-]
+// Os ids guardam as respostas; o texto das perguntas e das respostas vem do painel
+const IDS = ['Situação', 'Quem', 'Quando', 'Advogado']
+
+function usePerguntas() {
+  const { textos } = useSite()
+  return IDS.map((id, i) => ({
+    id,
+    texto: textos[`diag.pergunta${i + 1}`],
+    opcoes: textos[`diag.opcoes${i + 1}`].split('\n').map((o) => o.trim()).filter(Boolean)
+  }))
+}
 const ESPERA_DIGITANDO = 900
 
 function useAnalise() {
+  const PERGUNTAS = usePerguntas()
   const [respostas, setRespostas] = useState({})
   const atual = PERGUNTAS.findIndex((p) => !respostas[p.id])
   return {
+    perguntas: PERGUNTAS,
     respostas,
     atual,
     completa: atual === -1,
@@ -29,7 +32,7 @@ function useAnalise() {
   }
 }
 
-function useLinkResumo(respostas) {
+function useLinkResumo(PERGUNTAS, respostas) {
   const { contato } = useSite()
   // Os asteriscos viram negrito no WhatsApp
   const resumo = PERGUNTAS.map((p) => `*${p.texto}*\n${respostas[p.id]}`).join('\n\n')
@@ -53,9 +56,10 @@ function Balao({ minha, children }) {
 
 // Celular com a conversa: as mensagens são automáticas e isso fica dito na tela
 function Celular({ analise }) {
-  const { perfil } = useSite()
+  const { perfil, textos } = useSite()
+  const PERGUNTAS = analise.perguntas
   const pergunta = PERGUNTAS[analise.atual]
-  const href = useLinkResumo(analise.respostas)
+  const href = useLinkResumo(PERGUNTAS, analise.respostas)
   const [digitando, setDigitando] = useState(true)
   const conversa = useRef()
 
@@ -74,11 +78,11 @@ function Celular({ analise }) {
     <div className="tel">
       <div className="tel-topo">
         <img className="tel-avatar" src={perfil.fotoWhatsapp || perfil.foto} alt="" />
-        <div><strong>Heloisa Maximo</strong><small>Advocacia Criminal</small></div>
+        <div><strong><Texto de={textos} campo="geral.marca" /></strong><small><Texto de={textos} campo="geral.area" /></small></div>
       </div>
       <div className="tel-conversa" ref={conversa} aria-live="polite">
-        <p className="tel-aviso">Mensagens automáticas</p>
-        <Balao>Olá! Vou fazer quatro perguntas rápidas para organizar as informações.</Balao>
+        <p className="tel-aviso"><Texto de={textos} campo="diag.aviso" /></p>
+        <Balao><Texto de={textos} campo="diag.ola" /></Balao>
         {respondidas.map((p) => (
           <div key={p.id}>
             <Balao>{p.texto}</Balao>
@@ -88,7 +92,7 @@ function Celular({ analise }) {
         {digitando && <div className="tel-balao tel-digitando" aria-label="Digitando"><i /><i /><i /></div>}
         {!digitando && !analise.completa && <Balao>{pergunta.texto}</Balao>}
         {!digitando && analise.completa && (
-          <Balao>Pronto. Se quiser, envie essas respostas para a advogada pelo WhatsApp.</Balao>
+          <Balao><Texto de={textos} campo="diag.fim" /></Balao>
         )}
       </div>
       <div className="tel-respostas">
@@ -97,8 +101,8 @@ function Celular({ analise }) {
         ))}
         {!digitando && analise.completa && (
           <>
-            <a href={href} target="_blank" rel="noreferrer"><WhatsApp width={20} height={20} /> Enviar para a advogada</a>
-            <button onClick={analise.reiniciar}>Recomeçar</button>
+            <a href={href} target="_blank" rel="noreferrer"><WhatsApp width={20} height={20} /> <Texto de={textos} campo="diag.enviar" /></a>
+            <button onClick={analise.reiniciar}><Texto de={textos} campo="diag.recomecar" /></button>
           </>
         )}
       </div>
@@ -108,25 +112,24 @@ function Celular({ analise }) {
 
 export default function DiagnosticoPage() {
   const analise = useAnalise()
+  const { textos } = useSite()
 
   return (
     <Pagina chamada={false}>
       <header className="page-header diag-topo">
-        <h1>Conte sua situação</h1>
-        <p className="page-lead">
-          Responda quatro perguntas rápidas para organizar as informações antes do contato. Leva menos de um minuto.
-        </p>
+        <h1><Texto de={textos} campo="diag.titulo" /></h1>
+        <p className="page-lead"><Texto de={textos} campo="diag.subtitulo"><Realce>{textos['diag.subtitulo']}</Realce></Texto></p>
         <ul className="nota-selos">
-          <li><Escudo /> Atendimento confidencial</li>
-          <li><Check /> Respostas não ficam salvas</li>
-          <li><Relogio /> Menos de um minuto</li>
+          <li><Escudo /> <Texto de={textos} campo="diag.selo1" /></li>
+          <li><Check /> <Texto de={textos} campo="diag.selo2" /></li>
+          <li><Relogio /> <Texto de={textos} campo="diag.selo3" /></li>
         </ul>
       </header>
 
       <Celular analise={analise} />
 
       <p className="nota-legal">
-        <Info /> <span><strong>Importante:</strong> esta página só organiza as informações para a conversa. Ela <strong>não é consulta jurídica</strong>, não avalia o seu caso e <strong>não indica resultado</strong>.</span>
+        <Info /> <span><strong><Texto de={textos} campo="diag.notaRotulo" /></strong> <Texto de={textos} campo="diag.nota"><Realce>{textos['diag.nota']}</Realce></Texto></span>
       </p>
     </Pagina>
   )

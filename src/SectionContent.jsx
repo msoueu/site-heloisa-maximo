@@ -11,26 +11,26 @@ function Tag({ children, href }) {
 }
 
 export default function SectionContent({ current }) {
-  const { perfil, contato, destaques, areas, conteudos } = useSite()
+  const { perfil, contato, destaques, areas, conteudos, textos } = useSite()
   const destaque = conteudos[0]
   const painel = (i) => `section-panel ${current === i ? 'panel-active' : 'panel-hidden'}`
 
   return (
     <main className="section-content" id="conteudo" tabIndex={-1}>
       <section className={painel(0)}>
-        <Tag href="/sobre">ADVOCACIA CRIMINAL</Tag>
+        <Tag href="/sobre"><Texto de={textos} campo="inicio.tag" /></Tag>
         <div className="panel-intro">
           <h1 className="panel-name"><Texto de={perfil} campo="nome" /></h1>
           <p className="panel-desc"><Texto de={perfil} campo="slogan" /></p>
-          <p className="panel-sub"><Texto de={perfil} campo="especialidade" /> · Atuação Nacional</p>
+          <p className="panel-sub"><Texto de={perfil} campo="especialidade" /> · <Texto de={textos} campo="inicio.alcance" /></p>
         </div>
         <a className="panel-link" href="/sobre">
-          Conheça a advogada <Seta />
+          <Texto de={textos} campo="inicio.linkSobre" /> <Seta />
         </a>
       </section>
 
       <section className={painel(1)}>
-        <Tag href="/sobre">SOBRE</Tag>
+        <Tag href="/sobre"><Texto de={textos} campo="inicio.tagSobre" /></Tag>
         <h2 className="panel-titulo"><Texto de={perfil} campo="titulo" /></h2>
         <div className="panel-sobre">
           <img src={perfil.foto} alt={perfil.nome} className="panel-foto" loading="lazy" decoding="async" />
@@ -44,27 +44,27 @@ export default function SectionContent({ current }) {
           </ul>
         </div>
         <a className="panel-link" href="/sobre">
-          Conheça a trajetória completa <Seta />
+          <Texto de={textos} campo="inicio.linkTrajetoria" /> <Seta />
         </a>
       </section>
 
       <section className={`${painel(2)} panel-conteudo`}>
         {destaque && (
           <>
-            <Tag href="/conteudo">CONTEÚDO JURÍDICO</Tag>
+            <Tag href="/conteudo"><Texto de={textos} campo="inicio.tagConteudo" /></Tag>
             <h2 className="panel-titulo"><Texto de={destaque} campo="titulo" /></h2>
             <p className="panel-desc"><Texto de={destaque} campo="texto">{destaque.texto[0]}</Texto></p>
             <p className="panel-desc"><Texto de={destaque} campo="resumo" /></p>
             <a className="panel-link" href="/conteudo">
-              Ver mais conteúdo jurídico <Seta />
+              <Texto de={textos} campo="inicio.linkConteudo" /> <Seta />
             </a>
           </>
         )}
       </section>
 
       <section className={painel(3)}>
-        <Tag href="/atuacao">ÁREAS DE ATUAÇÃO</Tag>
-        <h2 className="panel-titulo">Defesa em todas as fases do processo penal</h2>
+        <Tag href="/atuacao"><Texto de={textos} campo="inicio.tagAtuacao" /></Tag>
+        <h2 className="panel-titulo"><Texto de={textos} campo="inicio.tituloAtuacao" /></h2>
         <ol className="panel-areas">
           {areas.map((a, i) => (
             <li key={i}>
@@ -73,19 +73,16 @@ export default function SectionContent({ current }) {
           ))}
         </ol>
         <a className="panel-link" href="/atuacao">
-          Ver todas as áreas <Seta />
+          <Texto de={textos} campo="inicio.linkAtuacao" /> <Seta />
         </a>
       </section>
 
       <section className={painel(4)}>
-        <Tag href="/contato">CONTATO</Tag>
-        <h2 className="panel-name">Contato</h2>
-        <p className="panel-desc">
-          Fale com a advogada pelo WhatsApp ou conte sua situação em quatro perguntas rápidas. Sua
-          conversa é protegida pelo sigilo profissional, nos termos da lei.
-        </p>
+        <Tag href="/contato"><Texto de={textos} campo="inicio.tagContato" /></Tag>
+        <h2 className="panel-name"><Texto de={textos} campo="inicio.tituloContato" /></h2>
+        <p className="panel-desc"><Texto de={textos} campo="inicio.textoContato" /></p>
         <ul className="panel-contact">
-          <li><Relogio /> Plantão 24h para urgências</li>
+          <li><Relogio /> <Texto de={textos} campo="geral.selo1" /></li>
           <li><Local /> <Texto de={perfil} campo="local" /></li>
           <li>
             <Instagram />
@@ -93,10 +90,10 @@ export default function SectionContent({ current }) {
           </li>
         </ul>
         <a href="/diagnostico" className="panel-btn panel-btn-solid">
-          Contar minha situação <Seta />
+          <Texto de={textos} campo="inicio.botaoSituacao" /> <Seta />
         </a>
         <a className="panel-link panel-link-contato" href="/contato">
-          Todas as formas de contato <Seta />
+          <Texto de={textos} campo="inicio.linkContato" /> <Seta />
         </a>
       </section>
     </main>

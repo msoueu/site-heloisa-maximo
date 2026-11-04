@@ -178,3 +178,140 @@ export const APARENCIA = {
   tamanhoTitulo: 1,
   destaque: 'negrito'
 }
+
+// Textos fixos das páginas, editáveis no painel. Cada campo: [chave, nome no painel, texto padrão, linhas do campo]
+// Em campo de várias linhas, linha em branco separa parágrafos; nas respostas do diagnóstico, uma por linha
+export const TEXTOS_DO_SITE = [
+  {
+    id: 'inicio',
+    pagina: 'Página inicial',
+    campos: [
+      ['inicio.tag', 'Etiqueta da abertura', 'ADVOCACIA CRIMINAL'],
+      ['inicio.alcance', 'Depois da área principal', 'Atuação Nacional'],
+      ['inicio.linkSobre', 'Link da abertura', 'Conheça a advogada'],
+      ['inicio.tagSobre', 'Etiqueta de Sobre', 'SOBRE'],
+      ['inicio.linkTrajetoria', 'Link de Sobre', 'Conheça a trajetória completa'],
+      ['inicio.tagConteudo', 'Etiqueta de Conteúdo', 'CONTEÚDO JURÍDICO'],
+      ['inicio.linkConteudo', 'Link de Conteúdo', 'Ver mais conteúdo jurídico'],
+      ['inicio.tagAtuacao', 'Etiqueta de Atuação', 'ÁREAS DE ATUAÇÃO'],
+      ['inicio.tituloAtuacao', 'Título de Atuação', 'Defesa em todas as fases do processo penal'],
+      ['inicio.linkAtuacao', 'Link de Atuação', 'Ver todas as áreas'],
+      ['inicio.tagContato', 'Etiqueta de Contato', 'CONTATO'],
+      ['inicio.tituloContato', 'Título de Contato', 'Contato'],
+      ['inicio.textoContato', 'Texto de Contato', 'Fale com a advogada pelo WhatsApp ou conte sua situação em quatro perguntas rápidas. Sua conversa é protegida pelo sigilo profissional, nos termos da lei.', 3],
+      ['inicio.botaoSituacao', 'Botão de Contato', 'Contar minha situação'],
+      ['inicio.linkContato', 'Link de Contato', 'Todas as formas de contato']
+    ]
+  },
+  {
+    id: 'sobre',
+    pagina: 'Sobre',
+    campos: [
+      ['sobre.ligacao', 'Entre a profissão e a área', ', com atuação em'],
+      ['sobre.tituloTrajetoria', 'Título da trajetória', 'Trajetória'],
+      ['sobre.trajetoria', 'Trajetória', TRAJETORIA.join('\n\n'), 10],
+      ['sobre.tituloConviccao', 'Título da citação', 'Convicção'],
+      ['sobre.citacao', 'Citação', 'A dignidade humana não aceita meios-termos: ela é, por definição, inegociável.', 2],
+      ['sobre.citacaoFonte', 'De onde vem a citação', '“O cárcere visto de frente: a dignidade humana é inegociável”'],
+      ['sobre.linkAtuacao', 'Link no fim da página', 'Ver as áreas de atuação']
+    ]
+  },
+  {
+    id: 'conteudo',
+    pagina: 'Conteúdo',
+    campos: [
+      ['conteudo.titulo', 'Título da página', 'Direito e reflexões'],
+      ['conteudo.subtitulo', 'Frase abaixo do título', 'Palestras e explicações sobre Direito Penal em linguagem acessível.', 2],
+      ['conteudo.maisRecente', 'Etiqueta da mais recente (celular)', 'Mais recente'],
+      ['conteudo.outras', 'Título da lista (celular)', 'Outras publicações']
+    ]
+  },
+  {
+    id: 'atuacao',
+    pagina: 'Atuação',
+    campos: [
+      ['atuacao.titulo', 'Título da página', 'Defesa em todas as fases do processo penal'],
+      ['atuacao.subtitulo', 'Frase abaixo do título', 'Atuação exclusiva na área criminal, do inquérito aos tribunais.', 2],
+      ['atuacao.tituloEtapas', 'Título das etapas', 'Do primeiro contato à conclusão do caso']
+    ]
+  },
+  {
+    id: 'contato',
+    pagina: 'Contato',
+    campos: [
+      ['contato.titulo', 'Título da página', 'Contato'],
+      ['contato.subtitulo', 'Frase abaixo do título', 'Fale com a advogada pelo WhatsApp ou pelo Instagram.', 2],
+      ['contato.porta1Titulo', 'Cartão do WhatsApp: título', 'Falar com a advogada'],
+      ['contato.porta1Texto', 'Cartão do WhatsApp: texto', 'Plantão 24h para urgências, como prisões em flagrante.', 2],
+      ['contato.porta1Acao', 'Cartão do WhatsApp: botão', 'Abrir o WhatsApp'],
+      ['contato.porta2Titulo', 'Cartão da situação: título', 'Contar minha situação'],
+      ['contato.porta2Texto', 'Cartão da situação: texto', 'Responda quatro perguntas rápidas para organizar as informações antes do contato.', 2],
+      ['contato.porta2Acao', 'Cartão da situação: botão', 'Começar'],
+      ['contato.sigilo', 'Frase do sigilo', 'Sua conversa é protegida pelo sigilo profissional, nos termos da lei.', 2],
+      ['contato.rotuloTelefone', 'Nome do telefone', 'Telefone'],
+      ['contato.rotuloEmail', 'Nome do e-mail', 'E-mail'],
+      ['contato.rotuloInstagram', 'Nome do Instagram', 'Instagram'],
+      ['contato.rotuloLocal', 'Nome do local', 'Onde atua']
+    ]
+  },
+  {
+    id: 'diagnostico',
+    pagina: 'Conte sua situação',
+    campos: [
+      ['diag.titulo', 'Título da página', 'Conte sua situação'],
+      ['diag.subtitulo', 'Frase abaixo do título', 'Responda quatro perguntas rápidas para organizar as informações antes do contato. Leva menos de um minuto.', 2],
+      ['diag.selo1', 'Selo 1', 'Atendimento confidencial'],
+      ['diag.selo2', 'Selo 2', 'Respostas não ficam salvas'],
+      ['diag.selo3', 'Selo 3', 'Menos de um minuto'],
+      ['diag.aviso', 'Aviso no topo da conversa', 'Mensagens automáticas'],
+      ['diag.ola', 'Primeira mensagem', 'Olá! Vou fazer quatro perguntas rápidas para organizar as informações.', 2],
+      ['diag.pergunta1', 'Pergunta 1', 'O que está acontecendo?'],
+      ['diag.opcoes1', 'Respostas da pergunta 1 (uma por linha)', 'Prisão em flagrante\nInvestigação ou inquérito\nProcesso em andamento\nSou vítima ou familiar de vítima\nCumprimento de pena\nOutra situação', 6],
+      ['diag.pergunta2', 'Pergunta 2', 'Quem precisa de ajuda?'],
+      ['diag.opcoes2', 'Respostas da pergunta 2 (uma por linha)', 'Eu\nUm familiar\nOutra pessoa', 3],
+      ['diag.pergunta3', 'Pergunta 3', 'Quando aconteceu?'],
+      ['diag.opcoes3', 'Respostas da pergunta 3 (uma por linha)', 'Agora ou nas últimas 24 horas\nNesta semana\nHá mais tempo', 3],
+      ['diag.pergunta4', 'Pergunta 4', 'Já existe advogado no caso?'],
+      ['diag.opcoes4', 'Respostas da pergunta 4 (uma por linha)', 'Não\nSim\nNão sei', 3],
+      ['diag.fim', 'Mensagem final', 'Pronto. Se quiser, envie essas respostas para a advogada pelo WhatsApp.', 2],
+      ['diag.enviar', 'Botão de enviar', 'Enviar para a advogada'],
+      ['diag.recomecar', 'Botão de recomeçar', 'Recomeçar'],
+      ['diag.notaRotulo', 'Início do aviso legal', 'Importante:'],
+      ['diag.nota', 'Aviso legal', 'esta página só organiza as informações para a conversa. Ela não é consulta jurídica, não avalia o seu caso e não indica resultado.', 3]
+    ]
+  },
+  {
+    id: 'perguntas',
+    pagina: 'Perguntas frequentes',
+    campos: [
+      ['perguntas.titulo', 'Título da página', 'Perguntas frequentes'],
+      ['perguntas.subtitulo', 'Frase abaixo do título', 'Respostas gerais para as dúvidas mais comuns. Cada caso é único e precisa ser avaliado individualmente.', 2],
+      ['perguntas.naoEncontrou', 'Título no fim da página', 'Não encontrou a sua dúvida?'],
+      ['perguntas.linkSituacao', 'Link da situação', 'Contar minha situação'],
+      ['perguntas.linkWhatsApp', 'Link do WhatsApp', 'Falar com a advogada']
+    ]
+  },
+  {
+    id: 'geral',
+    pagina: 'Topo e rodapé',
+    campos: [
+      ['geral.marca', 'Nome no topo', 'Heloisa Maximo'],
+      ['geral.area', 'Embaixo do nome (topo e rodapé)', 'Advocacia Criminal'],
+      ['geral.botaoWhatsApp', 'Botão do WhatsApp', 'Falar no WhatsApp'],
+      ['geral.selo1', 'Selo do plantão', 'Plantão 24h para urgências'],
+      ['geral.selo2', 'Selo do atendimento', 'Atendimento confidencial'],
+      ['geral.voltar', 'Link para voltar', 'Voltar ao início'],
+      ['geral.relogio', 'Antes do relógio', 'Plantão 24h · Horário de Brasília'],
+      ['geral.chamadaTitulo', 'Faixa de contato: título', 'Contato'],
+      ['geral.chamadaTexto', 'Faixa de contato: texto', 'Fale com a advogada pelo WhatsApp. Sua conversa é protegida pelo sigilo profissional, nos termos da lei.', 2],
+      ['geral.privacidade', 'Link da privacidade', 'Política de Privacidade'],
+      ['geral.termos', 'Link dos termos', 'Termos de Uso'],
+      ['geral.direitos', 'Depois do ano e do nome', 'Todos os direitos reservados.'],
+      ['geral.informativo', 'Aviso do rodapé', 'Conteúdo de caráter exclusivamente informativo.'],
+      ['geral.naoEncontradaTitulo', 'Página não encontrada: título', 'Página não encontrada'],
+      ['geral.naoEncontradaTexto', 'Página não encontrada: texto', 'Este endereço não existe ou mudou de lugar.']
+    ]
+  }
+]
+
+export const TEXTOS = Object.fromEntries(TEXTOS_DO_SITE.flatMap((p) => p.campos.map(([chave, , padrao]) => [chave, padrao])))

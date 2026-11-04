@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES, MENU } from './data'
+import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES, MENU, TEXTOS } from './data'
 import { CONFIGURADO, SUPABASE_URL, SUPABASE_CHAVE } from './ambiente'
 
 const PADRAO = {
@@ -11,8 +11,12 @@ const PADRAO = {
   conteudos: CONTEUDOS,
   aparencia: APARENCIA,
   perguntas: PERGUNTAS_FREQUENTES,
-  menu: MENU
+  menu: MENU,
+  textos: TEXTOS
 }
+
+// Os textos salvos completam os padrões, para que um texto novo no código apareça mesmo com dados antigos
+const juntar = (dados) => ({ ...PADRAO, ...dados, textos: { ...TEXTOS, ...dados.textos } })
 
 // Nome vazio no painel volta ao padrão, para o link nunca sumir do menu
 export const nomesDoMenu = (menu) =>
@@ -90,7 +94,7 @@ export function linkWhatsApp(valor, mensagem) {
   return `https://wa.me/${digitos.startsWith('55') ? digitos : `55${digitos}`}?${texto}`
 }
 
-// Formato escolhido na barra de um campo do painel: { fonte, tamanho, negrito, italico, sublinhado }
+// Formato escolhido na barra de um campo do painel: { fonte, tamanho, negrito, italico, sublinhado, linha }
 export function estiloCss(formato) {
   if (!formato) return undefined
   const css = {}
@@ -101,6 +105,8 @@ export function estiloCss(formato) {
   if (formato.negrito) css.fontWeight = 700
   if (formato.italico) css.fontStyle = 'italic'
   if (formato.sublinhado) css.textDecoration = 'underline'
+  // Na linha de baixo: o texto sai da linha do que vem antes e fica embaixo dele
+  if (formato.linha === 'embaixo') css.display = 'block'
   return Object.keys(css).length ? css : undefined
 }
 
@@ -121,10 +127,10 @@ const SiteContext = createContext(null)
 // O site só aparece depois de ler o painel, para não mostrar por um instante o que ela já apagou.
 // shortcut: se o banco passar de 3 s, abre com o data.js e troca quando ele responder
 export function buscarDados() {
-  if (rascunho || !CONFIGURADO) return { inicial: Promise.resolve(rascunho ? { ...PADRAO, ...rascunho } : PADRAO) }
+  if (rascunho || !CONFIGURADO) return { inicial: Promise.resolve(rascunho ? juntar(rascunho) : PADRAO) }
   const banco = fetch(`${SUPABASE_URL}/rest/v1/site?select=dados&id=eq.1`, { headers: { apikey: SUPABASE_CHAVE } })
     .then((resposta) => (resposta.ok ? resposta.json() : []))
-    .then(([linha]) => (linha ? { ...PADRAO, ...linha.dados } : PADRAO))
+    .then(([linha]) => (linha ? juntar(linha.dados) : PADRAO))
     // Se o banco falhar, o site continua no ar com o conteúdo do data.js
     .catch(() => PADRAO)
   const limite = new Promise((resolver) => setTimeout(() => resolver(PADRAO), 3000))

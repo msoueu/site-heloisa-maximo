@@ -48,8 +48,9 @@ const paragrafos = (lista) => lista.map((p) => `<p>${esc(p)}</p>`).join('')
 const itens = (lista) => lista.map((i) => `<h2>${esc(i.titulo)}</h2><p>${esc(i.texto)}</p>`).join('')
 const cabecalho = (titulo, lead) => `<h1>${esc(titulo)}</h1><p>${esc(lead)}</p>`
 
-function montarPaginas(site, preencher, { PRIVACIDADE, TERMOS }, TRAJETORIA) {
-  const { perfil, contato, destaques, areas, etapas, conteudos, perguntas } = site
+function montarPaginas(site, preencher, { PRIVACIDADE, TERMOS }) {
+  const { perfil, contato, destaques, areas, etapas, conteudos, perguntas, textos: t } = site
+  const trajetoria = t['sobre.trajetoria'].split(/\n\s*\n/).filter((p) => p.trim())
   const lista = conteudos.map((c) => `<li><a href="/conteudo/${esc(c.id)}">${esc(c.titulo)}</a></li>`).join('')
   const legal = (texto) => preencher(texto, perfil.oab).split('\n\n').map(bloco).join('')
 
@@ -62,33 +63,33 @@ function montarPaginas(site, preencher, { PRIVACIDADE, TERMOS }, TRAJETORIA) {
     {
       caminho: '/sobre',
       rota: 'sobre',
-      corpo: cabecalho(perfil.nome, `${perfil.titulo}, com atuação em ${perfil.especialidade}.`) + `<p>${esc(perfil.oab)}</p>` + paragrafos(TRAJETORIA) + itens(destaques)
+      corpo: cabecalho(perfil.nome, `${perfil.titulo}${t['sobre.ligacao']} ${perfil.especialidade}.`) + `<p>${esc(perfil.oab)}</p>` + paragrafos(trajetoria) + itens(destaques)
     },
     {
       caminho: '/conteudo',
       rota: 'conteudo',
-      corpo: cabecalho('Direito e reflexões', 'Palestras e explicações sobre Direito Penal em linguagem acessível.') + `<ul>${lista}</ul>`
+      corpo: cabecalho(t['conteudo.titulo'], t['conteudo.subtitulo']) + `<ul>${lista}</ul>`
     },
     {
       caminho: '/atuacao',
       rota: 'atuacao',
-      corpo: cabecalho('Defesa em todas as fases do processo penal', 'Atuação exclusiva na área criminal, do inquérito aos tribunais.') + itens(areas) + itens(etapas)
+      corpo: cabecalho(t['atuacao.titulo'], t['atuacao.subtitulo']) + itens(areas) + itens(etapas)
     },
     {
       caminho: '/contato',
       rota: 'contato',
-      corpo: cabecalho('Contato', 'Fale com a advogada pelo WhatsApp ou pelo Instagram.') +
+      corpo: cabecalho(t['contato.titulo'], t['contato.subtitulo']) +
         `<p>WhatsApp: ${esc(contato.whatsapp)}</p><p>Instagram: <a href="${esc(contato.instagram)}">${esc(contato.instagramUser)}</a></p><p>${esc(perfil.local)}</p>`
     },
     {
       caminho: '/diagnostico',
       rota: 'diagnostico',
-      corpo: cabecalho('Conte sua situação', 'Responda quatro perguntas rápidas para organizar as informações antes do contato.')
+      corpo: cabecalho(t['diag.titulo'], t['diag.subtitulo'])
     },
     {
       caminho: '/perguntas',
       rota: 'perguntas',
-      corpo: cabecalho('Perguntas frequentes', 'Respostas gerais para as dúvidas mais comuns. Cada caso é único e precisa ser avaliado individualmente.') + itens(perguntas)
+      corpo: cabecalho(t['perguntas.titulo'], t['perguntas.subtitulo']) + itens(perguntas)
     },
     { caminho: '/privacidade', rota: 'privacidade', corpo: legal(PRIVACIDADE) },
     { caminho: '/termos', rota: 'termos', corpo: legal(TERMOS) },
@@ -103,7 +104,7 @@ function montarPaginas(site, preencher, { PRIVACIDADE, TERMOS }, TRAJETORIA) {
   return [
     ...paginas.map((p) => ({ ...p, corpo: `<main>${p.corpo}</main>${navegacao}` })),
     { caminho: '/painel', rota: 'painel', arquivo: 'painel/index.html', oculta: true, corpo: '' },
-    { caminho: '/', rota: 'naoEncontrada', arquivo: '404.html', oculta: true, corpo: `<main>${cabecalho('Página não encontrada', 'Este endereço não existe ou mudou de lugar.')}</main>${navegacao}` }
+    { caminho: '/', rota: 'naoEncontrada', arquivo: '404.html', oculta: true, corpo: `<main>${cabecalho(t['geral.naoEncontradaTitulo'], t['geral.naoEncontradaTexto'])}</main>${navegacao}` }
   ]
 }
 
@@ -150,11 +151,13 @@ const site = {
   etapas: dados.ETAPAS,
   conteudos: dados.CONTEUDOS,
   perguntas: dados.PERGUNTAS_FREQUENTES,
-  ...painel
+  ...painel,
+  // Igual ao site: os textos salvos completam os padrões
+  textos: { ...dados.TEXTOS, ...painel.textos }
 }
 
 const modelo = readFileSync(join(BUILD, 'index.html'), 'utf8')
-const paginas = montarPaginas(site, legais.preencher, legais, dados.TRAJETORIA)
+const paginas = montarPaginas(site, legais.preencher, legais)
 
 for (const pagina of paginas) {
   const arquivo = join(BUILD, pagina.arquivo ?? (pagina.caminho === '/' ? 'index.html' : `${pagina.caminho.slice(1)}/index.html`))

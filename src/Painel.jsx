@@ -7,14 +7,18 @@ import {
   Documento, Telefone, Pessoa, Estrela, Balanca, Passos, Sair, Externo, Mais, Lixeira,
   Cima, Baixo, Imagem, Video, Check, Voltar, Letra, Cadeado
 } from './Icons'
-import { APARENCIA, CONTATO, MENU } from './data'
+import { APARENCIA, CONTATO, MENU, TEXTOS, TEXTOS_DO_SITE } from './data'
 import './Painel.css'
 
 // grupo: a aba do site onde o item aparece. pagina: o que a prévia abre primeiro.
 // adicionar e campos: os nomes usados na lista dessa seção
 const AJUSTES = 'Ajustes gerais'
 
+// textos: qual página de TEXTOS_DO_SITE (data.js) a seção edita
+const textosDe = (id, grupo, label, pagina, descricao) => ({ id: `textos-${id}`, textos: id, grupo, label, Icone: Documento, pagina, descricao })
+
 const SECOES = [
+  textosDe('inicio', 'Página inicial', 'Textos da página inicial', '', 'Etiquetas, títulos e links da página inicial. O seu nome, a frase e as listas vêm das outras partes do painel.'),
   { id: 'perfil', grupo: 'Sobre', label: 'Sobre você', Icone: Pessoa, pagina: 'sobre', descricao: 'Seu nome, sua apresentação e sua foto. O nome e a frase também aparecem na página inicial.' },
   {
     id: 'destaques',
@@ -51,7 +55,12 @@ const SECOES = [
     adicionar: 'Adicionar etapa',
     descricao: 'O caminho do primeiro contato até o fim do caso.'
   },
+  textosDe('sobre', 'Sobre', 'Outros textos da página', 'sobre', 'Trajetória, citação e os textos fixos da página Sobre.'),
+  textosDe('conteudo', 'Conteúdo', 'Textos da página', 'conteudo', 'Título e frases da página Conteúdo.'),
+  textosDe('atuacao', 'Atuação', 'Textos da página', 'atuacao', 'Título e frases da página Atuação.'),
   { id: 'contato', grupo: 'Contato', label: 'Formas de contato', Icone: Telefone, pagina: 'contato', descricao: 'WhatsApp, telefone, e-mail e Instagram. O WhatsApp também é usado nos botões de todo o site.' },
+  textosDe('contato', 'Contato', 'Textos da página', 'contato', 'Títulos, cartões e rótulos da página Contato.'),
+  textosDe('diagnostico', 'Contato', 'Conte sua situação', 'diagnostico', 'A conversa automática: perguntas, respostas e mensagens.'),
   {
     id: 'perguntas',
     grupo: 'Perguntas frequentes',
@@ -62,6 +71,8 @@ const SECOES = [
     campos: ['Pergunta', 'Resposta'],
     descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
+  textosDe('perguntas', 'Perguntas frequentes', 'Textos da página', 'perguntas', 'Título e frases da página Perguntas frequentes.'),
+  textosDe('geral', AJUSTES, 'Topo e rodapé', 'sobre', 'Textos que aparecem em todas as páginas: topo, botão do WhatsApp, faixa de contato e rodapé.'),
   { id: 'menu', grupo: AJUSTES, label: 'Nomes das páginas', Icone: Documento, pagina: 'sobre', descricao: 'Como cada página aparece no menu do topo e no rodapé. O endereço da página não muda.' },
   { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'O tipo de letra vale para o site todo. O tamanho muda só nas páginas internas. Para mudar só um texto, use a barra em cima do campo dele.' },
   { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
@@ -260,15 +271,15 @@ function NovaSenha({ aoConcluir }) {
   )
 }
 
-function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, menu }) {
-  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, menu }))
+function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, menu, textos }) {
+  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, menu, textos }))
 }
 
 function Editor({ usuario }) {
   const site = useSite()
   const { email } = usuario
   const [rascunho, setRascunho] = useState(() => copiar(site))
-  const [secao, setSecao] = useState(SECOES[0].id)
+  const [secao, setSecao] = useState('perfil')
   const [pendente, setPendente] = useState(false)
   const [salvando, setSalvando] = useState(false)
   const [aviso, setAviso] = useState(null)
@@ -403,6 +414,9 @@ function Editor({ usuario }) {
           {secao === 'conteudos' && <Publicacoes lista={rascunho.conteudos} mudar={(v) => alterar('conteudos', v)} />}
           {secao === 'contato' && <Contato contato={rascunho.contato} mudar={(v) => alterar('contato', v)} />}
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
+          {atual.textos && (
+            <TextosDaPagina key={secao} pagina={atual.textos} textos={rascunho.textos} mudar={(v) => alterar('textos', v)} />
+          )}
           {secao === 'menu' && <NomesDasPaginas menu={rascunho.menu} mudar={(v) => alterar('menu', v)} />}
           {secao === 'aparencia' && (
             <Aparencia
@@ -475,7 +489,7 @@ function Previa({ inicial, pendente, salvando, publicar, fechar }) {
   )
 }
 
-// Com formato e mudarFormato, o campo ganha a barra de letra, tamanho, negrito, itálico e sublinhado
+// Com formato e mudarFormato, o campo ganha a barra de letra, tamanho, linha, negrito, itálico e sublinhado
 function Campo({ label, valor, mudar, longo, dica, formato, mudarFormato, ...resto }) {
   const id = useId()
   const fonte = formato?.fonte
@@ -499,6 +513,7 @@ function Campo({ label, valor, mudar, longo, dica, formato, mudarFormato, ...res
 // Todas as letras das listas do painel, sem repetir; "" é a letra que a parte já usa no site
 const LETRAS_DO_CAMPO = [...new Set([...FONTES_TEXTO, ...FONTES_TITULO].map(([nome]) => nome))]
 const TAMANHOS_DO_CAMPO = [['0.85', 'Menor'], ['1', 'Normal'], ['1.15', 'Maior'], ['1.3', 'Bem maior'], ['1.5', 'Muito maior']]
+const LINHAS_DO_CAMPO = [['', 'Na mesma linha'], ['embaixo', 'Na linha de baixo']]
 const MARCAS_DO_CAMPO = [['negrito', 'N', 'Negrito'], ['italico', 'I', 'Itálico'], ['sublinhado', 'S', 'Sublinhado']]
 
 function BarraDeTexto({ formato, mudar, rotulo }) {
@@ -512,6 +527,9 @@ function BarraDeTexto({ formato, mudar, rotulo }) {
       </select>
       <select value={String(formato.tamanho || 1)} onChange={(e) => trocar('tamanho', Number(e.target.value))} aria-label="Tamanho">
         {TAMANHOS_DO_CAMPO.map(([v, nome]) => <option key={v} value={v}>{nome}</option>)}
+      </select>
+      <select value={formato.linha || ''} onChange={(e) => trocar('linha', e.target.value)} aria-label="Linha">
+        {LINHAS_DO_CAMPO.map(([v, nome]) => <option key={v} value={v}>{nome}</option>)}
       </select>
       {MARCAS_DO_CAMPO.map(([chave, letra, nome]) => (
         <button
@@ -602,6 +620,33 @@ function Arquivo({ label, valor, mudar, aceita, redondo }) {
         </div>
       )}
       {erro && <small className="adm-texto-erro">{erro}</small>}
+    </div>
+  )
+}
+
+function TextosDaPagina({ pagina, textos, mudar }) {
+  const { campos } = TEXTOS_DO_SITE.find((p) => p.id === pagina)
+  const voltar = () => {
+    if (!window.confirm('Voltar todos os textos desta tela ao original?')) return
+    const estilos = { ...textos.estilos }
+    campos.forEach(([chave]) => delete estilos[chave])
+    mudar({ ...textos, ...Object.fromEntries(campos.map(([chave]) => [chave, TEXTOS[chave]])), estilos })
+  }
+  return (
+    <div className="adm-pilha">
+      <Bloco descricao="Em textos com várias linhas, deixe uma linha em branco para começar outro parágrafo.">
+        {campos.map(([chave, rotulo, , linhas]) => (
+          <Campo
+            key={chave}
+            label={rotulo}
+            valor={textos[chave] ?? ''}
+            mudar={(v) => mudar({ ...textos, [chave]: v })}
+            longo={linhas}
+            {...formatoDe(textos, chave, (estilos) => mudar({ ...textos, estilos }))}
+          />
+        ))}
+        <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={voltar}>Voltar aos textos originais</button>
+      </Bloco>
     </div>
   )
 }

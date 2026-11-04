@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { DEV, TRAJETORIA } from './data'
+import { DEV } from './data'
 import { useSite, linkWhatsApp, nomesDoMenu, Texto } from './SiteData'
 import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
 import './Pages.css'
@@ -16,12 +16,13 @@ export function Realce({ children }) {
 const FORMATO_HORA = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', timeStyle: 'medium' })
 
 export function Horario() {
+  const { textos } = useSite()
   const [agora, setAgora] = useState(() => FORMATO_HORA.format(new Date()))
   useEffect(() => {
     const id = setInterval(() => setAgora(FORMATO_HORA.format(new Date())), 1000)
     return () => clearInterval(id)
   }, [])
-  return <p className="sinal-relogio"><span /> Plantão 24h · Horário de Brasília {agora}</p>
+  return <p className="sinal-relogio"><span /> <Texto de={textos} campo="geral.relogio" /> {agora}</p>
 }
 
 // Cada .sinal aparece e desenha sua linha ao entrar na tela
@@ -53,16 +54,16 @@ export function useFeixe() {
 }
 
 export function BotaoWhatsApp() {
-  const { contato } = useSite()
+  const { contato, textos } = useSite()
   return (
     <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer" className="page-botao">
-      <WhatsApp width={22} height={22} /> Falar no WhatsApp
+      <WhatsApp width={22} height={22} /> <Texto de={textos} campo="geral.botaoWhatsApp" />
     </a>
   )
 }
 
 function Rodape() {
-  const { perfil, contato, menu } = useSite()
+  const { perfil, contato, menu, textos } = useSite()
   return (
     <footer className="page-footer">
       <div className="page-footer-grid">
@@ -70,12 +71,12 @@ function Rodape() {
           <span className="page-footer-monograma" />
           <div>
             <p className="page-footer-name"><Texto de={perfil} campo="nome" /></p>
-            <p className="page-footer-area">Advocacia Criminal</p>
+            <p className="page-footer-area"><Texto de={textos} campo="geral.area" /></p>
             {perfil.oab && <p><Texto de={perfil} campo="oab" /></p>}
           </div>
         </div>
         <ul>
-          <li><Relogio /> Plantão 24h para urgências</li>
+          <li><Relogio /> <Texto de={textos} campo="geral.selo1" /></li>
           <li><Local /> <Texto de={perfil} campo="local" /></li>
           <li><Instagram /><a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a></li>
         </ul>
@@ -85,11 +86,11 @@ function Rodape() {
       </div>
       <div className="page-footer-base">
         <nav aria-label="Informações legais">
-          <a href="/privacidade">Política de Privacidade</a>
-          <a href="/termos">Termos de Uso</a>
+          <a href="/privacidade"><Texto de={textos} campo="geral.privacidade" /></a>
+          <a href="/termos"><Texto de={textos} campo="geral.termos" /></a>
         </nav>
-        <p>© {new Date().getFullYear()} {perfil.nome}. Todos os direitos reservados.{perfil.oab && ` ${perfil.oab}.`}</p>
-        <p>Conteúdo de caráter exclusivamente informativo.</p>
+        <p>© {new Date().getFullYear()} {perfil.nome}. <Texto de={textos} campo="geral.direitos" />{perfil.oab && ` ${perfil.oab}.`}</p>
+        <p><Texto de={textos} campo="geral.informativo" /></p>
         <p className="page-footer-creditos">
           <a href={DEV.github} target="_blank" rel="noreferrer">Site por {DEV.nome}</a>
           {/* crédito exigido pela licença CC BY 4.0 do modelo */}
@@ -107,11 +108,12 @@ function Rodape() {
 }
 
 export function Pagina({ chamada = true, plantao = true, children }) {
+  const { textos } = useSite()
   return (
     <main className="page" id="conteudo" tabIndex={-1}>
       <div className="page-inner">
         <a className="page-back" href="/">
-          <Voltar width={18} height={18} /> Voltar ao início
+          <Voltar width={18} height={18} /> <Texto de={textos} campo="geral.voltar" />
         </a>
         {plantao && <Horario />}
         {children}
@@ -119,8 +121,8 @@ export function Pagina({ chamada = true, plantao = true, children }) {
       {chamada && (
         <section className="page-chamada">
           <div>
-            <h2>Contato</h2>
-            <p>Fale com a advogada pelo WhatsApp. Sua conversa é protegida pelo sigilo profissional, nos termos da lei.</p>
+            <h2><Texto de={textos} campo="geral.chamadaTitulo" /></h2>
+            <p><Texto de={textos} campo="geral.chamadaTexto" /></p>
           </div>
           <BotaoWhatsApp />
         </section>
@@ -131,7 +133,7 @@ export function Pagina({ chamada = true, plantao = true, children }) {
 }
 
 export function SobrePage() {
-  const { perfil, destaques } = useSite()
+  const { perfil, destaques, textos } = useSite()
   const raiz = useSinal()
 
   return (
@@ -140,7 +142,7 @@ export function SobrePage() {
         <header className="sinal sinal-topo">
           <div>
             <h1><Texto de={perfil} campo="nome" /></h1>
-            <p className="page-lead"><Texto de={perfil} campo="titulo" />, com atuação em <Texto de={perfil} campo="especialidade" />.</p>
+            <p className="page-lead"><Texto de={perfil} campo="titulo" /><Texto de={textos} campo="sobre.ligacao" /> <Texto de={perfil} campo="especialidade" />.</p>
             <p className="page-slogan"><Texto de={perfil} campo="slogan" /></p>
             {(perfil.oab || perfil.formacao) && (
               <p>
@@ -154,19 +156,19 @@ export function SobrePage() {
         </header>
 
         <section className="sinal sinal-linha">
-          <h2>Trajetória</h2>
+          <h2><Texto de={textos} campo="sobre.tituloTrajetoria" /></h2>
           <div className="page-texto">
-            {TRAJETORIA.map((p) => <p key={p}><Realce>{p}</Realce></p>)}
+            {paragrafos(textos['sobre.trajetoria']).map((p, i) => <p key={i}><Texto de={textos} campo="sobre.trajetoria"><Realce>{p}</Realce></Texto></p>)}
           </div>
         </section>
 
         <section className="sinal sinal-linha">
-          <h2>Convicção</h2>
+          <h2><Texto de={textos} campo="sobre.tituloConviccao" /></h2>
           <blockquote className="page-citacao">
-            <p>A dignidade humana não aceita meios-termos: ela é, por definição, inegociável.</p>
+            <p><Texto de={textos} campo="sobre.citacao" /></p>
             <cite>
               <Texto de={perfil} campo="nome" />, em{' '}
-              <a href="/conteudo/carcere-de-frente">“O cárcere visto de frente: a dignidade humana é inegociável”</a>
+              <a href="/conteudo/carcere-de-frente"><Texto de={textos} campo="sobre.citacaoFonte" /></a>
             </cite>
           </blockquote>
         </section>
@@ -179,7 +181,7 @@ export function SobrePage() {
         ))}
 
         <a className="page-seguir" href="/atuacao">
-          Ver as áreas de atuação <Seta width={20} height={20} />
+          <Texto de={textos} campo="sobre.linkAtuacao" /> <Seta width={20} height={20} />
         </a>
       </div>
     </Pagina>
@@ -193,10 +195,13 @@ function Midia({ c }) {
   return c.imagem ? <img src={c.imagem} alt={c.imagemAlt} /> : null
 }
 
+// Linha em branco separa parágrafos nos textos longos do painel
+export const paragrafos = (texto = '') => texto.split(/\n\s*\n/).filter((p) => p.trim())
+
 const comMouse = window.matchMedia('(hover: hover)').matches
 
 export function ConteudoPage() {
-  const { conteudos } = useSite()
+  const { conteudos, textos } = useSite()
   // /conteudo/carcere-de-frente abre direto nessa publicação; pelo id, porque a lista do painel chega depois
   const [ativo, setAtivo] = useState(() => window.location.pathname.split('/')[2])
   const leitor = useRef()
@@ -211,15 +216,15 @@ export function ConteudoPage() {
   return (
     <Pagina chamada={false}>
       <header className="page-header">
-        <h1>Direito e reflexões</h1>
-        <p className="page-lead"><Realce>Palestras e explicações sobre Direito Penal em linguagem acessível.</Realce></p>
+        <h1><Texto de={textos} campo="conteudo.titulo" /></h1>
+        <p className="page-lead"><Texto de={textos} campo="conteudo.subtitulo"><Realce>{textos['conteudo.subtitulo']}</Realce></Texto></p>
       </header>
 
       {c && (
         <div className="indice">
           <div className="indice-lista">
             {/* No celular a publicação aberta fica no topo e esta lista mostra só as outras */}
-            {conteudos.length > 1 && <p className="indice-rotulo">Outras publicações</p>}
+            {conteudos.length > 1 && <p className="indice-rotulo"><Texto de={textos} campo="conteudo.outras" /></p>}
             {conteudos.map((item) => (
               <button
                 key={item.id}
@@ -230,7 +235,7 @@ export function ConteudoPage() {
               >
                 {(item.imagem || item.poster) && <img className="indice-capa" src={item.imagem || item.poster} alt="" loading="lazy" />}
                 <span className="indice-cartao">
-                  <span className="indice-meta"><Texto de={item} campo="categoria" />{item.data && ', '}<Texto de={item} campo="data" /></span>
+                  <span className="indice-meta"><Texto de={item} campo="categoria" />{item.data && item.estilos?.data?.linha !== 'embaixo' && ', '}<Texto de={item} campo="data" /></span>
                   <Texto de={item} campo="titulo" />
                 </span>
               </button>
@@ -238,7 +243,7 @@ export function ConteudoPage() {
           </div>
           <article className="indice-leitor" ref={leitor} key={c.id}>
             <header className="indice-leitor-topo">
-              <p className="indice-rotulo">{c.id === conteudos[0].id ? 'Mais recente' : <><Texto de={c} campo="categoria" />{c.data && ', '}<Texto de={c} campo="data" /></>}</p>
+              <p className="indice-rotulo">{c.id === conteudos[0].id ? <Texto de={textos} campo="conteudo.maisRecente" /> : <><Texto de={c} campo="categoria" />{c.data && c.estilos?.data?.linha !== 'embaixo' && ', '}<Texto de={c} campo="data" /></>}</p>
               <h2><Texto de={c} campo="titulo" /></h2>
             </header>
             <Midia c={c} />
@@ -256,14 +261,14 @@ export function ConteudoPage() {
 const ICONES_ETAPA = [Telefone, Papeis, Escudo, Sino]
 
 export function AtuacaoPage() {
-  const { areas, etapas } = useSite()
+  const { areas, etapas, textos } = useSite()
   const raiz = useFeixe()
 
   return (
     <Pagina>
       <header className="page-header">
-        <h1>Defesa em todas as fases do processo penal</h1>
-        <p className="page-lead">Atuação exclusiva na área criminal, do inquérito aos tribunais.</p>
+        <h1><Texto de={textos} campo="atuacao.titulo" /></h1>
+        <p className="page-lead"><Texto de={textos} campo="atuacao.subtitulo"><Realce>{textos['atuacao.subtitulo']}</Realce></Texto></p>
       </header>
 
       <div ref={raiz}>
@@ -276,7 +281,7 @@ export function AtuacaoPage() {
           ))}
         </div>
 
-        <h2 className="feixe-titulo">Do primeiro contato à conclusão do caso</h2>
+        <h2 className="feixe-titulo"><Texto de={textos} campo="atuacao.tituloEtapas" /></h2>
         <ol className="etapas">
           {etapas.map((e, i) => {
             const Icone = ICONES_ETAPA[i % ICONES_ETAPA.length]
@@ -296,68 +301,67 @@ export function AtuacaoPage() {
 }
 
 export function NaoEncontradaPage() {
+  const { textos } = useSite()
   return (
     <Pagina chamada={false} plantao={false}>
       <header className="page-header">
-        <h1>Página não encontrada</h1>
-        <p className="page-lead">Este endereço não existe ou mudou de lugar.</p>
+        <h1><Texto de={textos} campo="geral.naoEncontradaTitulo" /></h1>
+        <p className="page-lead"><Texto de={textos} campo="geral.naoEncontradaTexto" /></p>
       </header>
     </Pagina>
   )
 }
 
 export function ContatoPage() {
-  const { perfil, contato } = useSite()
+  const { perfil, contato, textos } = useSite()
   const zap = linkWhatsApp(contato.whatsapp, contato.mensagem)
 
   return (
     <Pagina chamada={false}>
       <header className="page-header">
-        <h1>Contato</h1>
-        <p className="page-lead">
-          Fale com a advogada pelo WhatsApp ou pelo Instagram.
-        </p>
+        <h1><Texto de={textos} campo="contato.titulo" /></h1>
+        <p className="page-lead"><Texto de={textos} campo="contato.subtitulo"><Realce>{textos['contato.subtitulo']}</Realce></Texto></p>
       </header>
 
       <div className="portas">
         <a className="porta porta-urgente" href={zap} target="_blank" rel="noreferrer">
           <Relogio width={28} height={28} />
-          <h2>Falar com a advogada</h2>
-          <p>Plantão 24h para urgências, como prisões em flagrante.</p>
-          <span>Abrir o WhatsApp <Seta width={22} height={22} /></span>
+          <h2><Texto de={textos} campo="contato.porta1Titulo" /></h2>
+          <p><Texto de={textos} campo="contato.porta1Texto" /></p>
+          <span><Texto de={textos} campo="contato.porta1Acao" /> <Seta width={22} height={22} /></span>
         </a>
         <a className="porta" href="/diagnostico">
           <Papeis width={28} height={28} />
-          <h2>Contar minha situação</h2>
-          <p>Responda quatro perguntas rápidas para organizar as informações antes do contato.</p>
-          <span>Começar <Seta width={22} height={22} /></span>
+          <h2><Texto de={textos} campo="contato.porta2Titulo" /></h2>
+          <p><Texto de={textos} campo="contato.porta2Texto" /></p>
+          <span><Texto de={textos} campo="contato.porta2Acao" /> <Seta width={22} height={22} /></span>
         </a>
       </div>
 
       <p className="contato-sigilo">
-        Sua conversa é protegida pelo <Realce>sigilo profissional</Realce>, nos termos da lei.
+        <Texto de={textos} campo="contato.sigilo"><Realce>{textos['contato.sigilo']}</Realce></Texto>
       </p>
 
       <ul className="canais">
         {contato.telefone && (
           <li>
             <span className="canal-icone"><Telefone /></span>
-            <div><strong>Telefone</strong><a href={`tel:${contato.telefone.replace(/\D/g, '')}`}>{contato.telefone}</a></div>
+            <div><strong><Texto de={textos} campo="contato.rotuloTelefone" /></strong><a href={`tel:${contato.telefone.replace(/\D/g, '')}`}>{contato.telefone}</a></div>
           </li>
         )}
         {contato.email && (
           <li>
             <span className="canal-icone"><Email /></span>
-            <div><strong>E-mail</strong><a href={`mailto:${contato.email}`}>{contato.email}</a></div>
+            <div><strong><Texto de={textos} campo="contato.rotuloEmail" /></strong><a href={`mailto:${contato.email}`}>{contato.email}</a></div>
           </li>
         )}
         <li>
           <span className="canal-icone"><Instagram /></span>
-          <div><strong>Instagram</strong><a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a></div>
+          <div><strong><Texto de={textos} campo="contato.rotuloInstagram" /></strong><a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a></div>
         </li>
         <li>
           <span className="canal-icone"><Local /></span>
-          <div><strong>Onde atua</strong><Texto de={perfil} campo="local" /></div>
+          <div><strong><Texto de={textos} campo="contato.rotuloLocal" /></strong><Texto de={perfil} campo="local" /></div>
         </li>
       </ul>
     </Pagina>
