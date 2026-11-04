@@ -416,7 +416,7 @@
   transition: color 0.25s;
 }
 
-.indice button span {
+.indice-meta {
   display: block;
   margin-bottom: 6px;
   font-family: var(--pagina-fonte, var(--sans));
@@ -440,6 +440,13 @@
 
 @keyframes indice-surgir {
   from { opacity: 0; }
+}
+
+/* Só no celular: rótulos, título no leitor e capas na lista */
+.indice-rotulo,
+.indice-leitor-topo,
+.indice-capa {
+  display: none;
 }
 
 .indice-leitor img,
@@ -666,8 +673,61 @@
     gap: 28px;
   }
 
+  /* Opção C: a publicação aberta vem primeiro, já para ler; as outras viram cartões embaixo */
   .indice-leitor {
     position: static;
+    order: -1;
+  }
+
+  .indice-rotulo {
+    display: block;
+    color: var(--gold);
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .indice-leitor-topo {
+    display: grid;
+    gap: 8px;
+  }
+
+  .indice-leitor-topo h2 {
+    font-family: var(--pagina-titulo, var(--serif));
+    font-size: calc(2rem * var(--pagina-tamanho-titulo, 1));
+    font-weight: 500;
+    line-height: 1.15;
+  }
+
+  .indice-lista {
+    display: grid;
+    gap: 12px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+
+  .indice button[aria-pressed='true'] {
+    display: none;
+  }
+
+  .indice button {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    font-size: calc(1.25rem * var(--pagina-tamanho, 1));
+  }
+
+  .indice-capa {
+    display: block;
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    object-fit: cover;
   }
 
   .etapas {

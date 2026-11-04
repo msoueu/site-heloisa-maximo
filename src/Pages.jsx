@@ -193,6 +193,8 @@ function Midia({ c }) {
   return c.imagem ? <img src={c.imagem} alt={c.imagemAlt} /> : null
 }
 
+const comMouse = window.matchMedia('(hover: hover)').matches
+
 export function ConteudoPage() {
   const { conteudos } = useSite()
   // /conteudo/carcere-de-frente abre direto nessa publicação; pelo id, porque a lista do painel chega depois
@@ -215,20 +217,30 @@ export function ConteudoPage() {
 
       {c && (
         <div className="indice">
-          <div>
+          <div className="indice-lista">
+            {/* No celular a publicação aberta fica no topo e esta lista mostra só as outras */}
+            {conteudos.length > 1 && <p className="indice-rotulo">Outras publicações</p>}
             {conteudos.map((item) => (
               <button
                 key={item.id}
                 aria-pressed={item.id === c.id}
                 onClick={() => escolher(item.id)}
-                onMouseEnter={() => setAtivo(item.id)}
+                // Só com mouse: no celular o toque escolheria antes do clique e o cartão sumiria
+                onMouseEnter={() => comMouse && setAtivo(item.id)}
               >
-                <span><Texto de={item} campo="categoria" />{item.data && ', '}<Texto de={item} campo="data" /></span>
-                <Texto de={item} campo="titulo" />
+                {(item.imagem || item.poster) && <img className="indice-capa" src={item.imagem || item.poster} alt="" loading="lazy" />}
+                <span className="indice-cartao">
+                  <span className="indice-meta"><Texto de={item} campo="categoria" />{item.data && ', '}<Texto de={item} campo="data" /></span>
+                  <Texto de={item} campo="titulo" />
+                </span>
               </button>
             ))}
           </div>
           <article className="indice-leitor" ref={leitor} key={c.id}>
+            <header className="indice-leitor-topo">
+              <p className="indice-rotulo">{c.id === conteudos[0].id ? 'Mais recente' : <><Texto de={c} campo="categoria" />{c.data && ', '}<Texto de={c} campo="data" /></>}</p>
+              <h2><Texto de={c} campo="titulo" /></h2>
+            </header>
             <Midia c={c} />
             <div className="page-texto">
               {(c.texto || [c.resumo]).map((p, i) => <p key={i}><Texto de={c} campo={c.texto ? 'texto' : 'resumo'}><Realce>{p}</Realce></Texto></p>)}
