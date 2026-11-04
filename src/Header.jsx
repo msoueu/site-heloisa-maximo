@@ -1,18 +1,10 @@
 import { useEffect, useState } from 'react'
 import './Header.css'
-import { useSite, linkWhatsApp } from './SiteData'
+import { useSite, linkWhatsApp, nomesDoMenu } from './SiteData'
 import { Sol, Lua, Relogio, Escudo, Menu, Fechar, WhatsApp } from './Icons'
 
-const LINKS = [
-  { label: 'Sobre', pagina: 'sobre' },
-  { label: 'Conteúdo', pagina: 'conteudo' },
-  { label: 'Atuação', pagina: 'atuacao' },
-  { label: 'Contato', pagina: 'contato' },
-  { label: 'Perguntas', sufixo: ' frequentes', pagina: 'perguntas' }
-]
-
 export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
-  const { contato } = useSite()
+  const { contato, menu: nomes } = useSite()
   const naHome = rota === 'home'
   const [menu, setMenu] = useState(false)
 
@@ -38,14 +30,14 @@ export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
 
         <div className="header-right">
           <div id="menu-site" className={`header-nav-links ${menu ? 'is-aberto' : ''}`}>
-            {LINKS.map((link) => (
+            {nomesDoMenu(nomes).map((link) => (
               <a
-                key={link.label}
+                key={link.pagina}
                 href={`/${link.pagina}`}
                 className={ativo(link) ? 'is-active' : ''}
                 onClick={() => setMenu(false)}
               >
-                {link.label}{link.sufixo && <span>{link.sufixo}</span>}
+                {link.label}
               </a>
             ))}
           </div>

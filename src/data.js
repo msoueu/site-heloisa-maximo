@@ -162,6 +162,15 @@ export const PERGUNTAS_FREQUENTES = [
 ]
 
 // Opções da seção Aparência do painel; valem só para as páginas internas
+// Nomes das páginas no menu do topo e no rodapé; a chave é o endereço da página
+export const MENU = {
+  sobre: 'Sobre',
+  conteudo: 'Conteúdo',
+  atuacao: 'Atuação',
+  contato: 'Contato',
+  perguntas: 'Perguntas frequentes'
+}
+
 export const APARENCIA = {
   fonte: 'Source Sans 3',
   titulo: 'Georgia',

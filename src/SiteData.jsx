@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES } from './data'
+import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES, MENU } from './data'
 import { CONFIGURADO, SUPABASE_URL, SUPABASE_CHAVE } from './ambiente'
 
 const PADRAO = {
@@ -10,8 +10,13 @@ const PADRAO = {
   etapas: ETAPAS,
   conteudos: CONTEUDOS,
   aparencia: APARENCIA,
-  perguntas: PERGUNTAS_FREQUENTES
+  perguntas: PERGUNTAS_FREQUENTES,
+  menu: MENU
 }
+
+// Nome vazio no painel volta ao padrão, para o link nunca sumir do menu
+export const nomesDoMenu = (menu) =>
+  Object.keys(MENU).map((pagina) => ({ pagina, label: menu?.[pagina]?.trim() || MENU[pagina] }))
 
 const PESOS_FONTE = {
   'Source Sans 3': '400;700',

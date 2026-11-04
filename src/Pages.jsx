@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEV, TRAJETORIA } from './data'
-import { useSite, linkWhatsApp } from './SiteData'
+import { useSite, linkWhatsApp, nomesDoMenu } from './SiteData'
 import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
 import './Pages.css'
 
@@ -62,7 +62,7 @@ export function BotaoWhatsApp() {
 }
 
 function Rodape() {
-  const { perfil, contato } = useSite()
+  const { perfil, contato, menu } = useSite()
   return (
     <footer className="page-footer">
       <div className="page-footer-grid">
@@ -80,11 +80,7 @@ function Rodape() {
           <li><Instagram /><a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a></li>
         </ul>
         <nav className="page-footer-links" aria-label="Páginas do site">
-          <a href="/sobre">Sobre</a>
-          <a href="/conteudo">Conteúdo jurídico</a>
-          <a href="/atuacao">Áreas de atuação</a>
-          <a href="/contato">Contato</a>
-          <a href="/perguntas">Perguntas frequentes</a>
+          {nomesDoMenu(menu).map(({ pagina, label }) => <a key={pagina} href={`/${pagina}`}>{label}</a>)}
         </nav>
       </div>
       <div className="page-footer-base">

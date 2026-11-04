@@ -7,7 +7,7 @@ import {
   Documento, Telefone, Pessoa, Estrela, Balanca, Passos, Sair, Externo, Mais, Lixeira,
   Cima, Baixo, Imagem, Video, Check, Voltar, Letra, Cadeado
 } from './Icons'
-import { APARENCIA, CONTATO } from './data'
+import { APARENCIA, CONTATO, MENU } from './data'
 import './Painel.css'
 
 // grupo: a aba do site onde o item aparece. pagina: o que a prévia abre primeiro.
@@ -62,6 +62,7 @@ const SECOES = [
     campos: ['Pergunta', 'Resposta'],
     descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
+  { id: 'menu', grupo: AJUSTES, label: 'Nomes das páginas', Icone: Documento, pagina: 'sobre', descricao: 'Como cada página aparece no menu do topo e no rodapé. O endereço da página não muda.' },
   { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' },
   { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
 ]
@@ -259,8 +260,8 @@ function NovaSenha({ aoConcluir }) {
   )
 }
 
-function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }) {
-  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas }))
+function copiar({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, menu }) {
+  return JSON.parse(JSON.stringify({ perfil, contato, destaques, areas, etapas, conteudos, aparencia, perguntas, menu }))
 }
 
 function Editor({ usuario }) {
@@ -402,6 +403,7 @@ function Editor({ usuario }) {
           {secao === 'conteudos' && <Publicacoes lista={rascunho.conteudos} mudar={(v) => alterar('conteudos', v)} />}
           {secao === 'contato' && <Contato contato={rascunho.contato} mudar={(v) => alterar('contato', v)} />}
           {secao === 'perfil' && <Perfil perfil={rascunho.perfil} mudar={(v) => alterar('perfil', v)} />}
+          {secao === 'menu' && <NomesDasPaginas menu={rascunho.menu} mudar={(v) => alterar('menu', v)} />}
           {secao === 'aparencia' && <Aparencia aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />}
           {['destaques', 'areas', 'etapas', 'perguntas'].includes(secao) && (
             <ListaSimples key={secao} secao={atual} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
@@ -545,6 +547,28 @@ function Arquivo({ label, valor, mudar, aceita, redondo }) {
         </div>
       )}
       {erro && <small className="adm-texto-erro">{erro}</small>}
+    </div>
+  )
+}
+
+function NomesDasPaginas({ menu, mudar }) {
+  return (
+    <div className="adm-pilha">
+      <Bloco descricao="Se deixar um nome em branco, volta o nome original.">
+        {Object.entries(MENU).map(([pagina, original]) => (
+          <Campo
+            key={pagina}
+            label={`Página ${original} (/${pagina})`}
+            valor={menu[pagina] ?? ''}
+            mudar={(v) => mudar({ ...menu, [pagina]: v })}
+            placeholder={original}
+            maxLength={30}
+          />
+        ))}
+        <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={() => mudar({ ...MENU })}>
+          Voltar aos nomes originais
+        </button>
+      </Bloco>
     </div>
   )
 }
