@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEV, TRAJETORIA } from './data'
-import { useSite, useParte, linkWhatsApp, nomesDoMenu } from './SiteData'
+import { useSite, linkWhatsApp, nomesDoMenu, Texto } from './SiteData'
 import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
 import './Pages.css'
 
@@ -63,24 +63,23 @@ export function BotaoWhatsApp() {
 
 function Rodape() {
   const { perfil, contato, menu } = useSite()
-  const parteMenu = useParte('menu')
   return (
     <footer className="page-footer">
       <div className="page-footer-grid">
         <div className="page-footer-marca">
           <span className="page-footer-monograma" />
           <div>
-            <p className="page-footer-name">{perfil.nome}</p>
+            <p className="page-footer-name"><Texto de={perfil} campo="nome" /></p>
             <p className="page-footer-area">Advocacia Criminal</p>
-            {perfil.oab && <p>{perfil.oab}</p>}
+            {perfil.oab && <p><Texto de={perfil} campo="oab" /></p>}
           </div>
         </div>
         <ul>
           <li><Relogio /> Plantão 24h para urgências</li>
-          <li><Local /> {perfil.local}</li>
+          <li><Local /> <Texto de={perfil} campo="local" /></li>
           <li><Instagram /><a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a></li>
         </ul>
-        <nav className="page-footer-links" aria-label="Páginas do site" {...parteMenu}>
+        <nav className="page-footer-links" aria-label="Páginas do site">
           {nomesDoMenu(menu).map(({ pagina, label }) => <a key={pagina} href={`/${pagina}`}>{label}</a>)}
         </nav>
       </div>
@@ -107,11 +106,10 @@ function Rodape() {
   )
 }
 
-export function Pagina({ chamada = true, plantao = true, parte, children }) {
-  const propsParte = useParte(parte)
+export function Pagina({ chamada = true, plantao = true, children }) {
   return (
     <main className="page" id="conteudo" tabIndex={-1}>
-      <div className="page-inner" {...propsParte}>
+      <div className="page-inner">
         <a className="page-back" href="/">
           <Voltar width={18} height={18} /> Voltar ao início
         </a>
@@ -135,19 +133,21 @@ export function Pagina({ chamada = true, plantao = true, parte, children }) {
 export function SobrePage() {
   const { perfil, destaques } = useSite()
   const raiz = useSinal()
-  const partePerfil = useParte('perfil')
-  const parteDestaques = useParte('destaques')
 
   return (
     <Pagina>
       <div ref={raiz}>
-        <header className="sinal sinal-topo" {...partePerfil}>
+        <header className="sinal sinal-topo">
           <div>
-            <h1>{perfil.nome}</h1>
-            <p className="page-lead">{perfil.titulo}, com atuação em {perfil.especialidade}.</p>
-            <p className="page-slogan">{perfil.slogan}</p>
+            <h1><Texto de={perfil} campo="nome" /></h1>
+            <p className="page-lead"><Texto de={perfil} campo="titulo" />, com atuação em <Texto de={perfil} campo="especialidade" />.</p>
+            <p className="page-slogan"><Texto de={perfil} campo="slogan" /></p>
             {(perfil.oab || perfil.formacao) && (
-              <p>{[perfil.oab, perfil.formacao].filter(Boolean).join(' · ')}</p>
+              <p>
+                {perfil.oab && <Texto de={perfil} campo="oab" />}
+                {perfil.oab && perfil.formacao && ' · '}
+                {perfil.formacao && <Texto de={perfil} campo="formacao" />}
+              </p>
             )}
           </div>
           <img src={perfil.foto} alt={`Retrato de ${perfil.nome}`} />
@@ -165,20 +165,18 @@ export function SobrePage() {
           <blockquote className="page-citacao">
             <p>A dignidade humana não aceita meios-termos: ela é, por definição, inegociável.</p>
             <cite>
-              {perfil.nome}, em{' '}
+              <Texto de={perfil} campo="nome" />, em{' '}
               <a href="/conteudo/carcere-de-frente">“O cárcere visto de frente: a dignidade humana é inegociável”</a>
             </cite>
           </blockquote>
         </section>
 
-        <div {...parteDestaques}>
-          {destaques.map((d) => (
-            <section className="sinal sinal-linha" key={d.titulo}>
-              <h2>{d.titulo}</h2>
-              <p><Realce>{d.texto}</Realce></p>
-            </section>
-          ))}
-        </div>
+        {destaques.map((d, i) => (
+          <section className="sinal sinal-linha" key={i}>
+            <h2><Texto de={d} campo="titulo" /></h2>
+            <p><Texto de={d} campo="texto"><Realce>{d.texto}</Realce></Texto></p>
+          </section>
+        ))}
 
         <a className="page-seguir" href="/atuacao">
           Ver as áreas de atuação <Seta width={20} height={20} />
@@ -209,7 +207,7 @@ export function ConteudoPage() {
   }
 
   return (
-    <Pagina chamada={false} parte="conteudos">
+    <Pagina chamada={false}>
       <header className="page-header">
         <h1>Direito e reflexões</h1>
         <p className="page-lead"><Realce>Palestras e explicações sobre Direito Penal em linguagem acessível.</Realce></p>
@@ -225,15 +223,15 @@ export function ConteudoPage() {
                 onClick={() => escolher(item.id)}
                 onMouseEnter={() => setAtivo(item.id)}
               >
-                <span>{item.categoria}{item.data && `, ${item.data}`}</span>
-                {item.titulo}
+                <span><Texto de={item} campo="categoria" />{item.data && ', '}<Texto de={item} campo="data" /></span>
+                <Texto de={item} campo="titulo" />
               </button>
             ))}
           </div>
           <article className="indice-leitor" ref={leitor} key={c.id}>
             <Midia c={c} />
             <div className="page-texto">
-              {(c.texto || [c.resumo]).map((p) => <p key={p}><Realce>{p}</Realce></p>)}
+              {(c.texto || [c.resumo]).map((p, i) => <p key={i}><Texto de={c} campo={c.texto ? 'texto' : 'resumo'}><Realce>{p}</Realce></Texto></p>)}
             </div>
           </article>
         </div>
@@ -248,8 +246,6 @@ const ICONES_ETAPA = [Telefone, Papeis, Escudo, Sino]
 export function AtuacaoPage() {
   const { areas, etapas } = useSite()
   const raiz = useFeixe()
-  const parteAreas = useParte('areas')
-  const parteEtapas = useParte('etapas')
 
   return (
     <Pagina>
@@ -259,24 +255,24 @@ export function AtuacaoPage() {
       </header>
 
       <div ref={raiz}>
-        <div className="feixe-grade" {...parteAreas}>
-          {areas.map((a) => (
-            <article className="feixe-bloco" key={a.titulo}>
-              <h2>{a.titulo}</h2>
-              <p><Realce>{a.texto}</Realce></p>
+        <div className="feixe-grade">
+          {areas.map((a, i) => (
+            <article className="feixe-bloco" key={i}>
+              <h2><Texto de={a} campo="titulo" /></h2>
+              <p><Texto de={a} campo="texto"><Realce>{a.texto}</Realce></Texto></p>
             </article>
           ))}
         </div>
 
-        <h2 className="feixe-titulo" {...parteEtapas}>Do primeiro contato à conclusão do caso</h2>
-        <ol className="etapas" {...parteEtapas}>
+        <h2 className="feixe-titulo">Do primeiro contato à conclusão do caso</h2>
+        <ol className="etapas">
           {etapas.map((e, i) => {
             const Icone = ICONES_ETAPA[i % ICONES_ETAPA.length]
             return (
-            <li key={e.titulo}>
+            <li key={i}>
               <span className="etapa-icone"><Icone /></span>
-              <h3>{e.titulo}</h3>
-              <p><Realce>{e.texto}</Realce></p>
+              <h3><Texto de={e} campo="titulo" /></h3>
+              <p><Texto de={e} campo="texto"><Realce>{e.texto}</Realce></Texto></p>
               {i < etapas.length - 1 && <span className="etapa-seta" aria-hidden="true"><Seta width={16} height={16} /></span>}
             </li>
             )
@@ -303,7 +299,7 @@ export function ContatoPage() {
   const zap = linkWhatsApp(contato.whatsapp, contato.mensagem)
 
   return (
-    <Pagina chamada={false} parte="contato">
+    <Pagina chamada={false}>
       <header className="page-header">
         <h1>Contato</h1>
         <p className="page-lead">
@@ -349,7 +345,7 @@ export function ContatoPage() {
         </li>
         <li>
           <span className="canal-icone"><Local /></span>
-          <div><strong>Onde atua</strong>{perfil.local}</div>
+          <div><strong>Onde atua</strong><Texto de={perfil} campo="local" /></div>
         </li>
       </ul>
     </Pagina>

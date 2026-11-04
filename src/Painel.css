@@ -140,6 +140,53 @@
   resize: vertical;
 }
 
+/* Barra de formato em cima de cada campo de texto */
+.adm-barra-texto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.adm-campo .adm-barra-texto select {
+  width: auto;
+  min-height: 36px;
+  padding: 0 8px;
+  border-color: var(--a-line);
+  font-size: 13px;
+}
+
+.adm-marca-texto {
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid var(--a-line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--a-muted);
+  font: 400 15px/1 Georgia, serif;
+  cursor: pointer;
+}
+
+.adm-marca-negrito { font-weight: 700; }
+.adm-marca-italico { font-style: italic; }
+.adm-marca-sublinhado { text-decoration: underline; }
+
+.adm-marca-texto:hover {
+  background: var(--a-hover);
+  color: var(--a-text);
+}
+
+.adm-marca-texto[aria-pressed='true'] {
+  border-color: var(--a-gold-2);
+  background: rgba(217, 189, 134, 0.14);
+  color: var(--a-gold);
+}
+
+.adm-marca-texto:focus-visible,
+.adm-barra-texto select:focus-visible {
+  outline: 2px solid var(--a-gold);
+  outline-offset: 2px;
+}
+
 /* Botões */
 .adm-btn {
   display: inline-flex;
@@ -472,11 +519,6 @@
 .adm-corpo {
   max-width: 1040px;
   padding: 32px 40px 80px;
-}
-
-/* Separa o bloco "Letras desta parte" do que vem antes */
-.adm-corpo > * + * {
-  margin-top: 40px;
 }
 
 /* Blocos de formulário */

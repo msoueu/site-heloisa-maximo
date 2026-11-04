@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { useSite, linkWhatsApp, aceitaMensagem, carregarFonte, varsDaAparencia } from './SiteData'
+import { useEffect, useId, useRef, useState } from 'react'
+import { useSite, linkWhatsApp, aceitaMensagem, carregarFonte, varsDaAparencia, estiloCss } from './SiteData'
 import { supabase, BUCKET } from './supabase'
 import { veioDeRecuperacao } from './rotas'
 import { validarArquivo, validarConteudo, TIPOS_IMAGEM, TIPOS_VIDEO } from './validacao'
@@ -63,7 +63,7 @@ const SECOES = [
     descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
   { id: 'menu', grupo: AJUSTES, label: 'Nomes das páginas', Icone: Documento, pagina: 'sobre', descricao: 'Como cada página aparece no menu do topo e no rodapé. O endereço da página não muda.' },
-  { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'O tipo de letra vale para o site todo. O tamanho muda só nas páginas internas. Cada parte também pode ter letras próprias, no fim da tela dela.' },
+  { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'O tipo de letra vale para o site todo. O tamanho muda só nas páginas internas. Para mudar só um texto, use a barra em cima do campo dele.' },
   { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
 ]
 
@@ -408,14 +408,11 @@ function Editor({ usuario }) {
             <Aparencia
               aparencia={rascunho.aparencia}
               mudar={(v) => alterar('aparencia', v)}
-              voltar={() => alterar('aparencia', { ...APARENCIA, partes: rascunho.aparencia.partes })}
+              voltar={() => alterar('aparencia', { ...APARENCIA })}
             />
           )}
           {['destaques', 'areas', 'etapas', 'perguntas'].includes(secao) && (
             <ListaSimples key={secao} secao={atual} lista={rascunho[secao]} mudar={(v) => alterar(secao, v)} />
-          )}
-          {PARTES_COM_LETRA.includes(secao) && (
-            <LetrasDaParte key={secao} id={secao} aparencia={rascunho.aparencia} mudar={(v) => alterar('aparencia', v)} />
           )}
         </div>
       </main>
@@ -478,17 +475,66 @@ function Previa({ inicial, pendente, salvando, publicar, fechar }) {
   )
 }
 
-function Campo({ label, valor, mudar, longo, dica, ...resto }) {
+// Com formato e mudarFormato, o campo ganha a barra de letra, tamanho, negrito, itálico e sublinhado
+function Campo({ label, valor, mudar, longo, dica, formato, mudarFormato, ...resto }) {
+  const id = useId()
+  const fonte = formato?.fonte
+  useEffect(() => { if (fonte) carregarFonte(fonte) }, [fonte])
+  // O campo já mostra o texto do jeito que vai ficar no site
+  const css = mudarFormato ? estiloCss(formato) : undefined
+  // No campo o tamanho parte dos 14px dele, não da letra em volta
+  const visual = css?.fontSize ? { ...css, fontSize: `${14 * Number(formato.tamanho)}px` } : css
   return (
-    <label className="adm-campo">
-      <span className="adm-rotulo">{label}</span>
+    <div className="adm-campo">
+      <label className="adm-rotulo" htmlFor={id}>{label}</label>
+      {mudarFormato && <BarraDeTexto formato={formato || {}} mudar={mudarFormato} rotulo={label} />}
       {longo
-        ? <textarea value={valor} onChange={(e) => mudar(e.target.value)} rows={longo} {...resto} />
-        : <input value={valor} onChange={(e) => mudar(e.target.value)} {...resto} />}
+        ? <textarea id={id} style={visual} value={valor} onChange={(e) => mudar(e.target.value)} rows={longo} {...resto} />
+        : <input id={id} style={visual} value={valor} onChange={(e) => mudar(e.target.value)} {...resto} />}
       {dica && <small>{dica}</small>}
-    </label>
+    </div>
   )
 }
+
+// Todas as letras das listas do painel, sem repetir; "" é a letra que a parte já usa no site
+const LETRAS_DO_CAMPO = [...new Set([...FONTES_TEXTO, ...FONTES_TITULO].map(([nome]) => nome))]
+const TAMANHOS_DO_CAMPO = [['0.85', 'Menor'], ['1', 'Normal'], ['1.15', 'Maior'], ['1.3', 'Bem maior'], ['1.5', 'Muito maior']]
+const MARCAS_DO_CAMPO = [['negrito', 'N', 'Negrito'], ['italico', 'I', 'Itálico'], ['sublinhado', 'S', 'Sublinhado']]
+
+function BarraDeTexto({ formato, mudar, rotulo }) {
+  const trocar = (chave, valor) => mudar({ ...formato, [chave]: valor })
+  const letras = formato.fonte && !LETRAS_DO_CAMPO.includes(formato.fonte) ? [...LETRAS_DO_CAMPO, formato.fonte] : LETRAS_DO_CAMPO
+  return (
+    <div className="adm-barra-texto" role="toolbar" aria-label={`Formato de ${rotulo}`}>
+      <select value={formato.fonte || ''} onChange={(e) => trocar('fonte', e.target.value)} aria-label="Letra">
+        <option value="">Letra do site</option>
+        {letras.map((nome) => <option key={nome} value={nome}>{nome}</option>)}
+      </select>
+      <select value={String(formato.tamanho || 1)} onChange={(e) => trocar('tamanho', Number(e.target.value))} aria-label="Tamanho">
+        {TAMANHOS_DO_CAMPO.map(([v, nome]) => <option key={v} value={v}>{nome}</option>)}
+      </select>
+      {MARCAS_DO_CAMPO.map(([chave, letra, nome]) => (
+        <button
+          key={chave}
+          type="button"
+          className={`adm-marca-texto adm-marca-${chave}`}
+          aria-pressed={!!formato[chave]}
+          aria-label={nome}
+          title={nome}
+          onClick={() => trocar(chave, !formato[chave])}
+        >
+          {letra}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// Liga a barra de um campo ao "estilos" do objeto que guarda o texto
+const formatoDe = (objeto, campo, salvar) => ({
+  formato: objeto.estilos?.[campo],
+  mudarFormato: (novo) => salvar({ ...objeto.estilos, [campo]: novo })
+})
 
 function Bloco({ titulo, descricao, children }) {
   return (
@@ -578,46 +624,6 @@ function NomesDasPaginas({ menu, mudar }) {
           Voltar aos nomes originais
         </button>
       </Bloco>
-    </div>
-  )
-}
-
-const PARTES_COM_LETRA = ['perfil', 'destaques', 'conteudos', 'areas', 'etapas', 'contato', 'perguntas', 'menu']
-
-// As letras de Letras do site, sem as escolhas de cada parte
-const letrasGerais = ({ partes, ...geral }) => geral
-
-function LetrasDaParte({ id, aparencia, mudar }) {
-  const propria = aparencia.partes?.[id]
-  const definir = (valor) => {
-    const partes = { ...aparencia.partes }
-    if (valor) partes[id] = valor
-    else delete partes[id]
-    mudar({ ...aparencia, partes })
-  }
-
-  return (
-    <div className="adm-pilha">
-      <Bloco
-        titulo="Letras desta parte"
-        descricao={propria
-          ? 'Esta parte usa letras próprias. O resto do site continua com as de Letras do site.'
-          : 'Esta parte usa as mesmas letras do site todo, escolhidas em Letras do site.'}
-      >
-        {!propria && (
-          <button className="adm-btn adm-btn-pequeno adm-btn-auto" onClick={() => definir(letrasGerais(aparencia))}>
-            Usar letras diferentes nesta parte
-          </button>
-        )}
-      </Bloco>
-      {propria && (
-        <Aparencia
-          aparencia={propria}
-          mudar={definir}
-          voltar={() => definir(null)}
-          rotuloVoltar="Voltar às letras do site todo"
-        />
-      )}
     </div>
   )
 }
@@ -859,24 +865,25 @@ function Contato({ contato, mudar }) {
 
 function Perfil({ perfil, mudar }) {
   const campo = (chave) => (v) => mudar({ ...perfil, [chave]: v })
+  const fmt = (chave) => formatoDe(perfil, chave, (estilos) => mudar({ ...perfil, estilos }))
   return (
     <div className="adm-colunas">
       <div className="adm-pilha">
         <Bloco titulo="Apresentação">
-          <Campo label="Nome" valor={perfil.nome} mudar={campo('nome')} />
-          <Campo label="Profissão" valor={perfil.titulo} mudar={campo('titulo')} dica="Por exemplo: Advogada Criminalista." />
-          <Campo label="Frase de apresentação" valor={perfil.slogan} mudar={campo('slogan')} dica="Uma frase curta que aparece na página inicial." />
+          <Campo label="Nome" valor={perfil.nome} mudar={campo('nome')} {...fmt('nome')} />
+          <Campo label="Profissão" valor={perfil.titulo} mudar={campo('titulo')} {...fmt('titulo')} dica="Por exemplo: Advogada Criminalista." />
+          <Campo label="Frase de apresentação" valor={perfil.slogan} mudar={campo('slogan')} {...fmt('slogan')} dica="Uma frase curta que aparece na página inicial." />
         </Bloco>
         <Bloco titulo="Onde e com o que você trabalha">
           <div className="adm-dupla">
-            <Campo label="Área principal" valor={perfil.especialidade} mudar={campo('especialidade')} />
-            <Campo label="Cidade ou estado" valor={perfil.local} mudar={campo('local')} />
+            <Campo label="Área principal" valor={perfil.especialidade} mudar={campo('especialidade')} {...fmt('especialidade')} />
+            <Campo label="Cidade ou estado" valor={perfil.local} mudar={campo('local')} {...fmt('local')} />
           </div>
         </Bloco>
         <Bloco titulo="OAB e formação">
           <div className="adm-dupla">
-            <Campo label="Número da OAB" valor={perfil.oab} mudar={campo('oab')} placeholder="OAB/SE 0000" />
-            <Campo label="Formação" valor={perfil.formacao} mudar={campo('formacao')} dica="Se deixar em branco, não aparece no site." />
+            <Campo label="Número da OAB" valor={perfil.oab} mudar={campo('oab')} {...fmt('oab')} placeholder="OAB/SE 0000" />
+            <Campo label="Formação" valor={perfil.formacao} mudar={campo('formacao')} {...fmt('formacao')} dica="Se deixar em branco, não aparece no site." />
           </div>
         </Bloco>
       </div>
@@ -920,8 +927,8 @@ function ListaSimples({ secao, lista, mudar }) {
         <div className="adm-item" key={i}>
           <span className="adm-item-num">{String(i + 1).padStart(2, '0')}</span>
           <div className="adm-item-campos">
-            <Campo label={rotuloTitulo} valor={item.titulo} mudar={(v) => editar(i, 'titulo', v)} />
-            <Campo label={rotuloTexto} valor={item.texto} mudar={(v) => editar(i, 'texto', v)} longo={2} />
+            <Campo label={rotuloTitulo} valor={item.titulo} mudar={(v) => editar(i, 'titulo', v)} {...formatoDe(item, 'titulo', (e) => editar(i, 'estilos', e))} />
+            <Campo label={rotuloTexto} valor={item.texto} mudar={(v) => editar(i, 'texto', v)} longo={2} {...formatoDe(item, 'texto', (e) => editar(i, 'estilos', e))} />
           </div>
           <div className="adm-item-acoes">
             <Ordenar i={i} total={lista.length} aoMover={(para) => mudar(mover(lista, i, para))} />
@@ -1003,6 +1010,7 @@ function Publicacoes({ lista, mudar }) {
 
 function EditarPublicacao({ pub, naHome, mudar, excluir, voltar }) {
   const [tipo, setTipo] = useState(pub.video ? 'video' : pub.imagem ? 'imagem' : 'nenhuma')
+  const fmt = (chave) => formatoDe(pub, chave, (estilos) => mudar({ estilos }))
 
   const trocarMidia = (novo) => {
     if (novo === tipo) return
@@ -1016,11 +1024,12 @@ function EditarPublicacao({ pub, naHome, mudar, excluir, voltar }) {
 
       <div className="adm-colunas">
         <Bloco>
-          <Campo label="Título" valor={pub.titulo} mudar={(v) => mudar({ titulo: v })} placeholder="Título da publicação" />
+          <Campo label="Título" valor={pub.titulo} mudar={(v) => mudar({ titulo: v })} {...fmt('titulo')} placeholder="Título da publicação" />
           <Campo
             label="Resumo curto"
             valor={pub.resumo}
             mudar={(v) => mudar({ resumo: v })}
+            {...fmt('resumo')}
             longo={2}
             dica="Uma ou duas frases contando do que se trata."
           />
@@ -1028,6 +1037,7 @@ function EditarPublicacao({ pub, naHome, mudar, excluir, voltar }) {
             label="Texto completo"
             valor={(pub.texto || []).join('\n\n')}
             mudar={(v) => mudar({ texto: v.split(/\n\s*\n/) })}
+            {...fmt('texto')}
             longo={12}
             dica="Para começar um novo parágrafo, deixe uma linha em branco."
           />
@@ -1035,8 +1045,8 @@ function EditarPublicacao({ pub, naHome, mudar, excluir, voltar }) {
 
         <div className="adm-pilha">
           <Bloco titulo="Informações">
-            <Campo label="Categoria" valor={pub.categoria} mudar={(v) => mudar({ categoria: v })} placeholder="Atuação, Palestra…" />
-            <Campo label="Data" valor={pub.data || ''} mudar={(v) => mudar({ data: v })} placeholder="Abril de 2026" />
+            <Campo label="Categoria" valor={pub.categoria} mudar={(v) => mudar({ categoria: v })} {...fmt('categoria')} placeholder="Atuação, Palestra…" />
+            <Campo label="Data" valor={pub.data || ''} mudar={(v) => mudar({ data: v })} {...fmt('data')} placeholder="Abril de 2026" />
             {naHome && <p className="adm-nota">Esta publicação aparece na página inicial porque é a primeira da lista.</p>}
           </Bloco>
 

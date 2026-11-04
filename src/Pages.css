@@ -745,13 +745,3 @@
 .page-texto p {
   color: var(--texto-cor, inherit);
 }
-
-/* Parte com letras próprias no painel: o texto sem regra própria herda dela */
-:where([data-parte]) {
-  font-family: var(--sans);
-}
-
-/* Só no conteúdo da página: o rodapé tem tamanhos próprios */
-:where(.page-inner[data-parte], .page-inner [data-parte]) {
-  font-size: calc(1.1875rem * var(--pagina-tamanho, 1));
-}

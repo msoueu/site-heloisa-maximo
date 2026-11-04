@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useSite, linkWhatsApp } from './SiteData'
+import { useSite, linkWhatsApp, Texto } from './SiteData'
 import { Baixo } from './Icons'
 import { Pagina, Realce } from './Pages'
 import './Perguntas.css'
@@ -9,7 +9,7 @@ export default function PerguntasPage() {
   const [aberta, setAberta] = useState(0)
 
   return (
-    <Pagina chamada={false} parte="perguntas">
+    <Pagina chamada={false}>
       <header className="page-header">
         <h1>Perguntas frequentes</h1>
         <p className="page-lead">
@@ -19,13 +19,13 @@ export default function PerguntasPage() {
 
       <div className="fq-sanfona">
         {perguntas.map((p, i) => (
-          <div key={p.titulo} className={aberta === i ? 'fq-aberta' : ''}>
+          <div key={i} className={aberta === i ? 'fq-aberta' : ''}>
             <h2>
               <button aria-expanded={aberta === i} onClick={() => setAberta(aberta === i ? -1 : i)}>
-                {p.titulo} <Baixo width={24} height={24} />
+                <Texto de={p} campo="titulo" /> <Baixo width={24} height={24} />
               </button>
             </h2>
-            {aberta === i && <p><Realce>{p.texto}</Realce></p>}
+            {aberta === i && <p><Texto de={p} campo="texto"><Realce>{p.texto}</Realce></Texto></p>}
           </div>
         ))}
       </div>

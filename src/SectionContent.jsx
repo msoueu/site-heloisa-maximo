@@ -1,5 +1,5 @@
 import './SectionContent.css'
-import { useSite, useParte } from './SiteData'
+import { useSite, Texto } from './SiteData'
 import { Seta, Instagram, Local, Relogio } from './Icons'
 
 function Tag({ children, href }) {
@@ -13,23 +13,16 @@ function Tag({ children, href }) {
 export default function SectionContent({ current }) {
   const { perfil, contato, destaques, areas, conteudos } = useSite()
   const destaque = conteudos[0]
-  const partes = {
-    perfil: useParte('perfil'),
-    destaques: useParte('destaques'),
-    conteudos: useParte('conteudos'),
-    areas: useParte('areas'),
-    contato: useParte('contato')
-  }
   const painel = (i) => `section-panel ${current === i ? 'panel-active' : 'panel-hidden'}`
 
   return (
     <main className="section-content" id="conteudo" tabIndex={-1}>
-      <section className={painel(0)} {...partes.perfil}>
+      <section className={painel(0)}>
         <Tag href="/sobre">ADVOCACIA CRIMINAL</Tag>
         <div className="panel-intro">
-          <h1 className="panel-name">{perfil.nome}</h1>
-          <p className="panel-desc">{perfil.slogan}</p>
-          <p className="panel-sub">{perfil.especialidade} · Atuação Nacional</p>
+          <h1 className="panel-name"><Texto de={perfil} campo="nome" /></h1>
+          <p className="panel-desc"><Texto de={perfil} campo="slogan" /></p>
+          <p className="panel-sub"><Texto de={perfil} campo="especialidade" /> · Atuação Nacional</p>
         </div>
         <a className="panel-link" href="/sobre">
           Conheça a advogada <Seta />
@@ -38,14 +31,14 @@ export default function SectionContent({ current }) {
 
       <section className={painel(1)}>
         <Tag href="/sobre">SOBRE</Tag>
-        <h2 className="panel-titulo">{perfil.titulo}</h2>
+        <h2 className="panel-titulo"><Texto de={perfil} campo="titulo" /></h2>
         <div className="panel-sobre">
           <img src={perfil.foto} alt={perfil.nome} className="panel-foto" loading="lazy" decoding="async" />
-          <ul className="panel-facts" {...partes.destaques}>
-            {destaques.map((d) => (
-              <li key={d.titulo}>
-                <strong>{d.titulo}</strong>
-                <span>{d.texto}</span>
+          <ul className="panel-facts">
+            {destaques.map((d, i) => (
+              <li key={i}>
+                <strong><Texto de={d} campo="titulo" /></strong>
+                <span><Texto de={d} campo="texto" /></span>
               </li>
             ))}
           </ul>
@@ -55,13 +48,13 @@ export default function SectionContent({ current }) {
         </a>
       </section>
 
-      <section className={`${painel(2)} panel-conteudo`} {...partes.conteudos}>
+      <section className={`${painel(2)} panel-conteudo`}>
         {destaque && (
           <>
             <Tag href="/conteudo">CONTEÚDO JURÍDICO</Tag>
-            <h2 className="panel-titulo">{destaque.titulo}</h2>
-            <p className="panel-desc">{destaque.texto[0]}</p>
-            <p className="panel-desc">{destaque.resumo}</p>
+            <h2 className="panel-titulo"><Texto de={destaque} campo="titulo" /></h2>
+            <p className="panel-desc"><Texto de={destaque} campo="texto">{destaque.texto[0]}</Texto></p>
+            <p className="panel-desc"><Texto de={destaque} campo="resumo" /></p>
             <a className="panel-link" href="/conteudo">
               Ver mais conteúdo jurídico <Seta />
             </a>
@@ -72,10 +65,10 @@ export default function SectionContent({ current }) {
       <section className={painel(3)}>
         <Tag href="/atuacao">ÁREAS DE ATUAÇÃO</Tag>
         <h2 className="panel-titulo">Defesa em todas as fases do processo penal</h2>
-        <ol className="panel-areas" {...partes.areas}>
-          {areas.map((a) => (
-            <li key={a.titulo}>
-              <span className="area-nome">{a.titulo}</span>
+        <ol className="panel-areas">
+          {areas.map((a, i) => (
+            <li key={i}>
+              <span className="area-nome"><Texto de={a} campo="titulo" /></span>
             </li>
           ))}
         </ol>
@@ -84,7 +77,7 @@ export default function SectionContent({ current }) {
         </a>
       </section>
 
-      <section className={painel(4)} {...partes.contato}>
+      <section className={painel(4)}>
         <Tag href="/contato">CONTATO</Tag>
         <h2 className="panel-name">Contato</h2>
         <p className="panel-desc">
@@ -93,7 +86,7 @@ export default function SectionContent({ current }) {
         </p>
         <ul className="panel-contact">
           <li><Relogio /> Plantão 24h para urgências</li>
-          <li><Local /> {perfil.local}</li>
+          <li><Local /> <Texto de={perfil} campo="local" /></li>
           <li>
             <Instagram />
             <a href={contato.instagram} target="_blank" rel="noreferrer">{contato.instagramUser}</a>

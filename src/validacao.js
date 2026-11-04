@@ -31,8 +31,7 @@ export function validarArquivo(arquivo, video) {
 
 export function validarConteudo({ perfil, contato, conteudos, aparencia }) {
   if (!perfil.nome.trim()) return 'Preencha o seu nome em Sobre você.'
-  const escolhas = [aparencia, ...Object.values(aparencia.partes || {})]
-  if (!escolhas.flatMap((a) => [a.fonte, a.titulo]).every(nomeDeFonteValido)) {
+  if (![aparencia.fonte, aparencia.titulo].every(nomeDeFonteValido)) {
     return 'Confira o nome da letra em Letras do site: use só letras, números e espaços.'
   }
   if (!whatsappValido(contato.whatsapp)) return 'Confira o número do WhatsApp em Formas de contato.'

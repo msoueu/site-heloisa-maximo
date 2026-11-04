@@ -78,19 +78,6 @@ export function aplicarAparencia(aparencia) {
   Object.entries(varsDaAparencia(aparencia)).forEach(([nome, valor]) => document.documentElement.style.setProperty(nome, valor))
 }
 
-// Atributos para o elemento de uma parte que tem letras próprias no painel; sem elas, nada muda
-export function useParte(id) {
-  const { aparencia } = useContext(SiteContext)
-  const propria = id && aparencia.partes?.[id]
-  const fonte = propria?.fonte
-  const titulo = propria?.titulo
-  useEffect(() => {
-    if (fonte) carregarFonte(fonte)
-    if (titulo) carregarFonte(titulo)
-  }, [fonte, titulo])
-  return propria ? { 'data-parte': id, style: varsDaAparencia(propria) } : {}
-}
-
 // Links wa.me/message/... são da conta comercial e ignoram o texto: só o número leva a mensagem
 export const aceitaMensagem = (valor) => !valor.includes('wa.me/message/')
 
@@ -101,6 +88,29 @@ export function linkWhatsApp(valor, mensagem) {
   if (/^https?:\/\//.test(valor)) return `${valor}${valor.includes('?') ? '&' : '?'}${texto}`
   const digitos = valor.replace(/\D/g, '')
   return `https://wa.me/${digitos.startsWith('55') ? digitos : `55${digitos}`}?${texto}`
+}
+
+// Formato escolhido na barra de um campo do painel: { fonte, tamanho, negrito, italico, sublinhado }
+export function estiloCss(formato) {
+  if (!formato) return undefined
+  const css = {}
+  if (formato.fonte && nomeDeFonteValido(formato.fonte)) css.fontFamily = `'${formato.fonte}', var(--sans)`
+  const tamanho = Number(formato.tamanho)
+  // em: relativo ao tamanho que o texto já tem ali, seja título ou parágrafo
+  if (tamanho >= 0.5 && tamanho <= 3 && tamanho !== 1) css.fontSize = `${tamanho}em`
+  if (formato.negrito) css.fontWeight = 700
+  if (formato.italico) css.fontStyle = 'italic'
+  if (formato.sublinhado) css.textDecoration = 'underline'
+  return Object.keys(css).length ? css : undefined
+}
+
+// Um texto do painel com o formato do campo dele. Ex.: <Texto de={area} campo="titulo" />
+export function Texto({ de, campo, children = de?.[campo] }) {
+  const formato = de?.estilos?.[campo]
+  const fonte = formato?.fonte
+  useEffect(() => { if (fonte) carregarFonte(fonte) }, [fonte])
+  const css = estiloCss(formato)
+  return css ? <span style={css}>{children}</span> : children
 }
 
 // Dentro da prévia do painel o site mostra o rascunho, que ainda não foi publicado
