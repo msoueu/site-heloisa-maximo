@@ -28,12 +28,22 @@ const PESOS_FONTE = {
   'Lora': '400;500'
 }
 
+// O nome vai para uma URL e para o CSS: só letras, números e espaços
+export const nomeDeFonteValido = (nome) => /^[A-Za-z0-9 ]{2,40}$/.test(nome)
+
 // Baixa só a letra em uso; Georgia já vem no aparelho
 export function carregarFonte(nome) {
   const id = `fonte-${nome}`
-  if (!PESOS_FONTE[nome] || document.getElementById(id)) return
-  const href = `https://fonts.googleapis.com/css2?family=${nome.replace(/ /g, '+')}:wght@${PESOS_FONTE[nome]}&display=swap`
-  document.head.append(Object.assign(document.createElement('link'), { id, rel: 'stylesheet', href }))
+  if (nome === 'Georgia' || !nomeDeFonteValido(nome) || document.getElementById(id)) return
+  const familia = `https://fonts.googleapis.com/css2?family=${nome.replace(/ /g, '+')}`
+  const link = Object.assign(document.createElement('link'), {
+    id,
+    rel: 'stylesheet',
+    href: `${familia}:wght@${PESOS_FONTE[nome] || '400;700'}&display=swap`
+  })
+  // Letra do Google Fonts sem o peso 700: carrega só a normal, e o negrito fica por conta do navegador
+  link.onerror = () => { link.onerror = null; link.href = `${familia}&display=swap` }
+  document.head.append(link)
 }
 
 export function aplicarAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaque }) {
@@ -42,6 +52,9 @@ export function aplicarAparencia({ fonte, titulo, tamanho, tamanhoTitulo, destaq
   const raiz = document.documentElement
   raiz.style.setProperty('--pagina-fonte', `'${fonte}', sans-serif`)
   raiz.style.setProperty('--pagina-titulo', `'${titulo}', Georgia, serif`)
+  // --sans e --serif levam a mesma letra para a página inicial, o menu e o rodapé
+  raiz.style.setProperty('--sans', `'${fonte}', -apple-system, 'Segoe UI', Roboto, sans-serif`)
+  raiz.style.setProperty('--serif', `'${titulo}', Georgia, 'Times New Roman', serif`)
   raiz.style.setProperty('--pagina-tamanho', tamanho)
   raiz.style.setProperty('--pagina-tamanho-titulo', tamanhoTitulo)
   raiz.dataset.destaque = destaque
@@ -64,17 +77,23 @@ const rascunho = window.frameElement && window.location.search.includes('previa'
 
 const SiteContext = createContext(null)
 
-export function SiteProvider({ children }) {
-  const [dados, setDados] = useState(rascunho ? { ...PADRAO, ...rascunho } : PADRAO)
+// O site só aparece depois de ler o painel, para não mostrar por um instante o que ela já apagou.
+// shortcut: se o banco passar de 3 s, abre com o data.js e troca quando ele responder
+export function buscarDados() {
+  if (rascunho || !CONFIGURADO) return { inicial: Promise.resolve(rascunho ? { ...PADRAO, ...rascunho } : PADRAO) }
+  const banco = fetch(`${SUPABASE_URL}/rest/v1/site?select=dados&id=eq.1`, { headers: { apikey: SUPABASE_CHAVE } })
+    .then((resposta) => (resposta.ok ? resposta.json() : []))
+    .then(([linha]) => (linha ? { ...PADRAO, ...linha.dados } : PADRAO))
+    // Se o banco falhar, o site continua no ar com o conteúdo do data.js
+    .catch(() => PADRAO)
+  const limite = new Promise((resolver) => setTimeout(() => resolver(PADRAO), 3000))
+  return { inicial: Promise.race([banco, limite]), banco }
+}
 
-  useEffect(() => {
-    if (!CONFIGURADO || rascunho) return
-    fetch(`${SUPABASE_URL}/rest/v1/site?select=dados&id=eq.1`, { headers: { apikey: SUPABASE_CHAVE } })
-      .then((resposta) => (resposta.ok ? resposta.json() : []))
-      .then(([linha]) => { if (linha) setDados({ ...PADRAO, ...linha.dados }) })
-      // Se o banco falhar, o site continua no ar com o conteúdo do data.js
-      .catch(() => {})
-  }, [])
+export function SiteProvider({ inicial, banco, children }) {
+  const [dados, setDados] = useState(inicial)
+
+  useEffect(() => { banco?.then(setDados) }, [banco])
 
   useEffect(() => aplicarAparencia(dados.aparencia), [dados.aparencia])
 

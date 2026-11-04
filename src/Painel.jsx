@@ -63,7 +63,7 @@ const SECOES = [
     descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
   { id: 'menu', grupo: AJUSTES, label: 'Nomes das páginas', Icone: Documento, pagina: 'sobre', descricao: 'Como cada página aparece no menu do topo e no rodapé. O endereço da página não muda.' },
-  { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'Tipo e tamanho das letras nas páginas internas. A página inicial não muda.' },
+  { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'O tipo de letra vale para o site todo. O tamanho muda só nas páginas internas.' },
   { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
 ]
 
@@ -591,8 +591,8 @@ function Aparencia({ aparencia, mudar }) {
     <div className="adm-pilha">
       <Bloco titulo="Tipo de letra">
         <div className="adm-dupla">
-          <Opcoes label="Letra dos textos" valor={aparencia.fonte} mudar={campo('fonte')} opcoes={FONTES_TEXTO} />
-          <Opcoes label="Letra dos títulos" valor={aparencia.titulo} mudar={campo('titulo')} opcoes={FONTES_TITULO} />
+          <EscolhaDeLetra label="Letra dos textos" valor={aparencia.fonte} mudar={campo('fonte')} opcoes={FONTES_TEXTO} />
+          <EscolhaDeLetra label="Letra dos títulos" valor={aparencia.titulo} mudar={campo('titulo')} opcoes={FONTES_TITULO} />
         </div>
       </Bloco>
       <Bloco titulo="Tamanho das letras" descricao="Arraste para aumentar ou diminuir. Os textos não ficam menores que o atual, para continuarem fáceis de ler.">
@@ -615,6 +615,40 @@ function Aparencia({ aparencia, mudar }) {
           Voltar ao que era antes
         </button>
       </Bloco>
+    </div>
+  )
+}
+
+// As letras da lista ou qualquer outra do Google Fonts, pelo nome
+function EscolhaDeLetra({ label, valor, mudar, opcoes }) {
+  const daLista = opcoes.some(([v]) => v === valor)
+  const [outra, setOutra] = useState(!daLista)
+  const digitando = outra || !daLista
+  return (
+    <div className="adm-pilha">
+      <label className="adm-campo">
+        <span className="adm-rotulo">{label}</span>
+        <select
+          value={digitando ? '' : valor}
+          onChange={(e) => {
+            setOutra(!e.target.value)
+            if (e.target.value) mudar(e.target.value)
+          }}
+        >
+          {opcoes.map(([v, nome]) => <option key={v} value={v}>{nome}</option>)}
+          <option value="">Outra, do Google Fonts…</option>
+        </select>
+      </label>
+      {digitando && (
+        <Campo
+          label="Nome da letra"
+          valor={daLista ? '' : valor}
+          mudar={mudar}
+          placeholder="Ex.: Montserrat"
+          maxLength={40}
+          dica={<>Escolha em <a href="https://fonts.google.com" target="_blank" rel="noreferrer">fonts.google.com</a> e copie o nome exatamente como aparece lá.</>}
+        />
+      )}
     </div>
   )
 }

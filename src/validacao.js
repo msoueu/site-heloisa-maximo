@@ -1,4 +1,6 @@
-const IMAGENS = ['image/jpeg', 'image/png', 'image/webp']
+import { nomeDeFonteValido } from './SiteData'
+
+const IMAGENS =['image/jpeg', 'image/png', 'image/webp']
 const VIDEOS = ['video/mp4', 'video/webm']
 const MB = 1024 * 1024
 const LIMITE_IMAGEM = 10 * MB
@@ -27,8 +29,11 @@ export function validarArquivo(arquivo, video) {
   return null
 }
 
-export function validarConteudo({ perfil, contato, conteudos }) {
+export function validarConteudo({ perfil, contato, conteudos, aparencia }) {
   if (!perfil.nome.trim()) return 'Preencha o seu nome em Sobre você.'
+  if (![aparencia.fonte, aparencia.titulo].every(nomeDeFonteValido)) {
+    return 'Confira o nome da letra em Letras do site: use só letras, números e espaços.'
+  }
   if (!whatsappValido(contato.whatsapp)) return 'Confira o número do WhatsApp em Formas de contato.'
   if (contato.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contato.email)) {
     return 'Confira o e-mail em Formas de contato.'

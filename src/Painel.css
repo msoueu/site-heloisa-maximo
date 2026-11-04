@@ -14,6 +14,9 @@
   --a-danger: #e5907b;
   --a-ok: #93c79e;
   --a-raio: 12px;
+  /* O painel mantém a própria letra, mesmo quando o site troca a dele */
+  --sans: -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: Georgia, 'Times New Roman', serif;
 
   position: relative;
   z-index: 100;
