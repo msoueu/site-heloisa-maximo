@@ -4,9 +4,10 @@ import { GitHub } from './Icons'
 import Dots from './Dots'
 import SectionContent from './SectionContent'
 
-const Cena = lazy(() => import('./Cena'))
-// O texto vem primeiro: o 3D é pesado e no celular travaria a página logo ao abrir
-const ATRASO_3D = 1500
+const carregarCena = () => import('./Cena')
+const Cena = lazy(carregarCena)
+// O texto vem primeiro: os arquivos do 3D baixam já, mas o Canvas só monta depois do primeiro desenho
+const ATRASO_3D = 300
 
 export class ModelBoundary extends Component {
   state = { failed: false }
@@ -27,6 +28,7 @@ export default function Home({ current, setCurrent }) {
   const [cena, setCena] = useState(false)
 
   useEffect(() => {
+    carregarCena()
     const id = setTimeout(() => setCena(true), ATRASO_3D)
     return () => clearTimeout(id)
   }, [])

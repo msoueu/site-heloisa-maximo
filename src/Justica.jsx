@@ -161,9 +161,13 @@ function lerModelo(buf) {
   return { posicao, normal, oclusao, espessura, faixas, sombra, caixa }
 }
 
+const comoBuffer = (l) => l.setResponseType('arraybuffer')
+// Baixa os .bin assim que este arquivo chega, sem esperar o Canvas montar
+useLoader.preload(THREE.FileLoader, [MODELO, MARMORE], comoBuffer)
+
 export default function Justica({ current }) {
   const { invalidate, viewport, camera, size, gl } = useThree()
-  const [modeloBuf, marmoreBuf] = useLoader(THREE.FileLoader, [MODELO, MARMORE], (l) => l.setResponseType('arraybuffer'))
+  const [modeloBuf, marmoreBuf] = useLoader(THREE.FileLoader, [MODELO, MARMORE], comoBuffer)
 
   const { geometrias, geoSombra, escala, uniforms } = useMemo(() => {
     const m = lerModelo(modeloBuf)

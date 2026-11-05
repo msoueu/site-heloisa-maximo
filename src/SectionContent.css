@@ -406,6 +406,15 @@
     font-size: 1rem;
   }
 
+  /* O texto vem do painel e pode ser longo: no celular mostra só o começo, o resto fica em /sobre */
+  .panel-facts span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+
   .panel-areas {
     grid-template-columns: 1fr;
   }
