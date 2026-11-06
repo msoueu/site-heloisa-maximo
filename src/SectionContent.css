@@ -318,6 +318,29 @@
   line-height: 1.5;
 }
 
+/* O texto vem do painel e pode ser longo: na inicial mostra só o começo, o resto fica em /sobre */
+.panel-facts span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+
+.panel-ler-mais {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--gold-bright);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.panel-ler-mais:hover,
+.panel-ler-mais:focus-visible {
+  text-decoration: underline;
+}
+
 .panel-conteudo .panel-desc + .panel-desc {
   font-family: var(--serif);
   font-size: clamp(1.25rem, 2.9vh, 1.5rem);
@@ -406,13 +429,9 @@
     font-size: 1rem;
   }
 
-  /* O texto vem do painel e pode ser longo: no celular mostra só o começo, o resto fica em /sobre */
   .panel-facts span {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
     line-clamp: 3;
-    overflow: hidden;
   }
 
   .panel-areas {

@@ -39,6 +39,7 @@ export default function SectionContent({ current }) {
               <li key={i}>
                 <strong><Texto de={d} campo="titulo" /></strong>
                 <span><Texto de={d} campo="texto" /></span>
+                <a className="panel-ler-mais" href="/sobre">Ler mais</a>
               </li>
             ))}
           </ul>
