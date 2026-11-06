@@ -250,13 +250,23 @@ export default function Justica({ current }) {
 
   useEffect(() => { invalidate() }, [size, current, invalidate])
   useEffect(() => {
+    // No celular a página rola: com a estátua fora da tela, o giro também para
+    let naTela = true
     const atualizar = () => {
-      emFoco.current = document.visibilityState === 'visible'
+      emFoco.current = naTela && document.visibilityState === 'visible'
       if (emFoco.current) invalidate()
     }
+    const observador = new IntersectionObserver(([e]) => {
+      naTela = e.isIntersecting
+      atualizar()
+    })
+    observador.observe(gl.domElement)
     document.addEventListener('visibilitychange', atualizar)
-    return () => document.removeEventListener('visibilitychange', atualizar)
-  }, [invalidate])
+    return () => {
+      observador.disconnect()
+      document.removeEventListener('visibilitychange', atualizar)
+    }
+  }, [invalidate, gl])
   useEffect(() => {
     gl.shadowMap.autoUpdate = false
     gl.shadowMap.needsUpdate = true

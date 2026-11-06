@@ -22,15 +22,25 @@ body.home-celular .header-nav {
   background: rgba(0, 0, 0, 0.6);
 }
 
-/* Desfoque numa camada própria: na barra em si ele prenderia o menu aberto embaixo do fundo escuro */
-:root[data-theme='escuro'] body.home-celular .header-nav::before,
-:root[data-theme='escuro'] .header-page .header-nav::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+/* Desfoque numa camada própria: na barra em si ele prenderia o menu aberto embaixo do fundo escuro.
+   Só com mouse: no toque, desfocar a página inteira a cada rolagem trava o celular */
+@media (pointer: fine) {
+  :root[data-theme='escuro'] body.home-celular .header-nav::before,
+  :root[data-theme='escuro'] .header-page .header-nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* O brilho da borda segue o mouse; no toque, o fundo preso à tela repinta o cartão a cada rolagem */
+@media (pointer: coarse) {
+  .page .feixe-bloco {
+    background-attachment: scroll;
+  }
 }
 
 .home-hero {
