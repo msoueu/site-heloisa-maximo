@@ -3,7 +3,8 @@ import { validarArquivo, validarConteudo } from './validacao'
 const base = {
   perfil: { nome: 'Heloisa' },
   contato: { whatsapp: '+55 79 99627-0697', email: '', instagram: 'https://www.instagram.com/x/' },
-  conteudos: [{ titulo: 'Um título' }]
+  conteudos: [{ titulo: 'Um título' }],
+  aparencia: { fonte: 'Source Sans 3', titulo: 'Cormorant Garamond' }
 }
 const com = (mudanca) => ({ ...base, ...mudanca })
 
@@ -18,6 +19,7 @@ test('recusa campos errados', () => {
   expect(validarConteudo(com({ contato: { ...base.contato, email: 'sem-arroba' } }))).toMatch(/e-mail/)
   expect(validarConteudo(com({ contato: { ...base.contato, instagram: 'javascript:alert(1)' } }))).toMatch(/Instagram/)
   expect(validarConteudo(com({ conteudos: [{ titulo: '' }] }))).toMatch(/título/)
+  expect(validarConteudo(com({ aparencia: { ...base.aparencia, fonte: 'Lato&family=x' } }))).toMatch(/letra/)
 })
 
 test('valida o arquivo pelo tipo e pelo tamanho', () => {
