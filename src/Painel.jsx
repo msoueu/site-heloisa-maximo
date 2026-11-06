@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { useSite, linkWhatsApp, aceitaMensagem, carregarFonte, varsDaAparencia, estiloCss } from './SiteData'
+import { useSite, linkWhatsApp, aceitaMensagem, carregarFonte, varsDaAparencia, estiloCss, definir, CHAVES_DO_SITE } from './SiteData'
 import { supabase, BUCKET } from './supabase'
 import { veioDeRecuperacao } from './rotas'
 import { validarArquivo, validarConteudo, TIPOS_IMAGEM, TIPOS_VIDEO } from './validacao'
@@ -18,8 +18,7 @@ const AJUSTES = 'Ajustes gerais'
 const textosDe = (id, grupo, label, pagina, descricao) => ({ id: `textos-${id}`, textos: id, grupo, label, Icone: Documento, pagina, descricao })
 
 const SECOES = [
-  textosDe('inicio', 'Página inicial', 'Textos da página inicial', '', 'Etiquetas, títulos e links da página inicial. O seu nome, a frase e as listas vêm das outras partes do painel.'),
-  { id: 'perfil', grupo: 'Sobre', label: 'Sobre você', Icone: Pessoa, pagina: 'sobre', descricao: 'Seu nome, sua apresentação e sua foto. O nome e a frase também aparecem na página inicial.' },
+  { id: 'perfil', grupo: 'Sobre', label: 'Suas fotos', Icone: Pessoa, pagina: 'sobre', descricao: 'A foto principal e a foto da conversa do WhatsApp.' },
   {
     id: 'destaques',
     grupo: 'Sobre',
@@ -55,12 +54,9 @@ const SECOES = [
     adicionar: 'Adicionar etapa',
     descricao: 'O caminho do primeiro contato até o fim do caso.'
   },
-  textosDe('sobre', 'Sobre', 'Outros textos da página', 'sobre', 'Trajetória, citação e os textos fixos da página Sobre.'),
-  textosDe('conteudo', 'Conteúdo', 'Textos da página', 'conteudo', 'Título e frases da página Conteúdo.'),
-  textosDe('atuacao', 'Atuação', 'Textos da página', 'atuacao', 'Título e frases da página Atuação.'),
+  textosDe('sobre', 'Sobre', 'Trajetória', 'sobre', 'O texto longo da trajetória. Os outros textos da página você muda clicando neles em Editar no site.'),
   { id: 'contato', grupo: 'Contato', label: 'Formas de contato', Icone: Telefone, pagina: 'contato', descricao: 'WhatsApp, telefone, e-mail e Instagram. O WhatsApp também é usado nos botões de todo o site.' },
-  textosDe('contato', 'Contato', 'Textos da página', 'contato', 'Títulos, cartões e rótulos da página Contato.'),
-  textosDe('diagnostico', 'Contato', 'Conte sua situação', 'diagnostico', 'A conversa automática: perguntas, respostas e mensagens.'),
+  textosDe('diagnostico', 'Contato', 'Perguntas da conversa', 'diagnostico', 'As perguntas e opções de “Conte sua situação”, que só aparecem durante a conversa.'),
   {
     id: 'perguntas',
     grupo: 'Perguntas frequentes',
@@ -71,8 +67,6 @@ const SECOES = [
     campos: ['Pergunta', 'Resposta'],
     descricao: 'As perguntas e respostas mostradas nessa aba.'
   },
-  textosDe('perguntas', 'Perguntas frequentes', 'Textos da página', 'perguntas', 'Título e frases da página Perguntas frequentes.'),
-  textosDe('geral', AJUSTES, 'Topo e rodapé', 'sobre', 'Textos que aparecem em todas as páginas: topo, botão do WhatsApp, faixa de contato e rodapé.'),
   { id: 'menu', grupo: AJUSTES, label: 'Nomes das páginas', Icone: Documento, pagina: 'sobre', descricao: 'Como cada página aparece no menu do topo e no rodapé. O endereço da página não muda.' },
   { id: 'aparencia', grupo: AJUSTES, label: 'Letras do site', Icone: Letra, pagina: 'sobre', descricao: 'O tipo de letra vale para o site todo. O tamanho muda só nas páginas internas. Para mudar só um texto, use a barra em cima do campo dele.' },
   { id: 'conta', grupo: AJUSTES, label: 'Minha conta', Icone: Cadeado, descricao: 'Sua senha e seu e-mail de acesso.' }
@@ -279,7 +273,7 @@ function Editor({ usuario }) {
   const site = useSite()
   const { email } = usuario
   const [rascunho, setRascunho] = useState(() => copiar(site))
-  const [secao, setSecao] = useState('perfil')
+  const [secao, setSecao] = useState('conteudos')
   const [pendente, setPendente] = useState(false)
   const [salvando, setSalvando] = useState(false)
   const [aviso, setAviso] = useState(null)
@@ -287,6 +281,25 @@ function Editor({ usuario }) {
 
   // Quando o conteúdo do banco chega depois da abertura do painel, o rascunho acompanha
   useEffect(() => { setRascunho(copiar(site)) }, [site])
+
+  // A prévia lê o rascunho daqui ao abrir ou trocar de página
+  useEffect(() => { window.rascunhoDoPainel = rascunho }, [rascunho])
+
+  // Texto editado direto no site da prévia
+  useEffect(() => {
+    const receber = (e) => {
+      const { tipo, caminho, valor } = e.data || {}
+      if (e.origin !== window.location.origin || tipo !== 'editar-texto') return
+      if (!Array.isArray(caminho) || !CHAVES_DO_SITE.includes(caminho[0])) return
+      // Texto chega como string; formato (negrito, letra…) como objeto dentro de "estilos"
+      const formato = caminho.at(-2) === 'estilos' && valor && typeof valor === 'object'
+      if (typeof valor !== 'string' && !formato) return
+      setRascunho((r) => definir(r, caminho, valor))
+      setPendente(true)
+    }
+    window.addEventListener('message', receber)
+    return () => window.removeEventListener('message', receber)
+  }, [])
 
   useEffect(() => {
     if (!pendente) return
@@ -332,9 +345,10 @@ function Editor({ usuario }) {
     setPendente(false)
   }
 
-  const abrirPrevia = () => {
+  // previa: false, 'ver' ou 'editar'
+  const abrirPrevia = (modo) => {
     window.rascunhoDoPainel = rascunho
-    setPrevia(true)
+    setPrevia(modo)
   }
 
   const atual = SECOES.find((s) => s.id === secao)
@@ -394,20 +408,14 @@ function Editor({ usuario }) {
               {pendente ? 'Mudanças ainda não publicadas' : <><Check width={14} height={14} /> Tudo publicado</>}
             </span>
             {pendente && <button className="adm-btn" onClick={descartar}>Desfazer</button>}
-            <button className="adm-btn" onClick={abrirPrevia}>Ver como vai ficar</button>
+            <button className="adm-btn adm-btn-destaque" onClick={() => abrirPrevia('editar')}>Editar no site</button>
+            <button className="adm-btn" onClick={() => abrirPrevia('ver')}>Ver como vai ficar</button>
             <button className="adm-btn adm-btn-primario" onClick={salvar} disabled={!pendente || salvando}>
               {salvando ? 'Publicando…' : 'Publicar no site'}
             </button>
           </div>}
         </header>
 
-        {secao !== 'conta' && (
-          <ol className="adm-passos">
-            <li>Escolha no menu o que quer mudar</li>
-            <li>Clique em Ver como vai ficar</li>
-            <li>Se gostou, clique em Publicar no site</li>
-          </ol>
-        )}
 
         <div className="adm-corpo">
           {secao === 'conta' && <Conta usuario={usuario} />}
@@ -433,6 +441,7 @@ function Editor({ usuario }) {
 
       {previa && (
         <Previa
+          editar={previa === 'editar'}
           inicial={atual.pagina}
           pendente={pendente}
           salvando={salvando}
@@ -447,14 +456,14 @@ function Editor({ usuario }) {
 }
 
 // O site de verdade, dentro de um quadro, lendo o rascunho em vez do que está publicado
-function Previa({ inicial, pendente, salvando, publicar, fechar }) {
+function Previa({ editar, inicial, pendente, salvando, publicar, fechar }) {
   const [pagina, setPagina] = useState(inicial)
   const [aparelho, setAparelho] = useState('computador')
 
   return (
     <div className="adm-tela-previa" role="dialog" aria-modal="true" aria-label="Prévia do site">
       <header>
-        <button className="adm-btn" onClick={fechar}><Voltar width={16} height={16} /> Voltar a editar</button>
+        <button className="adm-btn" onClick={fechar}><Voltar width={16} height={16} /> Voltar ao painel</button>
         <label className="adm-campo adm-previa-pagina">
           <span className="adm-rotulo">Página</span>
           <select value={pagina} onChange={(e) => setPagina(e.target.value)}>
@@ -480,11 +489,14 @@ function Previa({ inicial, pendente, salvando, publicar, fechar }) {
         </button>
       </header>
       <p>
-        {pendente
-          ? 'Isto é só uma prévia. Quem visita o site ainda não vê estas mudanças.'
-          : 'Você ainda não mudou nada. O site está assim agora.'}
+        {editar
+          ? 'Clique em qualquer texto para mudar. Enter confirma, Esc desfaz. Fotos e listas continuam no painel.'
+          : pendente
+            ? 'Isto é só uma prévia. Quem visita o site ainda não vê estas mudanças.'
+            : 'Você ainda não mudou nada. O site está assim agora.'}
+        {editar && pendente && ' Quem visita o site só vê depois de publicar.'}
       </p>
-      <iframe src={`/${pagina}?previa=1`} title="Prévia do site" className={`is-${aparelho}`} />
+      <iframe src={`/${pagina}?previa=1${editar ? '&editar=1' : ''}`} title="Prévia do site" className={`is-${aparelho}`} />
     </div>
   )
 }
@@ -492,16 +504,32 @@ function Previa({ inicial, pendente, salvando, publicar, fechar }) {
 // Com formato e mudarFormato, o campo ganha a barra de letra, tamanho, linha, negrito, itálico e sublinhado
 function Campo({ label, valor, mudar, longo, dica, formato, mudarFormato, ...resto }) {
   const id = useId()
+  // A barra de formato fica guardada: quase sempre só o texto muda
+  const [barra, setBarra] = useState(false)
   const fonte = formato?.fonte
   useEffect(() => { if (fonte) carregarFonte(fonte) }, [fonte])
   // O campo já mostra o texto do jeito que vai ficar no site
   const css = mudarFormato ? estiloCss(formato) : undefined
   // No campo o tamanho parte dos 14px dele, não da letra em volta
   const visual = css?.fontSize ? { ...css, fontSize: `${14 * Number(formato.tamanho)}px` } : css
+  const formatado = !!formato && Object.values(formato).some(Boolean)
   return (
     <div className="adm-campo">
-      <label className="adm-rotulo" htmlFor={id}>{label}</label>
-      {mudarFormato && <BarraDeTexto formato={formato || {}} mudar={mudarFormato} rotulo={label} />}
+      <div className="adm-campo-topo">
+        <label className="adm-rotulo" htmlFor={id}>{label}</label>
+        {mudarFormato && (
+          <button
+            type="button"
+            className={`adm-formatar ${formatado ? 'is-formatado' : ''}`}
+            aria-expanded={barra}
+            onClick={() => setBarra(!barra)}
+            title="Letra, tamanho, negrito…"
+          >
+            Aa{formatado && <span> · com formato</span>}
+          </button>
+        )}
+      </div>
+      {mudarFormato && barra && <BarraDeTexto formato={formato || {}} mudar={mudarFormato} rotulo={label} />}
       {longo
         ? <textarea id={id} style={visual} value={valor} onChange={(e) => mudar(e.target.value)} rows={longo} {...resto} />
         : <input id={id} style={visual} value={valor} onChange={(e) => mudar(e.target.value)} {...resto} />}
@@ -624,8 +652,12 @@ function Arquivo({ label, valor, mudar, aceita, redondo }) {
   )
 }
 
+// Na página Sobre só o texto longo fica aqui; o resto se edita clicando no site
+const SO_NO_PAINEL = { sobre: ['sobre.trajetoria'] }
+
 function TextosDaPagina({ pagina, textos, mudar }) {
-  const { campos } = TEXTOS_DO_SITE.find((p) => p.id === pagina)
+  const todos = TEXTOS_DO_SITE.find((p) => p.id === pagina).campos
+  const campos = SO_NO_PAINEL[pagina] ? todos.filter(([chave]) => SO_NO_PAINEL[pagina].includes(chave)) : todos
   const voltar = () => {
     if (!window.confirm('Voltar todos os textos desta tela ao original?')) return
     const estilos = { ...textos.estilos }
@@ -910,36 +942,14 @@ function Contato({ contato, mudar }) {
 
 function Perfil({ perfil, mudar }) {
   const campo = (chave) => (v) => mudar({ ...perfil, [chave]: v })
-  const fmt = (chave) => formatoDe(perfil, chave, (estilos) => mudar({ ...perfil, estilos }))
   return (
-    <div className="adm-colunas">
-      <div className="adm-pilha">
-        <Bloco titulo="Apresentação">
-          <Campo label="Nome" valor={perfil.nome} mudar={campo('nome')} {...fmt('nome')} />
-          <Campo label="Profissão" valor={perfil.titulo} mudar={campo('titulo')} {...fmt('titulo')} dica="Por exemplo: Advogada Criminalista." />
-          <Campo label="Frase de apresentação" valor={perfil.slogan} mudar={campo('slogan')} {...fmt('slogan')} dica="Uma frase curta que aparece na página inicial." />
-        </Bloco>
-        <Bloco titulo="Onde e com o que você trabalha">
-          <div className="adm-dupla">
-            <Campo label="Área principal" valor={perfil.especialidade} mudar={campo('especialidade')} {...fmt('especialidade')} />
-            <Campo label="Cidade ou estado" valor={perfil.local} mudar={campo('local')} {...fmt('local')} />
-          </div>
-        </Bloco>
-        <Bloco titulo="OAB e formação">
-          <div className="adm-dupla">
-            <Campo label="Número da OAB" valor={perfil.oab} mudar={campo('oab')} {...fmt('oab')} placeholder="OAB/SE 0000" />
-            <Campo label="Formação" valor={perfil.formacao} mudar={campo('formacao')} {...fmt('formacao')} dica="Se deixar em branco, não aparece no site." />
-          </div>
-        </Bloco>
-      </div>
-      <div className="adm-pilha">
-        <Bloco titulo="Sua foto">
-          <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita={TIPOS_IMAGEM} redondo />
-        </Bloco>
-        <Bloco titulo="Foto do WhatsApp" descricao="Aparece na conversa de “Conte sua situação”. Sem ela, entra a sua foto principal.">
-          <Arquivo valor={perfil.fotoWhatsapp} mudar={campo('fotoWhatsapp')} aceita={TIPOS_IMAGEM} redondo />
-        </Bloco>
-      </div>
+    <div className="adm-dupla">
+      <Bloco titulo="Foto principal" descricao="Aparece na página inicial e na página Sobre.">
+        <Arquivo valor={perfil.foto} mudar={campo('foto')} aceita={TIPOS_IMAGEM} redondo />
+      </Bloco>
+      <Bloco titulo="Foto do WhatsApp" descricao="Aparece na conversa de “Conte sua situação”. Sem ela, entra a foto principal.">
+        <Arquivo valor={perfil.fotoWhatsapp} mudar={campo('fotoWhatsapp')} aceita={TIPOS_IMAGEM} redondo />
+      </Bloco>
     </div>
   )
 }
@@ -960,20 +970,20 @@ function Ordenar({ i, total, aoMover }) {
 }
 
 function ListaSimples({ secao, lista, mudar }) {
-  const [rotuloTitulo, rotuloTexto] = secao.campos || ['Título', 'Texto']
-  const editar = (i, chave, v) => mudar(lista.map((item, n) => (n === i ? { ...item, [chave]: v } : item)))
+  const [rotuloTitulo] = secao.campos || ['Título']
   const remover = (i) => {
     if (window.confirm('Apagar este item? Ele só sai do site quando você publicar.')) mudar(lista.filter((_, n) => n !== i))
   }
 
   return (
     <div className="adm-pilha">
+      <p className="adm-dica">Aqui você adiciona, muda a ordem ou apaga. Para escrever ou mudar o texto, use <strong>Editar no site</strong> e clique nele.</p>
       {lista.map((item, i) => (
         <div className="adm-item" key={i}>
           <span className="adm-item-num">{String(i + 1).padStart(2, '0')}</span>
-          <div className="adm-item-campos">
-            <Campo label={rotuloTitulo} valor={item.titulo} mudar={(v) => editar(i, 'titulo', v)} {...formatoDe(item, 'titulo', (e) => editar(i, 'estilos', e))} />
-            <Campo label={rotuloTexto} valor={item.texto} mudar={(v) => editar(i, 'texto', v)} longo={2} {...formatoDe(item, 'texto', (e) => editar(i, 'estilos', e))} />
+          <div className="adm-item-resumo">
+            <strong>{item.titulo || `Novo item: escreva o ${rotuloTitulo.toLowerCase()} no site`}</strong>
+            {item.texto && <span>{item.texto}</span>}
           </div>
           <div className="adm-item-acoes">
             <Ordenar i={i} total={lista.length} aoMover={(para) => mudar(mover(lista, i, para))} />

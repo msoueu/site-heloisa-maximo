@@ -3,9 +3,26 @@ import { DEV } from './data'
 import { GitHub } from './Icons'
 import Dots from './Dots'
 import SectionContent from './SectionContent'
+import { SobrePage, ConteudoPage, AtuacaoPage, ContatoPage, Rodape, Embutida } from './Pages'
+import { useSite, Texto } from './SiteData'
 
 const carregarCena = () => import('./Cena')
 const Cena = lazy(carregarCena)
+const PerguntasPage = lazy(() => import('./Perguntas'))
+
+// Mesmo corte do Celular.css: aqui a página inicial rola em vez de trocar de seção
+const CELULAR = '(max-width: 760px), (max-width: 1100px) and (orientation: portrait)'
+
+function useCelular() {
+  const [celular, setCelular] = useState(() => window.matchMedia(CELULAR).matches)
+  useEffect(() => {
+    const m = window.matchMedia(CELULAR)
+    const mudar = () => setCelular(m.matches)
+    m.addEventListener('change', mudar)
+    return () => m.removeEventListener('change', mudar)
+  }, [])
+  return celular
+}
 // O texto vem primeiro: os arquivos do 3D baixam já, mas o Canvas só monta depois do primeiro desenho
 const ATRASO_3D = 300
 
@@ -26,6 +43,7 @@ const FORCA_ARRASTE = 0.35
 
 export default function Home({ current, setCurrent }) {
   const [cena, setCena] = useState(false)
+  const celular = useCelular()
 
   useEffect(() => {
     carregarCena()
@@ -34,6 +52,11 @@ export default function Home({ current, setCurrent }) {
   }, [])
 
   useEffect(() => {
+    document.body.classList.add('is-home')
+    if (celular) {
+      document.body.classList.add('home-celular')
+      return () => document.body.classList.remove('is-home', 'home-celular')
+    }
     let ultimoPasso = -Infinity
     let ultimoEvento = -Infinity
     let gestoUsado = false
@@ -102,7 +125,6 @@ export default function Home({ current, setCurrent }) {
     window.addEventListener('pointerup', onPointerUp, { passive: true })
     window.addEventListener('pointercancel', onPointerCancel, { passive: true })
     window.addEventListener('keydown', onKey)
-    document.body.classList.add('is-home')
     return () => {
       window.removeEventListener('wheel', onWheel)
       window.removeEventListener('pointerdown', onPointerDown)
@@ -112,19 +134,24 @@ export default function Home({ current, setCurrent }) {
       window.removeEventListener('keydown', onKey)
       document.body.classList.remove('is-home')
     }
-  }, [setCurrent])
+  }, [setCurrent, celular])
+
+  const estatua = (
+    <ModelBoundary>
+      <Suspense fallback={null}>
+        {/* Sempre o primeiro plano: a estátua fica parada no lugar, só girando, em todas as seções */}
+        {cena && <Cena current={0} />}
+      </Suspense>
+    </ModelBoundary>
+  )
+
+  if (celular) return <HomeCelular estatua={estatua} />
 
   return (
     <>
       <div className="app-veu" data-secao={current} />
 
-      <div className="app-canvas" aria-hidden="true">
-        <ModelBoundary>
-          <Suspense fallback={null}>
-            {cena && <Cena current={current} />}
-          </Suspense>
-        </ModelBoundary>
-      </div>
+      <div className="app-canvas" aria-hidden="true">{estatua}</div>
 
       <div className="app-grain" />
 
@@ -136,5 +163,31 @@ export default function Home({ current, setCurrent }) {
         <GitHub width={16} height={16} /> Site por {DEV.nome}
       </a>
     </>
+  )
+}
+
+// Celular: estátua girando no topo e, rolando, o conteúdo de todas as páginas
+function HomeCelular({ estatua }) {
+  const { perfil, textos } = useSite()
+  return (
+    <main className="page" id="conteudo" tabIndex={-1}>
+      <section className="home-hero">
+        <div className="home-hero-cena" aria-hidden="true">{estatua}</div>
+        <div className="home-hero-texto">
+          <p className="home-hero-tag"><Texto de={textos} campo="inicio.tag" /></p>
+          <h1><Texto de={perfil} campo="nome" /></h1>
+          <p><Texto de={perfil} campo="especialidade" /> · <Texto de={textos} campo="inicio.alcance" /></p>
+        </div>
+      </section>
+      <Embutida.Provider value>
+        {/* O menu do topo rola até cada id destes */}
+        <div id="secao-sobre"><SobrePage /></div>
+        <div id="secao-conteudo"><ConteudoPage /></div>
+        <div id="secao-atuacao"><AtuacaoPage /></div>
+        <div id="secao-contato"><ContatoPage /></div>
+        <div id="secao-perguntas"><Suspense fallback={null}><PerguntasPage /></Suspense></div>
+      </Embutida.Provider>
+      <Rodape />
+    </main>
   )
 }

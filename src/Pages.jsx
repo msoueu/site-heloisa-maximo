@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { DEV } from './data'
 import { useSite, linkWhatsApp, nomesDoMenu, Texto } from './SiteData'
 import { Seta, Voltar, WhatsApp, Instagram, Local, Relogio, Email, Telefone, Papeis, Escudo, Sino } from './Icons'
@@ -62,7 +62,7 @@ export function BotaoWhatsApp() {
   )
 }
 
-function Rodape() {
+export function Rodape() {
   const { perfil, contato, menu, textos } = useSite()
   return (
     <footer className="page-footer">
@@ -107,8 +107,12 @@ function Rodape() {
   )
 }
 
+// Na página inicial do celular as páginas aparecem uma embaixo da outra, sem voltar nem rodapé próprios
+export const Embutida = createContext(false)
+
 export function Pagina({ chamada = true, plantao = true, children }) {
   const { textos } = useSite()
+  if (useContext(Embutida)) return <section className="page-inner home-bloco">{children}</section>
   return (
     <main className="page" id="conteudo" tabIndex={-1}>
       <div className="page-inner">

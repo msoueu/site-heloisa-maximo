@@ -140,11 +140,54 @@
   resize: vertical;
 }
 
-/* Barra de formato em cima de cada campo de texto */
+/* Rótulo à esquerda, botão de formato à direita */
+.adm-campo-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.adm-formatar {
+  flex: none;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--a-muted);
+  font: 500 13px/1 var(--sans);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.adm-formatar:hover,
+.adm-formatar[aria-expanded='true'] {
+  border-color: var(--a-line);
+  background: var(--a-hover);
+  color: var(--a-text);
+}
+
+.adm-formatar.is-formatado {
+  color: var(--a-gold);
+}
+
+.adm-formatar span {
+  font-weight: 400;
+}
+
+.adm-formatar:focus-visible {
+  outline: 2px solid var(--a-gold);
+  outline-offset: 2px;
+}
+
+/* Barra de formato, aberta pelo botão Aa */
 .adm-barra-texto {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--a-line);
+  border-radius: 10px;
+  background: var(--a-side);
 }
 
 .adm-campo .adm-barra-texto select {
@@ -333,9 +376,12 @@
 
 .adm-nav {
   display: grid;
-  gap: 10px;
+  align-content: start;
+  gap: 18px;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--a-line) transparent;
 }
 
 .adm-nav-grupo {
@@ -344,10 +390,12 @@
 }
 
 .adm-nav-grupo p {
-  padding: 0 12px 2px;
+  padding: 0 12px 4px;
   color: var(--a-gold);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .adm-aba {
@@ -456,7 +504,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px 24px;
-  padding: 22px 40px;
+  padding: 22px max(40px, calc((100% - 880px) / 2));
   border-bottom: 1px solid var(--a-line);
   background: rgba(15, 14, 13, 0.88);
   backdrop-filter: blur(12px);
@@ -505,19 +553,10 @@
   background: currentColor;
 }
 
-.adm-passos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 32px;
-  padding: 14px 40px;
-  border-bottom: 1px solid var(--a-line);
-  color: var(--a-muted);
-  font-size: 15px;
-  list-style-position: inside;
-}
 
 .adm-corpo {
-  max-width: 1040px;
+  max-width: 960px;
+  margin: 0 auto;
   padding: 32px 40px 80px;
 }
 
@@ -564,8 +603,14 @@
 
 .adm-bloco-campos {
   display: grid;
-  gap: 18px;
-  padding: 18px 22px 22px;
+  gap: 24px;
+  padding: 24px 28px 28px;
+}
+
+/* Uma linha fina separa um campo do outro */
+.adm-bloco-campos > .adm-campo + .adm-campo {
+  padding-top: 24px;
+  border-top: 1px solid var(--a-line);
 }
 
 .adm-nota {
@@ -794,7 +839,7 @@
 .adm-item {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: start;
+  align-items: center;
   gap: 16px;
   padding: 18px 18px 18px 20px;
   border: 1px solid var(--a-line);
@@ -803,27 +848,58 @@
 }
 
 .adm-item-num {
-  padding-top: 30px;
+  padding-top: 2px;
   color: var(--a-gold);
   font-family: var(--serif);
   font-size: 18px;
 }
 
-.adm-item-campos {
+.adm-item-resumo {
   display: grid;
-  gap: 14px;
+  gap: 4px;
+  min-width: 0;
+}
+
+.adm-item-resumo strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.adm-item-resumo span {
+  overflow: hidden;
+  color: var(--a-muted);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-dica {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(217, 189, 134, 0.08);
+  color: var(--a-muted);
+  font-size: 14px;
+}
+
+.adm-dica strong {
+  color: var(--a-gold);
+  font-weight: 600;
+}
+
+.adm-btn-destaque {
+  border-color: var(--a-gold-2);
+  color: var(--a-gold);
 }
 
 .adm-item-acoes {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 4px;
-  padding-top: 26px;
 }
 
 .adm-item-acoes .adm-ordenar {
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .adm-adicionar {
@@ -968,9 +1044,6 @@
     padding: 0 10px;
   }
 
-  .adm-passos {
-    padding: 12px 20px;
-  }
 
   .adm-corpo {
     padding: 20px 16px 130px;

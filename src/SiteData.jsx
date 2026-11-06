@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { PERFIL, CONTATO, DESTAQUES, AREAS, ETAPAS, CONTEUDOS, APARENCIA, PERGUNTAS_FREQUENTES, MENU, TEXTOS } from './data'
 import { CONFIGURADO, SUPABASE_URL, SUPABASE_CHAVE } from './ambiente'
 
@@ -115,12 +116,139 @@ export function Texto({ de, campo, children = de?.[campo] }) {
   const formato = de?.estilos?.[campo]
   const fonte = formato?.fonte
   useEffect(() => { if (fonte) carregarFonte(fonte) }, [fonte])
-  const css = estiloCss(formato)
+  // Quebra de linha feita no editor aparece no site
+  const quebra = typeof de?.[campo] === 'string' && de[campo].includes('\n')
+  const css = quebra ? { ...estiloCss(formato), whiteSpace: 'pre-line' } : estiloCss(formato)
+  if (EDITANDO) return <TextoEditavel de={de} campo={campo} css={css}>{children}</TextoEditavel>
   return css ? <span style={css}>{children}</span> : children
 }
 
 // Dentro da prévia do painel o site mostra o rascunho, que ainda não foi publicado
 const rascunho = window.frameElement && window.location.search.includes('previa') ? window.parent.rascunhoDoPainel : null
+
+// Com &editar na prévia, cada texto vira um campo: clicou, escreveu, o painel recebe
+const EDITANDO = !!rascunho && window.location.search.includes('editar')
+export const CHAVES_DO_SITE = Object.keys(PADRAO)
+
+// Onde um objeto está nos dados: ['perfil'] ou ['areas', 2]
+function caminhoDe(dados, objeto) {
+  for (const chave of CHAVES_DO_SITE) {
+    const valor = dados[chave]
+    if (valor === objeto) return [chave]
+    if (Array.isArray(valor) && valor.includes(objeto)) return [chave, valor.indexOf(objeto)]
+  }
+  return null
+}
+
+// Troca um valor dentro dos dados sem mexer no original: definir(d, ['areas', 2, 'titulo'], 'Novo')
+export function definir(dados, [chave, ...resto], valor) {
+  const copia = Array.isArray(dados) ? [...dados] : { ...dados }
+  copia[chave] = resto.length ? definir(dados?.[chave] ?? {}, resto, valor) : valor
+  return copia
+}
+
+const LETRAS_EDITOR = ['Source Sans 3', 'Lato', 'Nunito Sans', 'Atkinson Hyperlegible', 'Georgia', 'EB Garamond', 'Libre Baskerville', 'Lora']
+const TAMANHOS_EDITOR = [['0.85', 'Menor'], ['1', 'Normal'], ['1.15', 'Maior'], ['1.3', 'Bem maior'], ['1.5', 'Muito maior']]
+const MARCAS_EDITOR = [['negrito', 'N', 'Negrito'], ['italico', 'I', 'Itálico'], ['sublinhado', 'S', 'Sublinhado']]
+// Botão da barra não tira o cursor do texto
+const manterFoco = (e) => e.preventDefault()
+
+function TextoEditavel({ de, campo, css, children }) {
+  const site = useSite()
+  const [ativo, setAtivo] = useState(false)
+  const [posicao, setPosicao] = useState(null)
+  const ref = useRef()
+  const barra = useRef()
+  const original = de?.[campo]
+  const caminho = caminhoDe(site, de)
+  // Só texto simples que aparece inteiro; parágrafos cortados de um texto maior ficam no painel
+  const inteiro = children === original || children?.props?.children === original
+
+  useEffect(() => {
+    if (!ativo) return
+    ref.current?.focus()
+    const medir = () => {
+      const r = ref.current?.getBoundingClientRect()
+      if (r) setPosicao({ top: Math.max(8, r.top - 52), left: Math.max(8, Math.min(r.left, window.innerWidth - 440)) })
+    }
+    medir()
+    window.addEventListener('scroll', medir, true)
+    window.addEventListener('resize', medir)
+    return () => {
+      window.removeEventListener('scroll', medir, true)
+      window.removeEventListener('resize', medir)
+    }
+  }, [ativo])
+
+  if (!caminho || typeof original !== 'string' || !inteiro) return css ? <span style={css}>{children}</span> : children
+
+  const enviar = (onde, valor) => {
+    site.atualizar((d) => definir(d, onde, valor))
+    window.parent.postMessage({ tipo: 'editar-texto', caminho: onde, valor }, window.location.origin)
+  }
+  const formato = de.estilos?.[campo] || {}
+  const formatar = (chave, valor) => {
+    enviar([...caminho, 'estilos', campo], { ...formato, [chave]: valor })
+    if (chave === 'fonte' && valor) carregarFonte(valor)
+    ref.current?.focus()
+  }
+  const salvar = () => {
+    const valor = ref.current.innerText.replace(/\n{3,}/g, '\n\n').trim()
+    setAtivo(false)
+    setPosicao(null)
+    if (valor !== original) enviar([...caminho, campo], valor)
+  }
+  // Sai da edição só quando o foco deixa o texto e a barra
+  const sair = (e) => {
+    const para = e.relatedTarget
+    if (para && (ref.current?.contains(para) || barra.current?.contains(para))) return
+    salvar()
+  }
+  const tecla = (e) => {
+    if (e.key === 'Escape') { ref.current.innerText = original; ref.current.blur() }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ref.current.blur() }
+  }
+
+  if (!ativo) {
+    return (
+      <texto-editavel key="parado" class={original ? undefined : 'is-vazio'} style={css} title="Clique para editar" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAtivo(true) }}>
+        {original ? children : 'Clique para escrever'}
+      </texto-editavel>
+    )
+  }
+
+  // Tag própria, e não span: regras como ".sinal-relogio span" do site não pegam nela.
+  // key troca o elemento ao entrar e sair da edição, para o React não brigar com o texto digitado
+  return (
+    <>
+      <texto-editavel key="editando" ref={ref} class="is-ativo" style={css} contentEditable="true" suppressContentEditableWarning onBlur={sair} onKeyDown={tecla}>{original}</texto-editavel>
+      {posicao && createPortal(
+        <div ref={barra} className="editor-barra" style={posicao} onBlur={sair} onClick={(e) => e.stopPropagation()}>
+          <select value={formato.fonte || ''} onChange={(e) => formatar('fonte', e.target.value)} aria-label="Tipo de letra">
+            <option value="">Letra do site</option>
+            {LETRAS_EDITOR.map((nome) => <option key={nome} value={nome}>{nome}</option>)}
+          </select>
+          <select value={String(formato.tamanho || 1)} onChange={(e) => formatar('tamanho', Number(e.target.value))} aria-label="Tamanho">
+            {TAMANHOS_EDITOR.map(([v, nome]) => <option key={v} value={v}>{nome}</option>)}
+          </select>
+          {MARCAS_EDITOR.map(([chave, letra, nome]) => (
+            <button key={chave} type="button" className={`editor-${chave}`} aria-pressed={!!formato[chave]} title={nome} aria-label={nome} onMouseDown={manterFoco} onClick={() => formatar(chave, !formato[chave])}>{letra}</button>
+          ))}
+          <span className="editor-divisor" />
+          <button type="button" title="Quebrar a linha onde está o cursor (Shift+Enter)" onMouseDown={manterFoco} onClick={() => document.execCommand('insertLineBreak')}>↵ Quebrar linha</button>
+          <button type="button" aria-pressed={formato.linha === 'embaixo'} title="Começar este texto na linha de baixo" onMouseDown={manterFoco} onClick={() => formatar('linha', formato.linha === 'embaixo' ? '' : 'embaixo')}>Linha própria</button>
+        </div>,
+        document.body
+      )}
+    </>
+  )
+}
+
+if (EDITANDO) {
+  // Clicar num texto dentro de um link edita, não navega; para trocar de página use o seletor do painel
+  document.addEventListener('click', (e) => { if (e.target.closest('a')) e.preventDefault() }, true)
+  document.documentElement.classList.add('modo-editar')
+}
 
 const SiteContext = createContext(null)
 

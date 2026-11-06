@@ -11,3 +11,88 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Prévia do painel em modo editar: cada texto mostra que é clicável */
+.modo-editar texto-editavel {
+  border-radius: 3px;
+  outline: 1px dashed transparent;
+  outline-offset: 3px;
+  cursor: text;
+  transition: outline-color 0.15s, background 0.15s;
+}
+
+.modo-editar texto-editavel:hover {
+  outline-color: rgba(230, 207, 159, 0.75);
+  background: rgba(230, 207, 159, 0.06);
+}
+
+.modo-editar texto-editavel.is-vazio {
+  color: rgba(230, 207, 159, 0.6);
+  font-style: italic;
+  outline-color: rgba(230, 207, 159, 0.4);
+}
+
+.modo-editar texto-editavel.is-ativo {
+  white-space: pre-line;
+  outline: 2px solid #e6cf9f;
+  background: rgba(230, 207, 159, 0.1);
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Barra que aparece em cima do texto clicado */
+.editor-barra {
+  position: fixed;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid rgba(230, 207, 159, 0.4);
+  border-radius: 12px;
+  background: #1b1414;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  color: #f3ead9;
+  font: 500 13px/1 'Source Sans 3', system-ui, sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.editor-barra select,
+.editor-barra button {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.editor-barra select {
+  border-color: rgba(230, 207, 159, 0.25);
+  background: #241b1b;
+}
+
+.editor-barra button:hover {
+  background: rgba(230, 207, 159, 0.12);
+}
+
+.editor-barra button[aria-pressed='true'] {
+  border-color: #e6cf9f;
+  background: rgba(230, 207, 159, 0.18);
+  color: #e6cf9f;
+}
+
+.editor-barra .editor-negrito { font-weight: 800; font-family: Georgia, serif; }
+.editor-barra .editor-italico { font-style: italic; font-family: Georgia, serif; }
+.editor-barra .editor-sublinhado { text-decoration: underline; font-family: Georgia, serif; }
+
+.editor-divisor {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: rgba(230, 207, 159, 0.25);
+}

@@ -1,0 +1,170 @@
+/* Página inicial do celular: estátua girando no topo e, rolando, o conteúdo de todas as páginas.
+   O topo e os botões redondos (WhatsApp e balão da situação) ficam fixos até o fim */
+.header-flutuantes {
+  display: none;
+}
+
+/* Aqui a página rola de verdade, sem a troca de seção do computador */
+body.home-celular {
+  overflow: auto;
+  overscroll-behavior: auto;
+  touch-action: auto;
+}
+
+/* Sem backdrop-filter: ele prende o menu dentro da barra e o fundo escuro passa por cima dos links */
+body.home-celular .header-nav {
+  background: rgba(14, 7, 9, 0.92);
+}
+
+/* Modo escuro: barra do topo preta, deixando a página aparecer por trás */
+:root[data-theme='escuro'] body.home-celular .header-nav,
+:root[data-theme='escuro'] .header-page .header-nav {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Desfoque numa camada própria: na barra em si ele prenderia o menu aberto embaixo do fundo escuro */
+:root[data-theme='escuro'] body.home-celular .header-nav::before,
+:root[data-theme='escuro'] .header-page .header-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.home-hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+}
+
+.home-hero-cena {
+  position: absolute;
+  inset: 0;
+}
+
+.home-hero-texto {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 36px;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(16, 8, 10, 0.9), 0 0 14px rgba(16, 8, 10, 0.75);
+}
+
+.home-hero-tag {
+  color: var(--gold-bright);
+  font-size: 0.8125rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.home-hero-texto h1 {
+  margin: 8px 0;
+  font-family: var(--serif);
+  font-size: 2.75rem;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.home-hero-texto p:last-child {
+  color: var(--ivory);
+  font-size: 0.9375rem;
+  opacity: 0.85;
+}
+
+/* O menu rola até aqui; a folga fica embaixo da barra fixa do topo */
+[id^='secao-'] {
+  scroll-margin-top: 24px;
+}
+
+/* Cada página vira um bloco da rolagem, separado por uma linha */
+.home-bloco {
+  padding-top: 56px;
+  padding-bottom: 56px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+  /* Sai o botão grande do WhatsApp; entram os redondos da lateral */
+  .header-cta {
+    display: none;
+  }
+
+  body.is-home .header-flutuantes {
+    position: fixed;
+    right: 14px;
+    /* Em tela baixa os botões não sobem até a barra do topo */
+    bottom: min(200px, 22vh);
+    z-index: 120;
+    display: grid;
+    gap: 12px;
+    pointer-events: all;
+  }
+
+  .header-flutuantes a {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e6cf9f, #b8975f);
+    color: #2a1a1b;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Contar a situação: balão de conversa, com a ponta para baixo */
+  .header-flutuantes .is-balao {
+    border-radius: 50% 50% 6px 50%;
+  }
+
+  .header-flutuantes svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Menu sem moldura */
+  .header-menu {
+    border-color: transparent;
+    background: transparent !important;
+  }
+
+  /* Menu aberto: só do tamanho dos links, e a página aparece por trás */
+  .header-nav-links,
+  body.is-home .header-nav-links,
+  :root[data-theme='escuro'] .header-nav-links,
+  :root[data-theme='escuro'] body.is-home .header-nav-links {
+    height: auto;
+    width: min(64vw, 240px);
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(230, 207, 159, 0.45);
+    border-radius: 0 0 0 16px;
+    background: rgba(62, 40, 44, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Menu mais alto, com a mesma largura: links maiores e mais espaçados */
+  .header-nav-links,
+  body.is-home .header-nav-links {
+    padding-top: 96px;
+    padding-bottom: 32px;
+    gap: 10px;
+  }
+
+  .header-nav-links a {
+    min-height: 60px;
+    font-size: 1.1875rem;
+  }
+
+  .header-fundo {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  /* Modo escuro: menu aberto em preto transparente, como a barra */
+  :root[data-theme='escuro'] .header-nav-links,
+  :root[data-theme='escuro'] body.is-home .header-nav-links {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './Header.css'
 import { useSite, linkWhatsApp, nomesDoMenu, Texto } from './SiteData'
-import { Sol, Lua, Relogio, Escudo, Menu, Fechar, WhatsApp } from './Icons'
+import { Sol, Lua, Relogio, Escudo, Menu, Fechar, WhatsApp, Documento } from './Icons'
 
 export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
   const { contato, menu: nomes, textos } = useSite()
@@ -36,7 +36,15 @@ export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
                 key={link.pagina}
                 href={`/${link.pagina}`}
                 className={ativo(link) ? 'is-active' : ''}
-                onClick={() => setMenu(false)}
+                onClick={(e) => {
+                  setMenu(false)
+                  // Na página inicial do celular a página já está ali embaixo: rola até ela em vez de abrir outra
+                  const secao = document.getElementById(`secao-${link.pagina}`)
+                  if (secao) {
+                    e.preventDefault()
+                    secao.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
               >
                 {link.label}
               </a>
@@ -71,6 +79,12 @@ export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
           <span><Relogio width={18} height={18} /> <Texto de={textos} campo="geral.selo1" /></span>
           <span><Escudo width={18} height={18} /> <Texto de={textos} campo="geral.selo2" /></span>
         </div>
+      </div>
+
+      {/* No celular os contatos viram botões redondos na lateral */}
+      <div className="header-flutuantes">
+        <a href={linkWhatsApp(contato.whatsapp, contato.mensagem)} target="_blank" rel="noreferrer" aria-label="Falar no WhatsApp"><WhatsApp /></a>
+        <a href="/diagnostico" className="is-balao" aria-label={textos['inicio.botaoSituacao']}><Documento /></a>
       </div>
     </div>
   )

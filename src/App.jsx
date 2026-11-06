@@ -7,6 +7,7 @@ import { aplicarMetadados } from './metadados'
 import { useSite } from './SiteData'
 import useTheme from './useTheme'
 import './App.css'
+import './Celular.css'
 
 const Painel = lazy(() => import('./Painel'))
 const DiagnosticoPage = lazy(() => import('./Diagnostico'))

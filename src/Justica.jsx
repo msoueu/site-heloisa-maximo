@@ -284,12 +284,12 @@ export default function Justica({ current }) {
     giro.current += GIRO_PARADO * dt + (CALMO ? 0 : GIRO_POR_SECAO * percorrido)
     prato.current.rotation.y = giro.current
 
-    // Em retrato o texto fica embaixo, então a peça sobe e a câmera recua
+    // Em retrato (página inicial do celular) a peça fica no meio do topo, com o nome embaixo
     const retrato = viewport.aspect < 0.8
-    const D = dist * (retrato ? 2.1 : 1)
+    const D = retrato ? 13 : dist
     const meiaAltura = Math.tan(d(fov) / 2) * D
     const sx = retrato ? 0 : telaX
-    const sy = retrato ? 0.42 : telaY
+    const sy = retrato ? -0.05 : telaY
     const a = tmp.alvo.set(-sx * meiaAltura * viewport.aspect, foco - sy * meiaAltura, 0)
     camera.position.set(a.x, a.y + Math.sin(alt) * D, a.z + Math.cos(alt) * D)
     camera.lookAt(a)
