@@ -22,6 +22,7 @@ export default function Header({ rota, endereco, irPara, tema, alternarTema }) {
   const ativo = (link) => !naHome && endereco.startsWith(`/${link.pagina}`)
   return (
     <div className={`header-overlay ${naHome ? '' : 'header-page'}`}>
+      {menu && <div className="header-fundo" onClick={() => setMenu(false)} />}
       <nav className="header-nav">
         <a className="header-logo" href="/" onClick={() => { setMenu(false); irPara(0) }} aria-label="Início">
           <span className="header-logo-mark" />

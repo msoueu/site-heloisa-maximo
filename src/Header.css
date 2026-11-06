@@ -205,18 +205,28 @@ body.is-home .header-theme {
     display: grid;
   }
 
+  /* Menu lateral: desliza da direita por cima da página */
   .header-nav-links,
   body.is-home .header-nav-links {
-    position: absolute;
-    top: 100%;
-    right: 12px;
-    left: 12px;
-    display: none;
-    padding: 8px;
-    border-color: rgba(230, 207, 159, 0.45);
-    border-radius: 16px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: min(80vw, 320px);
+    z-index: 200;
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    padding: 88px 16px 24px;
+    border: none;
+    border-left: 1px solid rgba(230, 207, 159, 0.45);
+    border-radius: 0;
     background: #5b373b;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: -16px 0 40px rgba(0, 0, 0, 0.45);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.4s var(--ease), visibility 0s 0.4s;
   }
 
   :root[data-theme='escuro'] .header-nav-links,
@@ -226,7 +236,23 @@ body.is-home .header-theme {
 
   .header-nav-links.is-aberto,
   body.is-home .header-nav-links.is-aberto {
-    display: grid;
+    transform: none;
+    visibility: visible;
+    transition: transform 0.4s var(--ease);
+  }
+
+  /* Os botões do topo ficam por cima do menu: o X fecha */
+  .header-theme {
+    position: relative;
+    z-index: 201;
+  }
+
+  .header-fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: all;
   }
 
   .header-nav-links a {
@@ -250,20 +276,16 @@ body.is-home .header-theme {
   }
 
   .header-cta {
-    right: 50%;
-    transform: translateX(50%);
-    bottom: 24px;
-  }
-
-  .header-cta {
+    left: 16px;
+    right: 16px;
     bottom: 8px;
   }
 
   .cta-selos {
-    gap: 10px;
+    gap: 8px;
     margin-top: 4px;
-    padding: 3px 12px;
-    font-size: 0.875rem;
+    padding: 3px 8px;
+    font-size: 0.78125rem;
   }
 }
 
